@@ -11023,107 +11023,102 @@ but not when nested. For example,
 
 would expand into
 
+```
 (quote (q a))
+```
 
+## 17.2 Dispatching Macro Characters
 
-17.2 Dispatching Macro Characters
 The sharp-quote, like other read-macros beginning with #, is an example of a
 subspecies called dispatching read-macros. These appear as two characters, the
 ﬁrst of which is called the dispatching character. The purpose of such read-macros
 is simply to make the most of the ASCII character set; one can only have so many
 one-character read-macros.
-     You can (with make-dispatch-macro-character) deﬁne your own dis-
+
+You can (with make-dispatch-macro-character) deﬁne your own dis-
 patching macro characters, but since # is already deﬁned as one, you may as well
 use it. Some combinations beginning with # are explicitly reserved for your use;
 others are available in that they do not yet have a predeﬁned meaning in Common
 Lisp. The complete list appears in CLTL2, p. 531.
-     New dispatching macro character combinations can be deﬁned by calling
+
+New dispatching macro character combinations can be deﬁned by calling
 the function set-dispatch-macro-character, like set-macro-character
 except that it takes two character arguments. One of the combinations reserved
 to the programmer is #?. Figure 17.2 shows how to deﬁne this combination as
 a read-macro for constant functions. Now #?2 will be read as a function which
 takes any number of arguments and returns 2. For example:
 
+```
 > (mapcar #?2 ’(a b c))
 (2 2 2)
+```
 
+```
+(set-macro-character #\] (get-macro-character #\)))
 
+(set-dispatch-macro-character #\# #\[
+  #’(lambda (stream char1 char2)
+      (let ((accum nil)
+            (pair (read-delimited-list #\] stream t)))
+        (do ((i (ceiling (car pair)) (1+ i)))
+            ((> i (floor (cadr pair)))
+             (list ’quote (nreverse accum)))
+          (push i accum)))))
+```
 
----
-
-
-17.3                                  DELIMITERS                                  227
-
-
-
- (set-macro-character #\] (get-macro-character #\)))
-
- (set-dispatch-macro-character #\# #\[
-   #’(lambda (stream char1 char2)
-       (let ((accum nil)
-             (pair (read-delimited-list #\] stream t)))
-         (do ((i (ceiling (car pair)) (1+ i)))
-             ((> i (floor (cadr pair)))
-              (list ’quote (nreverse accum)))
-           (push i accum)))))
-
-                  Figure 17.3: A read-macro deﬁning delimiters.
+> Figure 17.3: A read-macro deﬁning delimiters.
 
 
 This example makes the new operator look rather pointless, but in programs that
 use a lot of functional arguments, constant functions are often needed. In fact,
 some dialects provide a built-in function called always for deﬁning them.
-    Note that it is perfectly ok to use macro characters in the deﬁnition of this
+
+Note that it is perfectly ok to use macro characters in the deﬁnition of this
 macro character: as with any Lisp expression, they disappear when the deﬁnition
 is read. It is also ﬁne to use macro-characters after the #?. The deﬁnition of #?
 calls read, so macro-characters like ’ and #’ behave as usual:
 
+```
 > (eq (funcall #?’a) ’a)
 T
 > (eq (funcall #?#’oddp) (symbol-function ’oddp))
 T
+```
 
+## 17.3 Delimiters
 
-17.3 Delimiters
-    After simple macro characters, the most commonly deﬁned macro characters
+After simple macro characters, the most commonly deﬁned macro characters
 are list delimiters. Another character combination reserved for the user is #[.
 Figure 17.3 gives an example of how this character might be deﬁned as a more
 elaborate kind of left parenthesis. It deﬁnes an expression of the form #[x y] to
 read as a list of all the integers between x and y, inclusive:
 
+```
 > #[2 7]
 (2 3 4 5 6 7)
+```
 
 The only new thing about this read-macro is the call to read-delimited-list,
 a built-in function provided just for such cases. Its ﬁrst argument is the character
 to treat as the end of the list. For ] to be recognized as a delimiter, it must ﬁrst be
 given this role, hence the preliminary call to set-macro-character.
 
+```
+(defmacro defdelim (left right parms &body body)
+  ‘(ddfn ,left ,right #’(lambda ,parms ,@body)))
 
+(let ((rpar (get-macro-character #\) )))
+  (defun ddfn (left right fn)
+    (set-macro-character right rpar)
+    (set-dispatch-macro-character #\# left
+      #’(lambda (stream char1 char2)
+          (apply fn
+                 (read-delimited-list right stream t))))))
+```
 
----
+> Figure 17.4: A macro for deﬁning delimiter read-macros.
 
-
-228                                 READ-MACROS
-
-
-
-
- (defmacro defdelim (left right parms &body body)
-   ‘(ddfn ,left ,right #’(lambda ,parms ,@body)))
-
- (let ((rpar (get-macro-character #\) )))
-   (defun ddfn (left right fn)
-     (set-macro-character right rpar)
-     (set-dispatch-macro-character #\# left
-       #’(lambda (stream char1 char2)
-           (apply fn
-                  (read-delimited-list right stream t))))))
-
-            Figure 17.4: A macro for deﬁning delimiter read-macros.
-
-
-    Most potential delimiter read-macro deﬁnitions will duplicate a lot of the
+Most potential delimiter read-macro deﬁnitions will duplicate a lot of the
 code in Figure 17.3. A macro could put a more abstract interface on all this
 machinery. Figure 17.4 shows how we might deﬁne a utility for deﬁning delimiter
 read-macros. The defdelim macro takes two characters, a parameter list, and a
@@ -11131,49 +11126,52 @@ body of code. The parameter list and the body of code implicitly deﬁne a funct
 A call to defdelim deﬁnes the ﬁrst character as a dispatching read-macro which
 reads up to the second, then returns the result of applying this function to what it
 read.
-    Incidentally, the body of the function in Figure 17.3 also cries out for a utility—
+
+Incidentally, the body of the function in Figure 17.3 also cries out for a utility—
 for one we have already deﬁned, in fact: mapa-b, from page 54. Using defdelim
 and mapa-b, the read-macro deﬁned in Figure 17.3 could now be written:
 
+```
 (defdelim #\[ #\] (x y)
   (list ’quote (mapa-b #’identity (ceiling x) (floor y))))
+```
 
-   Another useful delimiter read-macro would be one for functional composition.
+Another useful delimiter read-macro would be one for functional composition.
 Section 5.4 deﬁned an operator for functional composition:
 
+```
 > (let ((f1 (compose #’list #’1+))
         (f2 #’(lambda (x) (list (1+ x)))))
     (equal (funcall f1 7) (funcall f2 7)))
 T
+```
 
 When we are composing built-in functions like list and 1+, there is no reason
 to wait until runtime to evaluate the call to compose. Section 5.7 suggested an
 alternative; by preﬁxing the sharp-dot read-macro to a compose expression,
 
+```
 #.(compose #’list #’1+)
+```
 
-
-
----
-
-
-17.4                             WHEN WHAT HAPPENS                                229
-
-
-
+```
  (defdelim #\{ #\} (&rest args)
    ‘(fn (compose ,@args)))
+```
 
-             Figure 17.5: A read-macro for functional composition.
+> Figure 17.5: A read-macro for functional composition.
 
 
 we could cause it to be evaluated at read-time.
-       Here we show a similar but cleaner solution. The read-macro in Figure 17.5
+
+Here we show a similar but cleaner solution. The read-macro in Figure 17.5
 deﬁnes an expression of the form #{f 1 f 2 . . . f n } to read as the composition of
 f 1 , f 2 , . . . , f n . Thus:
 
+```
 > (funcall #{list 1+} 7)
 (8)
+```
 
 It works by generating a call to fn (page 202), which will create the function at
 compile-time.
@@ -11842,7 +11840,7 @@ operator, we will be able to use lists as pattern elements, simply by quoting th
 take apart its argument at runtime. This list is passed on to gen-match, which
 recursively generates matching code for nested patterns, and thence to match1,
 which generates match code for each leaf of the pattern tree.
-     Most of the code which will appear in the expansion of an if-match comes
+Most of the code which will appear in the expansion of an if-match comes
 from match1, which is shown in Figure 18.8. This function considers four cases.
 If the pattern argument is a gensym, then it is one of the invisible variables created
 by destruc to hold sublists, and all we need to do at runtime is test that it has the
