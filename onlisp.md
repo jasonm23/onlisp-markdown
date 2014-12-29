@@ -11177,102 +11177,99 @@ It works by generating a call to fn (page 202), which will create the function a
 compile-time.
 
 
-17.4 When What Happens
+## 17.4 When What Happens
+
 Finally, it might be useful to clear up a possibly confusing issue. If read-macros are
 invoked before ordinary macros, how is it that macros can expand into expressions
 which contain read-macros? For example, the macro:
+
+```
 (defmacro quotable ()
   ’(list ’able))
+```
 
 generates an expansion with a quote in it. Or does it? In fact, what happens is
 that both quotes in the deﬁnition of this macro are expanded when the defmacro
 expression is read, yielding
 
+```
 (defmacro quotable ()
   (quote (list (quote able))))
+```
 
 Usually, there is no harm in acting as if macroexpansions could contain read-
 macros, because the deﬁnition of a read-macro will not (or should not) change
 between read-time and compile-time.
 
+# 18 Destructuring
 
-
----
-
-
-18
-
-Destructuring
-
-Destructuring is a generalization of assignment. The operators setq and setf
+Destructuring is a generalization of assignment. The operators `setq` and `setf`
 do assignments to individual variables. Destructuring combines assignment with
 access: instead of giving a single variable as the ﬁrst argument, we give a pattern
 of variables, which are each assigned the value occurring in the corresponding
 position in some structure.
 
+## 18.1 Destructuring on Lists
 
-18.1 Destructuring on Lists
 As of CLTL2, Common Lisp includes a new macro called destructuring-bind.
 This macro was brieﬂy introduced in Chapter 7. Here we consider it in more
 detail. Suppose that lst is a list of three elements, and we want to bind x to the
 ﬁrst, y to the second, and z to the third. In raw CLTL1 Common Lisp, we would
 have had to say:
 
+```
 (let ((x (first lst))
       (y (second lst))
       (z (third lst)))
   ...)
+```
 
 With the new macro we can say instead
 
+```
 (destructuring-bind (x y z) lst
   ...)
-
-
-
-
-                                       230
-
-
-
----
-
-
-18.2                             OTHER STRUCTURES                                231
-
+```
 
 which is not only shorter, but clearer as well. Readers grasp visual cues much
 faster than textual ones. In the latter form we are shown the relationship between
 x, y, and z; in the former, we have to infer it.
-    If such a simple case is made clearer by the use of destructuring, imagine the
+
+If such a simple case is made clearer by the use of destructuring, imagine the
 improvement in more complex ones. The ﬁrst argument to destructuring-bind
 can be an arbitrarily complex tree. Imagine
 
+```
 (destructuring-bind ((first last) (month day year) . notes)
                     birthday
   ...)
+```
 
 written using let and the list access functions. Which raises another point:
 destructuring makes it easier to write programs as well as easier to read them.
-     Destructuring did exist in CLTL1 Common Lisp. If the patterns in the examples
+
+Destructuring did exist in CLTL1 Common Lisp. If the patterns in the examples
 above look familiar, it’s because they have the same form as macro parameter lists.
 In fact, destructuring-bind is the code used to take apart macro argument
 lists, now sold separately. You can put anything in the pattern that you would put
 in a macro parameter list, with one unimportant exception (the &environment
 keyword).
-     Establishing bindings en masse is an attractive idea. The following sections
+
+Establishing bindings en masse is an attractive idea. The following sections
 describe several variations upon this theme.
 
+## 18.2 Other Structures
 
-18.2 Other Structures
 There is no reason to limit destructuring to lists. Any complex object is a candidate
-for it. This section shows how to write macros like destructuring-bind for
+for it. This section shows how to write macros like `destructuring-bind` for
 other kinds of objects.
-    The natural next step is to handle sequences generally. Figure 18.1 contains a
-macro called dbind, which resembles destructuring-bind, but works for any
+
+The natural next step is to handle sequences generally. Figure 18.1 contains a
+macro called `dbind`, which resembles `destructuring-bind`, but works for any
 kind of sequence. The second argument can be a list, a vector, or any combination
 thereof:
 
+```
 > (dbind (a b c) #(1 2 3)
     (list a b c))
 (1 2 3)
@@ -11282,17 +11279,9 @@ thereof:
 > (dbind (a (b . c) &rest d) ’(1 "fribble" 2 3 4)
     (list a b c d))
 (1 #\f "ribble" (2 3 4))
+```
 
-
-
----
-
-
-232                         DESTRUCTURING
-
-
-
-
+```
  (defmacro dbind (pat seq &body body)
    (let ((gseq (gensym)))
      ‘(let ((,gseq ,seq))
@@ -11331,21 +11320,15 @@ thereof:
                             binds)
                     body))))
 
-         Figure 18.1: General sequence destructuring operator.
+```
+> Figure 18.1: General sequence destructuring operator.
 
-
-
----
-
-
-18.2                            OTHER STRUCTURES                               233
-
-
-The #( read-macro is for representing vectors, and #\ for representing characters.
-Since "abc" = #(#\a #\b #\c), the ﬁrst element of "fribble" is the character
-#\f. For the sake of simplicity, dbind supports only the &rest and &body
+The `#(` read-macro is for representing vectors, and `#\` for representing characters.
+Since `"abc" = #(#\a #\b #\c)`, the ﬁrst element of "fribble" is the character #\f.
+For the sake of simplicity, `dbind` supports only the `&rest` and `&body`
 keywords.
-     Compared to most of the macros seen so far, dbind is big. It’s worth studying
+
+Compared to most of the macros seen so far, `dbind` is big. It’s worth studying
 the implementation of this macro, not only to understand how it works, but also
 because it embodies a general lesson about Lisp programming. As section 3.4
 mentioned, Lisp programs may intentionally be written in a way that will make
@@ -11357,26 +11340,33 @@ destruc and dbind-ex. Perhaps they both could be combined into one function
 which would do everything in a single pass. But why bother? As two separate
 functions, they will be easier to test. Why trade this advantage for speed we don’t
 need?
-     The ﬁrst function, destruc, traverses the pattern and associates each variable
+
+The ﬁrst function, `destruc`, traverses the pattern and associates each variable
 with the location of the corresponding object at runtime:
 
+```
 > (destruc ’(a b c) ’seq #’atom)
 ((A (ELT SEQ 0)) (B (ELT SEQ 1)) (C (ELT SEQ 2)))
+```
 
 The optional third argument is the predicate used to distinguish pattern structure
 from pattern content.
-   To make access more efﬁcient, a new variable (a gensym) will be bound to
+
+To make access more efﬁcient, a new variable (a gensym) will be bound to
 each subsequence:
 
+```
 > (destruc ’(a (b . c) &rest d) ’seq)
 ((A (ELT SEQ 0))
  ((#:G2 (ELT SEQ 1)) (B (ELT #:G2 0)) (C (SUBSEQ #:G2 1)))
  (D (SUBSEQ SEQ 2)))
+```
 
 The output of destruc is sent to dbind-ex, which generates the bulk of the
 macroexpansion. It translates the tree produced by destruc into a nested series
 of lets:
 
+```
 > (dbind-ex (destruc ’(a (b . c) &rest d) ’seq) ’(body))
 (LET ((A (ELT SEQ 0))
       (#:G4 (ELT SEQ 1))
@@ -11384,18 +11374,10 @@ of lets:
   (LET ((B (ELT #:G4 0))
         (C (SUBSEQ #:G4 1)))
     (PROGN BODY)))
+```
 
-
-
----
-
-
-234                               DESTRUCTURING
-
-
-
-
- (defmacro with-matrix (pats ar &body body)
+```
+(defmacro with-matrix (pats ar &body body)
    (let ((gar (gensym)))
      ‘(let ((,gar ,ar))
         (let ,(let ((row -1))
@@ -11418,33 +11400,26 @@ of lets:
                           ‘(,(car p) (aref ,gar ,@(cdr p))))
                       pat)
           ,@body))))
+```
+> Figure 18.2: Destructuring on arrays.
 
-                      Figure 18.2: Destructuring on arrays.
-
-
-     Note that dbind, like destructuring-bind, assumes that it will ﬁnd all the
+Note that `dbind`, like `destructuring-bind`, assumes that it will ﬁnd all the
 list structure it is looking for. Left-over variables are not simply bound to nil, as
 with multiple-value-bind. If the sequence given at runtime does not have all
 the expected elements, destructuring operators generate an error:
 
+```
 > (dbind (a b c) (list 1 2))
 >>Error: 2 is not a valid index for the sequence (1 2)
+```
 
-     What other objects have internal structure? There are arrays generally, which
+What other objects have internal structure? There are arrays generally, which
 differ from vectors in having more than one dimension. If we deﬁne a destructuring
 macro for arrays, how do we represent the pattern? For two-dimensional arrays,
 it is still practical to use a list. Figure 18.2 contains a macro, with-matrix, for
 destructuring on two-dimensional arrays.
 
-
-
----
-
-
-18.2                             OTHER STRUCTURES                              235
-
-
-
+```
  (defmacro with-struct ((name . fields) struct &body body)
    (let ((gs (gensym)))
      ‘(let ((,gs ,struct))
@@ -11452,10 +11427,10 @@ destructuring on two-dimensional arrays.
                           ‘(,f (,(symb name f) ,gs)))
                       fields)
           ,@body))))
+```
+> Figure 18.3: Destructuring on structures.
 
-                    Figure 18.3: Destructuring on structures.
-
-
+```
 > (setq ar (make-array ’(3 3)))
 #<Simple-Array T (3 3) C2D39E>
 > (for (r 0 2)
@@ -11467,36 +11442,31 @@ NIL
                 (g h i)) ar
     (list a b c d e f g h i))
 (0 1 2 10 11 12 20 21 22)
+```
 
-    For large arrays or those with dimension 3 or higher, we want a different kind
+For large arrays or those with dimension 3 or higher, we want a different kind
 of approach. We are not likely to want to bind variables to each element of a large
 array. It will be more practical to make the pattern a sparse representation of the
 array—containing variables for only a few elements, plus coordinates to identify
 them. The second macro in Figure 18.2 is built on this principle. Here we use it
 to get the diagonal of our previous array:
 
+```
 > (with-array ((a 0 0) (d 1 1) (i 2 2)) ar
     (values a d i))
 0
 11
 22
+```
 
-    With this new macro we have begun to move away from patterns whose
+With this new macro we have begun to move away from patterns whose
 elements must occur in a ﬁxed order. We can make a similar sort of macro to bind
-variables to ﬁelds in structures built by defstruct. Such a macro is deﬁned in
+variables to ﬁelds in structures built by `defstruct`. Such a macro is deﬁned in
 Figure 18.3. The ﬁrst argument in the pattern is taken to be the preﬁx associated
 with the structure, and the rest are ﬁeld names. To build access calls, this macro
-uses symb (page 58).
+uses `symb` (page 58).
 
-
-
----
-
-
-236                               DESTRUCTURING
-
-
-
+```
 > (defstruct visitor name title firm)
 VISITOR
 > (setq theo (make-visitor :name "Theodebert"
@@ -11506,49 +11476,49 @@ VISITOR
 > (with-struct (visitor- name firm title) theo
     (list name firm title))
 ("Theodebert" FRANKS KING)
+```
 
+## 18.3 Reference
 
-
-18.3 Reference
 CLOS brings with it a macro for destructuring on instances. Suppose tree is a
 class with three slots, species, age, and height, and that my-tree is an instance
 of tree. Within
 
+```
 (with-slots (species age height) my-tree
   ...)
+```
 
 we can refer to the slots of my-tree as if they were ordinary variables. Within the
 body of the with-slots, the symbol height refers to the height slot. It is not
 simply bound to the value stored there, but refers to the slot, so that if we write:
 
+```
 (setq height 72)
+```
 
 then the height slot of my-tree will be given the value 72. This macro works by
 deﬁning height as a symbol-macro (Section 7.11) which expands into a slot refer-
 ence. In fact, it was to support macros like with-slots that symbol-macrolet
 was added to Common Lisp.
-    Whether or not with-slots is really a destructuring macro, it has the same
-role pragmatically as destructuring-bind. As conventional destructuring is
+
+Whether or not `with-slots` is really a destructuring macro, it has the same
+role pragmatically as `destructuring-bind`. As conventional destructuring is
 to call-by-value, this new kind is to call-by-name. Whatever we call it, it looks to
 be useful. What other macros can we deﬁne on the same principle?
-    We can create a call-by-name version of any destructuring macro by making it
-expand into a symbol-macrolet rather than a let. Figure 18.4 shows a version
-of dbind modiﬁed to behave like with-slots. We can use with-places as we
-do dbind:
 
+We can create a `call-by-name` version of any destructuring macro by making it
+expand into a symbol-macrolet rather than a `let`. Figure 18.4 shows a version
+of `dbind` modiﬁed to behave like `with-slots`. We can use `with-places` as we
+do `dbind`:
+
+```
 > (with-places (a b c) #(1 2 3)
     (list a b c))
 (1 2 3)
+```
 
-
-
----
-
-
-18.3                                REFERENCE                                 237
-
-
-
+```
  (defmacro with-places (pat seq &body body)
    (let ((gseq (gensym)))
      ‘(let ((,gseq ,seq))
@@ -11567,122 +11537,118 @@ do dbind:
                                     (cdr b)))
                             binds)
                     body))))
-
-              Figure 18.4: Reference destructuring on sequences.
-
+```
+> Figure 18.4: Reference destructuring on sequences.
 
 But the new macro also gives us the option to setf positions in sequences, as we
 do slots in with-slots:
 
+```
 > (let ((lst ’(1 (2 3) 4)))
     (with-places (a (b . c) d) lst
       (setf a ’uno)
       (setf c ’(tre)))
     lst)
 (UNO (2 TRE) 4)
+```
 
-As in a with-slots, the variables now refer to the corresponding locations in the
-structure. There is one important difference, however: you must use setf rather
-than setq to set these pseudo-variables. The with-slots macro must invoke
-a code-walker (page 273) to transform setqs into setfs within its body. Here,
+As in a `with-slots`, the variables now refer to the corresponding locations in the
+structure. There is one important difference, however: you must use `setf` rather
+than `setq` to set these pseudo-variables. The `with-slots` macro must invoke
+a code-walker (page 273) to transform `setqs` into `setfs` within its body. Here,
 writing a code-walker would be a lot of code for a small reﬁnement.
-    If with-places is more general than dbind, why not just use it all the time?
-While dbind associates a variable with a value, with-places associates it with
-a set of instructions for ﬁnding a value. Every reference requires a lookup. Where
-dbind would bind c to the value of (elt x 2), with-places will make c a
-symbol-macro that expands into (elt x 2). So if c is evaluated n times in the
 
+If with-places is more general than `dbind`, why not just use it all
+the time?  While `dbind` associates a variable with a value,
+with-places associates it with a set of instructions for ﬁnding a
+value. Every reference requires a lookup. Where dbind would bind c to
+the value of `(elt x 2)`, `with-places` will make `c` a symbol-macro
+that expands into `(elt x 2)`. So if `c` is evaluated n times in the
+body, that will entail n calls to elt. Unless you actually want to
+setf the variables created by destructuring, `dbind` will be faster.
+The deﬁnition of `with-places` is only slightly changed from that of
+`dbind` (Figure 18.1). Within `wplac-ex` (formerly `dbind-ex`) the
+`let` has become a symbol-macrolet. By similar alterations, we could
+make a call-by-name version of any normal destructuring macro.
 
+##  18.4 Matching
 
----
+As destructuring is a generalization of assignment, pattern-matching
+is a generalization of destructuring. The term "pattern-matching" has
+many senses. In this context, it means comparing two structures,
+possibly containing variables, to see if there is some way of
+assigning values to the variables which makes the two equal. For
+example, if ?x and ?y are variables, then the two lists
 
+```
+(p ?x ?y c ?x)
+(p a b c a)
+```
 
-   238                               DESTRUCTURING
+match when `?x = a` and `?y = b`. And the lists
 
+```
+(p ?x b ?y a)
+(p ?y b c a)
+```
 
+match when `?x = ?y = c`.
 
-   body, that will entail n calls to elt. Unless you actually want to setf the variables
-   created by destructuring, dbind will be faster.
-       The deﬁnition of with-places is only slightly changed from that of dbind
-   (Figure 18.1). Within wplac-ex (formerly dbind-ex) the let has become
-   a symbol-macrolet. By similar alterations, we could make a call-by-name
-   version of any normal destructuring macro.
+Suppose a program works by exchanging messages with some outside
+source.  To respond to a message, the program has to tell what kind of
+message it is, and also to extract its speciﬁc content. With a
+matching operator we can combine the two steps.
 
+To be able to write such an operator we have to invent some way of
+distinguishing variables. We can’t just say that all symbols are
+variables, because we will want symbols to occur as arguments within
+patterns. Here we will say that a pattern variable is a symbol
+beginning with a question mark. If it becomes in- convenient, this
+convention could be changed simply by redeﬁning the predicate var?.
 
-   18.4 Matching
-   As destructuring is a generalization of assignment, pattern-matching is a gener-
-   alization of destructuring. The term "pattern-matching" has many senses. In this
-   context, it means comparing two structures, possibly containing variables, to see
-   if there is some way of assigning values to the variables which makes the two
-   equal. For example, if ?x and ?y are variables, then the two lists
+Figure 18.5 contains a pattern-matching function similar to ones that appear
+in several introductions to Lisp. We give match two lists, and if they can be made
+to match, we will get back a list showing how:
 
-   (p ?x ?y c ?x)
-   (p a b c a)
+```
+> (match ’(p a b c a) ’(p ?x ?y c ?x))
+((?Y . B) (?X . A))
+T
+```
 
-   match when ?x = a and ?y = b. And the lists
+```
+(defun match (x y &optional binds)
+  (acond2
+    ((or (eql x y) (eql x ’_) (eql y ’_)) (values binds t))
+    ((binding x binds) (match it y binds))
+    ((binding y binds) (match x it binds))
+    ((varsym? x) (values (cons (cons x y) binds) t))
+    ((varsym? y) (values (cons (cons y x) binds) t))
+    ((and (consp x) (consp y) (match (car x) (car y) binds))
+     (match (cdr x) (cdr y) it))
+    (t (values nil nil))))
 
-   (p ?x b ?y a)
-   (p ?y b c a)
+(defun varsym? (x)
+  (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
 
-  match when ?x = ?y = c.
-      Suppose a program works by exchanging messages with some outside source.
-  To respond to a message, the program has to tell what kind of message it is, and
-  also to extract its speciﬁc content. With a matching operator we can combine the
-  two steps.
-      To be able to write such an operator we have to invent some way of distin-
-  guishing variables. We can’t just say that all symbols are variables, because we
-  will want symbols to occur as arguments within patterns. Here we will say that
-  a pattern variable is a symbol beginning with a question mark. If it becomes in-
-  convenient, this convention could be changed simply by redeﬁning the predicate
-  var?.
-      Figure 18.5 contains a pattern-matching function similar to ones that appear
- in several introductions to Lisp. We give match two lists, and if they can be made
-  to match, we will get back a list showing how:
+(defun binding (x binds)
+  (labels ((recbind (x binds)
+             (aif (assoc x binds)
+                  (or (recbind (cdr it) binds)
+                      it))))
+    (let ((b (recbind x binds)))
+      (values (cdr b) b))))
+```
+> Figure 18.5: Matching function.
 
-   > (match ’(p a b c a) ’(p ?x ?y c ?x))
-   ((?Y . B) (?X . A))
-   T
-
-
-
----
-
-
-18.4                                MATCHING                                 239
-
-
-
- (defun match (x y &optional binds)
-   (acond2
-     ((or (eql x y) (eql x ’_) (eql y ’_)) (values binds t))
-     ((binding x binds) (match it y binds))
-     ((binding y binds) (match x it binds))
-     ((varsym? x) (values (cons (cons x y) binds) t))
-     ((varsym? y) (values (cons (cons y x) binds) t))
-     ((and (consp x) (consp y) (match (car x) (car y) binds))
-      (match (cdr x) (cdr y) it))
-     (t (values nil nil))))
-
- (defun varsym? (x)
-   (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
-
- (defun binding (x binds)
-   (labels ((recbind (x binds)
-              (aif (assoc x binds)
-                   (or (recbind (cdr it) binds)
-                       it))))
-     (let ((b (recbind x binds)))
-       (values (cdr b) b))))
-
-                        Figure 18.5: Matching function.
-
-
+```
 > (match ’(p ?x b ?y a) ’(p ?y b c a))
 ((?Y . C) (?X . ?Y))
 T
 > (match ’(a b c) ’(a a a))
 NIL
 NIL
+```
 
 As match compares its arguments element by element, it builds up assignments
 of values to variables, called bindings, in the parameter binds. If the match is
@@ -11690,329 +11656,314 @@ successful, match returns the bindings generated, otherwise it returns nil. Sinc
 not all successful matches generate any bindings, match, like gethash, returns a
 second value to indicate whether the match succeeded or failed:
 
+```
 > (match ’(p ?x) ’(p ?x))
 NIL
 T
+```
 
+```
+(defmacro if-match (pat seq then &optional else)
+  ‘(aif2 (match ’,pat ,seq)
+         (let ,(mapcar #’(lambda (v)
+                           ‘(,v (binding ’,v it)))
+                       (vars-in then #’atom))
+           ,then)
+         ,else))
 
+(defun vars-in (expr &optional (atom? #’atom))
+  (if (funcall atom? expr)
+      (if (var? expr) (list expr))
+      (union (vars-in (car expr) atom?)
+             (vars-in (cdr expr) atom?))))
 
----
-
-
-240                                DESTRUCTURING
-
-
-
-
- (defmacro if-match (pat seq then &optional else)
-   ‘(aif2 (match ’,pat ,seq)
-          (let ,(mapcar #’(lambda (v)
-                            ‘(,v (binding ’,v it)))
-                        (vars-in then #’atom))
-            ,then)
-          ,else))
-
- (defun vars-in (expr &optional (atom? #’atom))
-   (if (funcall atom? expr)
-       (if (var? expr) (list expr))
-       (union (vars-in (car expr) atom?)
-              (vars-in (cdr expr) atom?))))
-
- (defun var? (x)
-   (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
-
-                      Figure 18.6: Slow matching operator.
-
+(defun var? (x)
+  (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
+```
+> Figure 18.6: Slow matching operator.
 
 When match returns nil and t as above, it indicates a successful match which
 yielded no bindings.
-    Like Prolog, match treats (underscore) as a wild-card. It matches everything,
+
+Like Prolog, match treats (underscore) as a wild-card. It matches everything,
 and has no effect on the bindings:
 
+```
 > (match ’(a ?x b) ’(_ 1 _))
 ((?X . 1))
 T
+```
 
-    Given match, it is easy to write a pattern-matching version of dbind. Fig-
-ure 18.6 contains a macro called if-match. Like dbind, its ﬁrst two arguments
-are a pattern and a sequence, and it establishes bindings by comparing the pattern
-with the sequence. However, instead of a body it has two more arguments: a then
-clause to be evaluated, with new bindings, if the match succeeds; and an else
-clause to be evaluated if the match fails. Here is a simple function which uses
+Given match, it is easy to write a pattern-matching version of
+dbind. Figure 18.6 contains a macro called if-match. Like dbind, its
+ﬁrst two arguments are a pattern and a sequence, and it establishes
+bindings by comparing the pattern with the sequence. However, instead
+of a body it has two more arguments: a then clause to be evaluated,
+with new bindings, if the match succeeds; and an else clause to be
+evaluated if the match fails. Here is a simple function which uses
 if-match:
 
+```
 (defun abab (seq)
   (if-match (?x ?y ?x ?y) seq
       (values ?x ?y)
       nil))
+```
 
-If the match succeeds, it will establish values for ?x and ?y, which will be returned:
+If the match succeeds, it will establish values for `?x` and `?y`, which will be returned:
 
-
-
----
-
-
-18.4                                 MATCHING                                  241
-
-
+```
 > (abab ’(hi ho hi ho))
 HI
 HO
+```
 
-    The function vars-in returns all the pattern variables in an expression. It
+The function vars-in returns all the pattern variables in an expression. It
 calls var? to test if something is a variable. At the moment, var? is identical to
 varsym? (Figure 18.5), which is used to detect variables in binding lists. We have
 two distinct functions in case we want to use different representations for the two
 kinds of variables.
-    As deﬁned in Figure 18.6, if-match is short, but not very efﬁcient. It does
+
+As deﬁned in Figure 18.6, if-match is short, but not very efﬁcient. It does
 too much work at runtime. We traverse both sequences at runtime, even though
 the ﬁrst is known at compile-time. Worse still, during the process of matching, we
 cons up lists to hold the variable bindings. If we take advantage of information
 known at compile-time, we can write a version of if-match which performs no
 unnecessary comparisons, and doesn’t cons at all.
-    If one of the sequences is known at compile-time, and only that one contains
+
+If one of the sequences is known at compile-time, and only that one contains
 variables, then we can go about things differently. In a call to match, either
 argument could contain variables. By restricting variables to the ﬁrst argument
 of if-match, we make it possible to tell at compile-time which variables will
 be involved in the match. Then instead of creating lists of variable bindings, we
 could keep the values of variables in the variables themselves.
-    The new version of if-match appears in Figure 18.7 and 18.8. When we can
+
+The new version of if-match appears in Figure 18.7 and 18.8. When we can
 predict what code would be evaluated at runtime, we can simply generate it at
 compile-time. Here, instead of expanding into a call to match, we generate code
 which performs just the right comparisons.
-    If we are going to use the variable ?x to contain the binding of ?x, how do we
+
+If we are going to use the variable ?x to contain the binding of ?x, how do we
 represent a variable for which no binding has yet been established by the match?
 Here we will indicate that a pattern variable is unbound by binding it to a gensym.
 So if-match begins by generating code which will bind all the variables in the
 pattern to gensyms. In this case, instead of expanding into a with-gensyms, it’s
 safe to make the gensyms once at compile-time and insert them directly into the
 expansion.
-    The rest of the expansion is generated by pat-match. This macro takes
+
+The rest of the expansion is generated by pat-match. This macro takes
 the same arguments as if-match; the only difference is that it establishes no
 new bindings for pattern variables. In some situations this is an advantage, and
 Chapter 19 will use pat-match as an operator in its own right.
-    In the new matching operator, the distinction between pattern content and
+
+In the new matching operator, the distinction between pattern content and
 pattern structure will be deﬁned by the function simple?. If we want to be able
 to use quoted literals in patterns, the destructuring code (and vars-in) have to be
 told not to go inside lists whose ﬁrst element is quote. With the new matching
 operator, we will be able to use lists as pattern elements, simply by quoting them.
 
+```
+(defmacro if-match (pat seq then &optional else)
+  ‘(let ,(mapcar #’(lambda (v) ‘(,v ’,(gensym)))
+                 (vars-in pat #’simple?))
+     (pat-match ,pat ,seq ,then ,else)))
+
+(defmacro pat-match (pat seq then else)
+  (if (simple? pat)
+      (match1 ‘((,pat ,seq)) then else)
+      (with-gensyms (gseq gelse)
+        ‘(labels ((,gelse () ,else))
+           ,(gen-match (cons (list gseq seq)
+                             (destruc pat gseq #’simple?))
+                       then
+                       ‘(,gelse))))))
+
+(defun simple? (x) (or (atom x) (eq (car x) ’quote)))
+
+(defun gen-match (refs then else)
+  (if (null refs)
+      then
+      (let ((then (gen-match (cdr refs) then else)))
+        (if (simple? (caar refs))
+            (match1 refs then else)
+            (gen-match (car refs) then else)))))
+```
+> Figure 18.7: Fast matching operator.
 
 
----
 
-
-242                                DESTRUCTURING
-
-
-
-
- (defmacro if-match (pat seq then &optional else)
-   ‘(let ,(mapcar #’(lambda (v) ‘(,v ’,(gensym)))
-                  (vars-in pat #’simple?))
-      (pat-match ,pat ,seq ,then ,else)))
-
- (defmacro pat-match (pat seq then else)
-   (if (simple? pat)
-       (match1 ‘((,pat ,seq)) then else)
-       (with-gensyms (gseq gelse)
-         ‘(labels ((,gelse () ,else))
-            ,(gen-match (cons (list gseq seq)
-                              (destruc pat gseq #’simple?))
-                        then
-                        ‘(,gelse))))))
-
- (defun simple? (x) (or (atom x) (eq (car x) ’quote)))
-
- (defun gen-match (refs then else)
-   (if (null refs)
-       then
-       (let ((then (gen-match (cdr refs) then else)))
-         (if (simple? (caar refs))
-             (match1 refs then else)
-             (gen-match (car refs) then else)))))
-
-                       Figure 18.7: Fast matching operator.
-
-
-     Like dbind, pat-match calls destruc to get a list of the calls that will
+Like `dbind`, `pat-match` calls `destruc` to get a list of the calls that will
 take apart its argument at runtime. This list is passed on to gen-match, which
 recursively generates matching code for nested patterns, and thence to match1,
 which generates match code for each leaf of the pattern tree.
+
 Most of the code which will appear in the expansion of an if-match comes
 from match1, which is shown in Figure 18.8. This function considers four cases.
 If the pattern argument is a gensym, then it is one of the invisible variables created
 by destruc to hold sublists, and all we need to do at runtime is test that it has the
-right length. If the pattern element is a wildcard ( ), no code need be generated.
+right length. If the pattern element is a wildcard `( )`, no code need be generated.
 If the pattern element is a variable, match1 generates code to match it against,
 or set it to, the corresponding part of the sequence given at runtime. Otherwise,
 the pattern element is taken to be a literal value, and match1 generates code to
 compare it with the corresponding part of the sequence.
 
+```
+(defun match1 (refs then else)
+  (dbind ((pat expr) . rest) refs
+    (cond ((gensym? pat)
+           ‘(let ((,pat ,expr))
+              (if (and (typep ,pat ’sequence)
+                       ,(length-test pat rest))
+                  ,then
+                  ,else)))
+          ((eq pat ’_) then)
+          ((var? pat)
+           (let ((ge (gensym)))
+             ‘(let ((,ge ,expr))
+                (if (or (gensym? ,pat) (equal ,pat ,ge))
+                    (let ((,pat ,ge)) ,then)
+                    ,else))))
+          (t ‘(if (equal ,pat ,expr) ,then ,else)))))
 
+(defun gensym? (s)
+  (and (symbolp s) (not (symbol-package s))))
 
----
+(defun length-test (pat rest)
+  (let ((fin (caadar (last rest))))
+    (if (or (consp fin) (eq fin ’elt))
+        ‘(= (length ,pat) ,(length rest))
+        ‘(> (length ,pat) ,(- (length rest) 2)))))
+```
+> Figure 18.8: Fast matching operator (continued).
 
-
-18.4                                MATCHING                                  243
-
-
-
- (defun match1 (refs then else)
-   (dbind ((pat expr) . rest) refs
-     (cond ((gensym? pat)
-            ‘(let ((,pat ,expr))
-               (if (and (typep ,pat ’sequence)
-                        ,(length-test pat rest))
-                   ,then
-                   ,else)))
-           ((eq pat ’_) then)
-           ((var? pat)
-            (let ((ge (gensym)))
-              ‘(let ((,ge ,expr))
-                 (if (or (gensym? ,pat) (equal ,pat ,ge))
-                     (let ((,pat ,ge)) ,then)
-                     ,else))))
-           (t ‘(if (equal ,pat ,expr) ,then ,else)))))
-
- (defun gensym? (s)
-   (and (symbolp s) (not (symbol-package s))))
-
- (defun length-test (pat rest)
-   (let ((fin (caadar (last rest))))
-     (if (or (consp fin) (eq fin ’elt))
-         ‘(= (length ,pat) ,(length rest))
-         ‘(> (length ,pat) ,(- (length rest) 2)))))
-
-                Figure 18.8: Fast matching operator (continued).
-
-
-   Let’s look at examples of how some parts of the expansion are generated.
+Let’s look at examples of how some parts of the expansion are generated.
 Suppose we begin with
 
+```
 (if-match (?x ’a) seq
     (print ?x)
     nil)
+```
 
 The pattern will be passed to destruc, with some gensym (call it g for legibility)
 to represent the sequence:
 
+```
 (destruc ’(?x ’a) ’g #’simple?)
+```
 
 yielding:
 
+```
+((?x (elt g 0)) ((quote a) (elt g 1)))
+```
+
+On the front of this list we cons (g seq):
+
+```
+((g seq) (?x (elt g 0)) ((quote a) (elt g 1)))
+```
+
+and send the whole thing to gen-match. Like the naive implementation
+of length (page 22), gen-match ﬁrst recurses all the way to the end of
+the list, and then builds its return value on the way back up. When it
+has run out of elements, gen-match returns its then argument, which
+will be ?x. On the way back up the recursion, this return value will
+be passed as the then argument to match1. Now we will have a call
+like:
+
+```
+(match1 ’(((quote a) (elt g 1))) ’(print ?x) ’ else function )
+```
+
+yielding:
+
+```
+(if (equal (quote a) (elt g 1))
+    (print ?x)
+     else function )
+```
+
+This will in turn become the then argument to another call to match1,
+the value of which will become the then argument of the last call to
+match1. The full expansion of this if-match is shown in Figure 18.9.
+
+In this expansion gensyms are used in two completely unrelated
+ways. The variables used to hold parts of the tree at runtime have
+gensymed names, in order to avoid capture. And the variable ?x is
+initially bound to a gensym, to indicate that it hasn’t yet been
+assigned a value by matching.
+
+In the new if-match, the pattern elements are now evaluated instead of
+being implicitly quoted. This means that Lisp variables can be used in
+patterns, as well as quoted expressions:
+
+```
+> (let ((n 3))
+    (if-match (?x n ’n ’(a b)) ’(1 3 n (a b))
+      ?x))
+1
+```
+
+Two further improvements appear because the new version calls destruc
+(Figure 18.1). The pattern can now contain &rest or &body keywords
+(match doesn’t bother with those). And because destruc uses the
+generic sequence operators elt and subseq, the new if-match will work
+for any kind of sequence. If abab is deﬁned with the new version, it
+can be used also on vectors and strings:
+
+```
+(if-match (?x ’a) seq
+    (print ?x))
+
+;; expands into:
+
+(let ((?x ’#:g1))
+  (labels ((#:g3 nil nil))
+    (let ((#:g2 seq))
+      (if (and (typep #:g2 ’sequence)
+               (= (length #:g2) 2))
+          (let ((#:g5 (elt #:g2 0)))
+            (if (or (gensym? x) (equal ?x #:g5))
+                (let ((?x #:g5))
+                   (if (equal ’a (elt #:g2 1))
+                       (print ?x)
+                       (#:g3)))
+                (#:g3)))
+          (#:g3)))))
+
+```
+> Figure 18.9: Expansion of an if-match.
 
 
----
-
-
-   244                              DESTRUCTURING
-
-
-
-   ((?x (elt g 0)) ((quote a) (elt g 1)))
-
-   On the front of this list we cons (g seq):
-
-   ((g seq) (?x (elt g 0)) ((quote a) (elt g 1)))
-
-   and send the whole thing to gen-match. Like the naive implementation of length
-   (page 22), gen-match ﬁrst recurses all the way to the end of the list, and then
-   builds its return value on the way back up. When it has run out of elements,
-   gen-match returns its then argument, which will be ?x. On the way back up the
-   recursion, this return value will be passed as the then argument to match1. Now
-   we will have a call like:
-
-   (match1 ’(((quote a) (elt g 1))) ’(print ?x) ’ else function )
-
-   yielding:
-
-   (if (equal (quote a) (elt g 1))
-       (print ?x)
-        else function )
-
-  This will in turn become the then argument to another call to match1, the value
-  of which will become the then argument of the last call to match1. The full
-  expansion of this if-match is shown in Figure 18.9.
-      In this expansion gensyms are used in two completely unrelated ways. The
-  variables used to hold parts of the tree at runtime have gensymed names, in order
-  to avoid capture. And the variable ?x is initially bound to a gensym, to indicate
- that it hasn’t yet been assigned a value by matching.
-      In the new if-match, the pattern elements are now evaluated instead of being
- implicitly quoted. This means that Lisp variables can be used in patterns, as well
-  as quoted expressions:
-
-   > (let ((n 3))
-       (if-match (?x n ’n ’(a b)) ’(1 3 n (a b))
-         ?x))
-   1
-
-   Two further improvements appear because the new version calls destruc (Fig-
-   ure 18.1). The pattern can now contain &rest or &body keywords (match doesn’t
-   bother with those). And because destruc uses the generic sequence operators
-   elt and subseq, the new if-match will work for any kind of sequence. If abab
-   is deﬁned with the new version, it can be used also on vectors and strings:
-
-
-
----
-
-
-18.4                                MATCHING                                  245
-
-
-
- (if-match (?x ’a) seq
-     (print ?x))
-
- expands into:
- (let ((?x ’#:g1))
-   (labels ((#:g3 nil nil))
-     (let ((#:g2 seq))
-       (if (and (typep #:g2 ’sequence)
-                (= (length #:g2) 2))
-           (let ((#:g5 (elt #:g2 0)))
-             (if (or (gensym? x) (equal ?x #:g5))
-                 (let ((?x #:g5))
-                    (if (equal ’a (elt #:g2 1))
-                        (print ?x)
-                        (#:g3)))
-                 (#:g3)))
-           (#:g3)))))
-
-                    Figure 18.9: Expansion of an if-match.
-
-
+```
 > (abab "abab")
 #\a
 #\b
 > (abab #(1 2 1 2))
 1
 2
+```
 
 In fact, patterns can be as complex as patterns to dbind:
+
+```
 > (if-match (?x (1 . ?y) . ?x) ’((a b) #(1 2 3) a b)
        (values ?x ?y))
 (A B)
 #(2 3)
+```
 
 Notice that, in the second return value, the elements of the vector are displayed.
 To have vectors printed this way, set *print-array* to t.
-    In this chapter we are beginning to cross the line into a new kind of pro-
-gramming. We began with simple macros for destructuring. In the ﬁnal version
-of if-match we have something that looks more like its own language. The
-remaining chapters describe a whole class of programs which operate on the same
-philosophy.
 
+In this chapter we are beginning to cross the line into a new kind of
+programming. We began with simple macros for destructuring. In the
+ﬁnal version of if-match we have something that looks more like its
+own language. The remaining chapters describe a whole class of
+programs which operate on the same philosophy.
 
-
----
-
-
-19
-
-A Query Compiler
+# 19 A Query Compiler
 
 Some of the macros deﬁned in the preceding chapter were large ones. To generate
 its expansion, if-match needed all the code in Figures 18.7 and 18.8, plus
@@ -12021,38 +11972,31 @@ embedded languages. If small macros are extensions to Lisp, large macros deﬁne
 sub-languages within it—possibly with their own syntax or control structure. We
 saw the beginning of this in if-match, which had its own distinct representation
 for variables.
-    A language implemented within Lisp is called an embedded language. Like
+
+A language implemented within Lisp is called an embedded language. Like
 "utility," the term is not a precisely deﬁned one; if-match probably still counts
 as a utility, but it is getting close to the borderline.
-    An embedded language is not a like a language implemented by a traditional
+
+An embedded language is not a like a language implemented by a traditional
 compiler or interpreter. It is implemented within some existing language, usually
 by transformation. There need be no barrier between the base language and the
 extension: it should be possible to intermingle the two freely. For the implementor,
 this can mean a huge saving of effort. You can embed just what you need, and for
 the rest, use the base language.
-    Transformation, in Lisp, suggests macros. To some extent, you could imple-
+
+Transformation, in Lisp, suggests macros. To some extent, you could imple-
 ment embedded languages with preprocessors. But preprocessors usually operate
 only on text, while macros take advantage of a unique property of Lisp: between
 the reader and the compiler, your Lisp program is represented as lists of Lisp
 objects. Transformations done at this stage can be much smarter.
-    The best-known example of an embedded language is CLOS, the Common Lisp
+
+The best-known example of an embedded language is CLOS, the Common Lisp
 Object System. If you wanted to make an object-oriented version of a conventional
 language, you would have to write a new compiler. Not so in Lisp. Tuning the
-
-
-                                        246
-
-
-
----
-
-
-19.1                                THE DATABASE                                 247
-
-
 compiler will make CLOS run faster, but in principle the compiler doesn’t have to
 be changed at all. The whole thing can be written in Lisp.
-    The remaining chapters give examples of embedded languages. This chapter
+
+The remaining chapters give examples of embedded languages. This chapter
 describes how to embed in Lisp a program to answer queries on a database. (You
 will notice in this program a certain family resemblance to if-match.) The ﬁrst
 sections describe how to write a system which interprets queries. This program is
@@ -12060,72 +12004,72 @@ then reimplemented as a query compiler—in essence, as one big macro—making
 it both more efﬁcient and better integrated with Lisp.
 
 
-19.1 The Database
+## 19.1 The Database
+
 For our present purposes, the format of the database doesn’t matter very much.
 Here, for the sake of convenience, we will store information in lists. For example,
 we will represent the fact that Joshua Reynolds was an English painter who lived
 from 1723 to 1792 by:
 
+```
 (painter reynolds joshua english)
 (dates reynolds 1723 1792)
+```
 
 There is no canonical way of reducing information to lists. We could just as well
 have used one big list:
+
+```
 (painter reynolds joshua 1723 1792 english)
+```
 
 It is up to the user to decide how to organize database entries. The only restriction
 is that the entries (facts) will be indexed under their ﬁrst element (the predicate).
 Within those bounds, any consistent form will do, although some forms might
 make for faster queries than others.
-     Any database system needs at least two operations: one for modifying the
+
+Any database system needs at least two operations: one for modifying the
 database, and one for examining it. The code shown in Figure 19.1 provides these
 operations in a basic form. A database is represented as a hash-table ﬁlled with
 lists of facts, hashed according to their predicate.
-     Although the database functions deﬁned in Figure 19.1 support multiple
+
+Although the database functions deﬁned in Figure 19.1 support multiple
 databases, they all default to operations on *default-db*. As with packages
 in Common Lisp, programs which don’t need multiple databases need not even
 mention them. In this chapter all the examples will just use the *default-db*.
-     We initialize the system by calling clear-db, which empties the current
+
+We initialize the system by calling clear-db, which empties the current
 database. We can look up facts with a given predicate with db-query, and insert
 new facts into a database entry with db-push. As explained in Section 12.1, a
 macro which expands into an invertible reference will itself be invertible. Since
 db-query is deﬁned this way, we can simply push new facts onto the db-query
 of their predicates. In Common Lisp, hash-table entries are initialized to nil
 
+```
+(defun make-db (&optional (size 100))
+  (make-hash-table :size size))
 
+(defvar *default-db* (make-db))
 
----
+(defun clear-db (&optional (db *default-db*))
+  (clrhash db))
 
+(defmacro db-query (key &optional (db ’*default-db*))
+  ‘(gethash ,key ,db))
 
-248                            A QUERY COMPILER
+(defun db-push (key val &optional (db *default-db*))
+  (push val (db-query key db)))
 
-
-
-
- (defun make-db (&optional (size 100))
-   (make-hash-table :size size))
-
- (defvar *default-db* (make-db))
-
- (defun clear-db (&optional (db *default-db*))
-   (clrhash db))
-
- (defmacro db-query (key &optional (db ’*default-db*))
-   ‘(gethash ,key ,db))
-
- (defun db-push (key val &optional (db *default-db*))
-   (push val (db-query key db)))
-
- (defmacro fact (pred &rest args)
-   ‘(progn (db-push ’,pred ’,args)
-           ’,args))
-
-                     Figure 19.1: Basic database functions.
-
+(defmacro fact (pred &rest args)
+  ‘(progn (db-push ’,pred ’,args)
+          ’,args))
+```
+> Figure 19.1: Basic database functions.
 
 unless speciﬁed otherwise, so any key initially has an empty list associated with
 it. Finally, the macro fact adds a new fact to the database.
 
+```
 > (fact painter reynolds joshua english)
 (REYNOLDS JOSHUA ENGLISH)
 > (fact painter canale antonio venetian)
@@ -12134,41 +12078,34 @@ it. Finally, the macro fact adds a new fact to the database.
 ((CANALE ANTONIO VENETIAN)
   (REYNOLDS JOSHUA ENGLISH))
 T
+```
 
-The t returned as the second value by db-query appears because db-query
-expands into a gethash, which returns as its second value a ﬂag to distinguish
+The `t` returned as the second value by `db-query` appears because `db-query`
+expands into a `gethash`, which returns as its second value a ﬂag to distinguish
 between ﬁnding no entry and ﬁnding an entry whose value is nil.
 
+## 19.2 Pattern-Matching Queries
 
-19.2 Pattern-Matching Queries
-Calling db-query is not a very ﬂexible way of looking at the contents of the
+Calling `db-query` is not a very ﬂexible way of looking at the contents of the
 database. Usually the user wants to ask questions which depend on more than
 just the ﬁrst element of a fact. A query language is a language for expressing
 
-
-
----
-
-
-19.2                        PATTERN-MATCHING QUERIES                          249
-
-
-
-  query    :   ( symbol argument *)
-           :   (not query )
-           :   (and query *)
-           :   (or query *)
-  argument :   ? symbol
-           :    symbol
-           :    number
-
-                         Figure 19.2: Syntax of queries.
-
+```
+query    :   ( symbol argument *)
+         :   (not query )
+         :   (and query *)
+         :   (or query *)
+argument :   ? symbol
+         :    symbol
+         :    number
+```
+> Figure 19.2: Syntax of queries.
 
 more complicated questions. In a typical query language, the user can ask for all
 the values which satisfy some combination of restrictions—for example, the last
 names of all the painters born in 1697.
-     Our program will provide a declarative query language. In a declarative query
+
+Our program will provide a declarative query language. In a declarative query
 language, the user speciﬁes the constraints which answers must satisfy, and leaves
 it to the system to ﬁgure out how to generate them. This way of expressing queries
 is close to the form people use in everyday conversation. With our program, we
@@ -12176,51 +12113,49 @@ will be able to express the sample query by asking for all the x such that there
 is a fact of the form (painter x ...), and a fact of the form (dates x 1697
 ...). We will be able to refer to all the painters born in 1697 by writing:
 
+```
 (and (painter ?x ?y ?z)
      (dates ?x 1697 ?w))
+```
 
 As well as accepting simple queries consisting of a predicate and some arguments,
 our program will be able to answer arbitrarily complex queries joined together by
 logical operators like and and or. The syntax of the query language is shown in
 Figure 19.2.
-    Since facts are indexed under their predicates, variables cannot appear in the
+
+Since facts are indexed under their predicates, variables cannot appear in the
 predicate position. If you were willing to give up the beneﬁts of indexing, you
 could get around this restriction by always using the same predicate, and making
 the ﬁrst argument the de facto predicate.
-    Like many such systems, this program has a skeptic’s notion of truth: some
+
+Like many such systems, this program has a skeptic’s notion of truth: some
 facts are known, and everything else is false. The not operator succeeds if the
 fact in question is not present in the database. To a degree, you could represent
 explicit falsity by the Wayne’s World method:
 
+```
 (edible motor-oil not)
+```
 
 However, the not operator wouldn’t treat these facts differently from any others.
 
-
-
----
-
-
-250                              A QUERY COMPILER
-
-
-
-    In programming languages there is a fundamental distinction between inter-
+In programming languages there is a fundamental distinction between inter-
 preted and compiled programs. In this chapter we examine the same question
 with respect to queries. A query interpreter accepts a query and uses it to generate
 answers from the database. A query compiler accepts a query and generates a
 program which, when run, yields the same result. The following sections describe
 a query interpreter and then a query compiler.
 
+## 19.3 A Query Interpreter
 
-19.3 A Query Interpreter
-     To implement a declarative query language we will use the pattern-matching
+To implement a declarative query language we will use the pattern-matching
 utilities deﬁned in Section 18.4. The functions shown in Figure 19.3 interpret
 queries of the form shown in Figure 19.2. The central function in this code is
 interpret-query, which recursively works through the structure of a complex
 query, generating bindings in the process. The evaluation of complex queries
 proceeds left-to-right, as in Common Lisp itself.
-     When the recursion gets down to patterns for facts, interpret-query calls
+
+When the recursion gets down to patterns for facts, interpret-query calls
 lookup. This is where the pattern-matching occurs. The function lookup takes
 a pattern consisting of a predicate and a list of arguments, and returns a list of all
 the bindings which make the pattern match some fact in the database. It gets all
@@ -12228,526 +12163,510 @@ the database entries for the predicate, and calls match (page 239) to compare ea
 of them against the pattern. Each successful match returns a list of bindings, and
 lookup in turn returns a list of all these lists.
 
+```
 > (lookup ’painter ’(?x ?y english))
 (((?Y . JOSHUA) (?X . REYNOLDS)))
+```
 
-    These results are then ﬁltered or combined depending on the surrounding
+These results are then ﬁltered or combined depending on the surrounding
 logical operators. The ﬁnal result is returned as a list of sets of bindings. Given
 the assertions shown in Figure 19.4, here is the example from earlier in this
 chapter:
 
+```
 > (interpret-query ’(and (painter ?x ?y ?z)
                          (dates ?x 1697 ?w)))
 (((?W . 1768) (?Z . VENETIAN) (?Y . ANTONIO) (?X . CANALE))
  ((?W . 1772) (?Z . ENGLISH) (?Y . WILLIAM) (?X . HOGARTH)))
+```
 
 As a general rule, queries can be combined and nested without restriction. In a
 few cases there are subtle restrictions on the syntax of queries, but these are best
 dealt with after looking at some examples of how this code is used.
-    The macro with-answer provides a clean way of using the query interpreter
+
+The macro with-answer provides a clean way of using the query interpreter
 within Lisp programs. It takes as its ﬁrst argument any legal query; the rest
 of the arguments are treated as a body of code. A with-answer expands into
 
+```
+(defmacro with-answer (query &body body)
+  (let ((binds (gensym)))
+    ‘(dolist (,binds (interpret-query ’,query))
+       (let ,(mapcar #’(lambda (v)
+                         ‘(,v (binding ’,v ,binds)))
+                     (vars-in query #’atom))
+         ,@body))))
 
+(defun interpret-query (expr &optional binds)
+  (case (car expr)
+    (and (interpret-and (reverse (cdr expr)) binds))
+    (or   (interpret-or (cdr expr) binds))
+    (not (interpret-not (cadr expr) binds))
+    (t    (lookup (car expr) (cdr expr) binds))))
 
----
+(defun interpret-and (clauses binds)
+  (if (null clauses)
+      (list binds)
+      (mapcan #’(lambda (b)
+                  (interpret-query (car clauses) b))
+              (interpret-and (cdr clauses) binds))))
 
+(defun interpret-or (clauses binds)
+  (mapcan #’(lambda (c)
+              (interpret-query c binds))
+          clauses))
 
-19.3                     A QUERY INTERPRETER              251
+(defun interpret-not (clause binds)
+  (if (interpret-query clause binds)
+      nil
+      (list binds)))
 
+(defun lookup (pred   args &optional binds)
+  (mapcan #’(lambda   (x)
+              (aif2   (match x args binds) (list it)))
+          (db-query   pred)))
+```
+> Figure 19.3: Query interpreter.
 
-
-
- (defmacro with-answer (query &body body)
-   (let ((binds (gensym)))
-     ‘(dolist (,binds (interpret-query ’,query))
-        (let ,(mapcar #’(lambda (v)
-                          ‘(,v (binding ’,v ,binds)))
-                      (vars-in query #’atom))
-          ,@body))))
-
- (defun interpret-query (expr &optional binds)
-   (case (car expr)
-     (and (interpret-and (reverse (cdr expr)) binds))
-     (or   (interpret-or (cdr expr) binds))
-     (not (interpret-not (cadr expr) binds))
-     (t    (lookup (car expr) (cdr expr) binds))))
-
- (defun interpret-and (clauses binds)
-   (if (null clauses)
-       (list binds)
-       (mapcan #’(lambda (b)
-                   (interpret-query (car clauses) b))
-               (interpret-and (cdr clauses) binds))))
-
- (defun interpret-or (clauses binds)
-   (mapcan #’(lambda (c)
-               (interpret-query c binds))
-           clauses))
-
- (defun interpret-not (clause binds)
-   (if (interpret-query clause binds)
-       nil
-       (list binds)))
-
- (defun lookup (pred   args &optional binds)
-   (mapcan #’(lambda   (x)
-               (aif2   (match x args binds) (list it)))
-           (db-query   pred)))
-
-                  Figure 19.3: Query interpreter.
-
-
-
----
-
-
-252                             A QUERY COMPILER
-
-
-
-
- (clear-db)
- (fact painter hogarth william english)
- (fact painter canale antonio venetian)
- (fact painter reynolds joshua english)
- (fact dates hogarth 1697 1772)
- (fact dates canale 1697 1768)
- (fact dates reynolds 1723 1792)
-
-                     Figure 19.4: Assertion of sample facts.
-
+```
+(clear-db)
+(fact painter hogarth william english)
+(fact painter canale antonio venetian)
+(fact painter reynolds joshua english)
+(fact dates hogarth 1697 1772)
+(fact dates canale 1697 1768)
+(fact dates reynolds 1723 1792)
+```
+> Figure 19.4: Assertion of sample facts.
 
 code which collects all the sets of bindings generated by the query, then iterates
 through the body with the variables in the query bound as speciﬁed by each set of
 bindings. Variables which appear in the query of a with-answer can (usually)
 be used within its body. When the query is successful but contains no variables,
 with-answer evaluates the body of code just once.
-    With the database as deﬁned in Figure 19.4, Figure 19.5 shows some sample
+
+With the database as deﬁned in Figure 19.4, Figure 19.5 shows some sample
 queries, accompanied by English translations. Because pattern-matching is done
 with match, it is possible to use the underscore as a wild-card in patterns.
-    To keep these examples short, the code within the bodies of the queries does
+
+To keep these examples short, the code within the bodies of the queries does
 nothing more than print some result. In general, the body of a with-answer can
 consist of any Lisp expressions.
 
 
-19.4 Restrictions on Binding
+## 19.4 Restrictions on Binding
+
 There are some restrictions on which variables will be bound by a query. For
 example, why should the query
 
+```
 (not (painter ?x ?y ?z))
+```
 
 assign any bindings to ?x and ?y at all? There are an inﬁnite number of combi-
 nations of ?x and ?y which are not the name of some painter. Thus we add the
 following restriction: the not operator will ﬁlter out bindings which are already
 generated, as in
 
+```
 (and (painter ?x ?y ?z) (not (dates ?x 1772 ?d)))
+```
 
 but you cannot expect it to generate bindings all by itself. We have to generate
 sets of bindings by looking for painters before we can screen out the ones not born
 in 1772. If we had put the clauses in the reverse order:
 
+```
 (and (not (dates ?x 1772 ?d)) (painter ?x ?y ?z))                        ; wrong
+```
 
+The ﬁrst name and nationality of every painter called Hogarth.
 
-
----
-
-
-19.4                          RESTRICTIONS ON BINDING                          253
-
-
-
- The ﬁrst name and nationality of every painter called Hogarth.
+```
  > (with-answer (painter hogarth ?x ?y)
      (princ (list ?x ?y)))
  (WILLIAM ENGLISH)
  NIL
- The last name of every painter born in 1697. (Our original example.)
- > (with-answer (and (painter ?x _ _)
+```
+
+The last name of every painter born in 1697. (Our original example.)
+
+```
+> (with-answer (and (painter ?x _ _)
                      (dates ?x 1697 _))
      (princ (list ?x)))
  (CANALE)(HOGARTH)
  NIL
- The last name and year of birth of everyone who died in 1772 or 1792.
- > (with-answer (or (dates ?x ?y 1772)
+```
+
+The last name and year of birth of everyone who died in 1772 or 1792.
+
+```
+> (with-answer (or (dates ?x ?y 1772)
                     (dates ?x ?y 1792))
      (princ (list ?x ?y)))
  (HOGARTH 1697)(REYNOLDS 1723)
  NIL
- The last name of every English painter not born the same year as a Venetian
- one.
- > (with-answer (and (painter ?x _ english)
+```
+
+The last name of every English painter not born the same year as a Venetian
+one.
+
+```
+> (with-answer (and (painter ?x _ english)
                      (dates ?x ?b _)
                      (not (and (painter ?x2 _ venetian)
                                (dates ?x2 ?b _))))
      (princ ?x))
  REYNOLDS
  NIL
+```
 
-                    Figure 19.5: The query interpreter in use.
-
+> Figure 19.5: The query interpreter in use.
 
 then we would get nil as the result if there were any painters born in 1772. Even
 in the ﬁrst example, we shouldn’t expect to be able to use the value of ?d within
 the body of a with-answer expression.
-    Also, expressions of the form (or q 1 . . . qn ) are only guaranteed to generate
+
+Also, expressions of the form `(or q 1 . . . qn )` are only guaranteed to generate
 real bindings for variables which appear in all of the q i . If a with-answer
 contained the query
+
+```
 (or (painter ?x ?y ?z) (dates ?x ?b ?d))
+```
+
+you could expect to use the binding of ?x, because no matter which of
+the subqueries succeeds, it will generate a binding for ?x. But
+neither ?y nor ?b is guaranteed to get a binding from the query,
+though one or the other will. Pattern variables not bound by the query
+will be nil for that iteration.
 
 
+## 19.5 A Query Compiler
 
----
+The code in Figure 19.3 does what we want, but inefﬁciently. It
+analyzes the structure of the query at runtime, though it is known at
+compile-time. And it conses up lists to hold variable bindings, when
+we could use the variables to hold their own values. Both of these
+problems can be solved by deﬁning with-answer in a different way.
 
+Figure 19.6 deﬁnes a new version of with-answer. The new version
+continues a trend which began with avg (page 182), and continued with
+if-match (page 242): it does at compile-time much of the work that the
+old version did at runtime. The code in Figure 19.6 bears a superﬁcial
+resemblance to that in Figure 19.3, but none of these functions are
+called at runtime. Instead of gen- erating bindings, they generate
+code, which becomes part of the expansion of with-answer. At runtime
+this code will generate all the bindings which satisfy the query
+according to the current state of the database.
 
-   254                             A QUERY COMPILER
+In effect, this program is one big macro. Figure 19.7 shows the
+macroexpansion of a with-answer. Most of the work is done by pat-match
+(page 242), which is itself a macro. Now the only new functions needed
+at runtime are the basic database functions shown in Figure 19.1.
 
+When with-answer is called from the toplevel, query compilation has
+little advantage. The code representing the query is generated,
+evaluated, then thrown away. But when a with-answer expression appears
+within a Lisp program, the code representing the query becomes part of
+its macroexpansion. So when the containing program is compiled, the
+code for all the queries will be compiled inline in the process.
 
+Although the primary advantage of the new approach is speed, it also
+makes with-answer expressions better integrated with the code in which
+they appear.  This shows in two speciﬁc improvements. First, the
+arguments within the query now get evaluated, so we can say:
 
-  you could expect to use the binding of ?x, because no matter which of the
-  subqueries succeeds, it will generate a binding for ?x. But neither ?y nor ?b is
-  guaranteed to get a binding from the query, though one or the other will. Pattern
- variables not bound by the query will be nil for that iteration.
+```
+> (setq my-favorite-year 1723)
+1723
+> (with-answer (dates ?x my-favorite-year ?d)
+    (format t "~A was born in my favorite year.~%" ?x))
+REYNOLDS was born in my favorite year.
+NIL
+```
 
+```
+(defmacro with-answer (query &body body)
+  ‘(with-gensyms ,(vars-in query #’simple?)
+     ,(compile-query query ‘(progn ,@body))))
 
-   19.5 A Query Compiler
-   The code in Figure 19.3 does what we want, but inefﬁciently. It analyzes the
-   structure of the query at runtime, though it is known at compile-time. And it
-   conses up lists to hold variable bindings, when we could use the variables to hold
-   their own values. Both of these problems can be solved by deﬁning with-answer
-   in a different way.
-       Figure 19.6 deﬁnes a new version of with-answer. The new version con-
-   tinues a trend which began with avg (page 182), and continued with if-match
-   (page 242): it does at compile-time much of the work that the old version did
-   at runtime. The code in Figure 19.6 bears a superﬁcial resemblance to that in
-   Figure 19.3, but none of these functions are called at runtime. Instead of gen-
-   erating bindings, they generate code, which becomes part of the expansion of
-   with-answer. At runtime this code will generate all the bindings which satisfy
-   the query according to the current state of the database.
-       In effect, this program is one big macro. Figure 19.7 shows the macroexpan-
-   sion of a with-answer. Most of the work is done by pat-match (page 242),
-   which is itself a macro. Now the only new functions needed at runtime are the
-   basic database functions shown in Figure 19.1.
-       When with-answer is called from the toplevel, query compilation has little
-   advantage. The code representing the query is generated, evaluated, then thrown
-   away. But when a with-answer expression appears within a Lisp program, the
-   code representing the query becomes part of its macroexpansion. So when the
-   containing program is compiled, the code for all the queries will be compiled
-   inline in the process.
-       Although the primary advantage of the new approach is speed, it also makes
-   with-answer expressions better integrated with the code in which they appear.
-   This shows in two speciﬁc improvements. First, the arguments within the query
-   now get evaluated, so we can say:
+(defun compile-query (q body)
+  (case (car q)
+    (and (compile-and (cdr q) body))
+    (or   (compile-or (cdr q) body))
+    (not (compile-not (cadr q) body))
+    (lisp ‘(if ,(cadr q) ,body))
+    (t    (compile-simple q body))))
 
-   > (setq my-favorite-year 1723)
-   1723
-   > (with-answer (dates ?x my-favorite-year ?d)
-       (format t "~A was born in my favorite year.~%" ?x))
-   REYNOLDS was born in my favorite year.
-   NIL
+(defun compile-simple (q body)
+  (let ((fact (gensym)))
+    ‘(dolist (,fact (db-query ’,(car q)))
+       (pat-match ,(cdr q) ,fact ,body nil))))
 
+(defun compile-and (clauses body)
+  (if (null clauses)
+      body
+      (compile-query (car clauses)
+                     (compile-and (cdr clauses) body))))
 
+(defun compile-or (clauses body)
+  (if (null clauses)
+      nil
+      (let ((gbod (gensym))
+            (vars (vars-in body #’simple?)))
+        ‘(labels ((,gbod ,vars ,body))
+           ,@(mapcar #’(lambda (cl)
+                         (compile-query cl ‘(,gbod ,@vars)))
+                     clauses)))))
 
----
+(defun compile-not (q body)
+  (let ((tag (gensym)))
+    ‘(if (block ,tag
+           ,(compile-query q ‘(return-from ,tag nil))
+           t)
+         ,body)))
+```
+> Figure 19.6: Query compiler.
 
+```
+(with-answer (painter ?x ?y ?z)
+  (format t "~A ~A is a painter.~%" ?y ?x))
 
-19.5                     A QUERY COMPILER                   255
+;; is expanded by the query interpreter into:
 
+(dolist (#:g1 (interpret-query ’(painter ?x ?y ?z)))
+  (let ((?x (binding ’?x #:g1))
+        (?y (binding ’?y #:g1))
+        (?z (binding ’?z #:g1)))
+    (format t "~A ~A is a painter.~%" ?y ?x)))
 
+;; and by the query compiler into:
 
- (defmacro with-answer (query &body body)
-   ‘(with-gensyms ,(vars-in query #’simple?)
-      ,(compile-query query ‘(progn ,@body))))
-
- (defun compile-query (q body)
-   (case (car q)
-     (and (compile-and (cdr q) body))
-     (or   (compile-or (cdr q) body))
-     (not (compile-not (cadr q) body))
-     (lisp ‘(if ,(cadr q) ,body))
-     (t    (compile-simple q body))))
-
- (defun compile-simple (q body)
-   (let ((fact (gensym)))
-     ‘(dolist (,fact (db-query ’,(car q)))
-        (pat-match ,(cdr q) ,fact ,body nil))))
-
- (defun compile-and (clauses body)
-   (if (null clauses)
-       body
-       (compile-query (car clauses)
-                      (compile-and (cdr clauses) body))))
-
- (defun compile-or (clauses body)
-   (if (null clauses)
-       nil
-       (let ((gbod (gensym))
-             (vars (vars-in body #’simple?)))
-         ‘(labels ((,gbod ,vars ,body))
-            ,@(mapcar #’(lambda (cl)
-                          (compile-query cl ‘(,gbod ,@vars)))
-                      clauses)))))
-
- (defun compile-not (q body)
-   (let ((tag (gensym)))
-     ‘(if (block ,tag
-            ,(compile-query q ‘(return-from ,tag nil))
-            t)
-          ,body)))
-
-                   Figure 19.6: Query compiler.
-
-
-
----
-
-
-256                             A QUERY COMPILER
-
-
-
-
- (with-answer (painter ?x ?y ?z)
-   (format t "~A ~A is a painter.~%" ?y ?x))
-
- is expanded by the query interpreter into:
- (dolist (#:g1 (interpret-query ’(painter ?x ?y ?z)))
-   (let ((?x (binding ’?x #:g1))
-         (?y (binding ’?y #:g1))
-         (?z (binding ’?z #:g1)))
-     (format t "~A ~A is a painter.~%" ?y ?x)))
-
- and by the query compiler into:
- (with-gensyms (?x ?y ?z)
-   (dolist (#:g1 (db-query ’painter))
-     (pat-match (?x ?y ?z) #:g1
-          (progn
-            (format t "~A ~A is a painter.~%" ?y ?x))
-          nil)))
-
-                Figure 19.7: Two expansions of the same query.
-
+(with-gensyms (?x ?y ?z)
+  (dolist (#:g1 (db-query ’painter))
+    (pat-match (?x ?y ?z) #:g1
+         (progn
+           (format t "~A ~A is a painter.~%" ?y ?x))
+         nil)))
+```
+> Figure 19.7: Two expansions of the same query.
 
 This could have been done in the query interpreter, but only at the cost of calling
 eval explicitly. And even then, it wouldn’t have been possible to refer to lexical
 variables in the query arguments.
-    Since arguments within queries are now evaluated, any literal argument (e.g.
+
+Since arguments within queries are now evaluated, any literal argument (e.g.
 english) that doesn’t evaluate to itself should now be quoted. (See Figure 19.8.)
-    The second advantage of the new approach is that it is now much easier to
+
+The second advantage of the new approach is that it is now much easier to
 include normal Lisp expressions within queries. The query compiler adds a lisp
 operator, which may be followed by any Lisp expression. Like the not operator,
 it cannot generate bindings by itself, but it will screen out bindings for which
 the expression returns nil. The lisp operator is useful for getting at built-in
 predicates like >:
+
+```
 > (with-answer (and (dates ?x ?b ?d)
                     (lisp (> (- ?d ?b) 70)))
     (format t "~A lived over 70 years.~%" ?x))
 CANALE lived over 70 years.
 HOGARTH lived over 70 years.
 NIL
+```
 
 A well-implemented embedded language can have a seamless interface with the
-
-
-
----
-
-
-19.5                            A QUERY COMPILER                             257
-
-
-
- The ﬁrst name and nationality of every painter called Hogarth.
- > (with-answer (painter ’hogarth ?x ?y)
-     (princ (list ?x ?y)))
- (WILLIAM ENGLISH)
- NIL
- The last name of every English painter not born in the same year as a Venetian
- painter.
- > (with-answer (and (painter ?x _ ’english)
-                     (dates ?x ?b _)
-                     (not (and (painter ?x2 _ ’venetian)
-                               (dates ?x2 ?b _))))
-     (princ ?x))
- REYNOLDS
- NIL
- The last name and year of death of every painter who died between 1770 and
- 1800 exclusive.
- > (with-answer (and (painter ?x _ _)
-                     (dates ?x _ ?d)
-                     (lisp (< 1770 ?d 1800)))
-     (princ (list ?x ?d)))
- (REYNOLDS 1792)(HOGARTH 1772)
- NIL
-
-                    Figure 19.8: The query compiler in use.
-
-
 base language on both sides.
-    Aside from these two additions—the evaluation of arguments and the new
+
+```
+;; The ﬁrst name and nationality of every painter called Hogarth.
+
+> (with-answer (painter ’hogarth ?x ?y)
+    (princ (list ?x ?y)))
+(WILLIAM ENGLISH)
+NIL
+
+;; The last name of every English painter not born in the same year as a Venetian painter.
+
+> (with-answer (and (painter ?x _ ’english)
+                    (dates ?x ?b _)
+                    (not (and (painter ?x2 _ ’venetian)
+                              (dates ?x2 ?b _))))
+    (princ ?x))
+REYNOLDS
+NIL
+
+;; The last name and year of death of every painter who died between 1770 and 1800 exclusive.
+
+> (with-answer (and (painter ?x _ _)
+                    (dates ?x _ ?d)
+                    (lisp (< 1770 ?d 1800)))
+    (princ (list ?x ?d)))
+(REYNOLDS 1792)(HOGARTH 1772)
+NIL
+```
+> Figure 19.8: The query compiler in use.
+
+Aside from these two additions—the evaluation of arguments and the new
 lisp operator—the query language supported by the query compiler is identical
 to that supported by the interpreter. Figure 19.8 shows examples of the results
 generated by the query compiler with the database as deﬁned in Figure 19.4.
-    Section 17.2 gave two reasons why it is better to compile an expression
+
+Section 17.2 gave two reasons why it is better to compile an expression
 than feed it, as a list, to eval. The former is faster, and allows the expression
 to be evaluated in the surrounding lexical context. The advantages of query
 compilation are exactly analogous. Work that used to be done at runtime is now
 done at compile-time. And because the queries are compiled as a piece with the
 surrounding Lisp code, they can take advantage of the lexical context.
 
+# 20 Continuations
 
+A continuation is a program frozen in action: a single functional
+object containing the state of a computation. When the object is
+evaluated, the stored computation is restarted where it left off. In
+solving certain types of problems it can be a great help to be able to
+save the state of a program and restart it later. In multiprocessing,
+for example, a continuation conveniently represents a suspended
+process. In nondeterministic search programs, a continuation can
+represent a node in the search tree.
 
----
+Continuations can be difﬁcult to understand. This chapter approaches
+the topic in two steps. The ﬁrst part of the chapter looks at the use
+of continuations in Scheme, which has built-in support for them. Once
+the behavior of continuations has been explained, the second part
+shows how to use macros to build continuations in Common Lisp
+programs. Chapters 21–24 will all make use of the macros deﬁned here.
 
+## 20.1 Scheme Continuations
 
-   20
+One of the principal ways in which Scheme differs from Common Lisp is
+its explicit support for continuations. This section shows how
+continuations work in Scheme. (Figure 20.1 lists some other
+differences between Scheme and Common Lisp.)
 
-   Continuations
+A continuation is a function representing the future of a
+computation. When- ever an expression is evaluated, something is
+waiting for the value it will return.  For example, in
 
-  A continuation is a program frozen in action: a single functional object containing
-  the state of a computation. When the object is evaluated, the stored computation
-  is restarted where it left off. In solving certain types of problems it can be
-  a great help to be able to save the state of a program and restart it later. In
-  multiprocessing, for example, a continuation conveniently represents a suspended
-  process. In nondeterministic search programs, a continuation can represent a node
-  in the search tree.
-      Continuations can be difﬁcult to understand. This chapter approaches the
-  topic in two steps. The ﬁrst part of the chapter looks at the use of continuations in
- Scheme, which has built-in support for them. Once the behavior of continuations
-  has been explained, the second part shows how to use macros to build continuations
-  in Common Lisp programs. Chapters 21–24 will all make use of the macros
-  deﬁned here.
+1. Scheme makes no distinction between what Common Lisp calls the
+ symbol-value and symbol-function of a symbol. In Scheme, a vari- able
+ has a single value, which can be either a function or some other sort
+ of object. Thus there is no need for sharp-quote or funcall in
+ Scheme. The Common Lisp:
 
+```
+(let ((f #’(lambda (x) (1+ x))))
+(funcall f 2))
 
-   20.1 Scheme Continuations
-       One of the principal ways in which Scheme differs from Common Lisp is its
-   explicit support for continuations. This section shows how continuations work in
-   Scheme. (Figure 20.1 lists some other differences between Scheme and Common
-   Lisp.)
-       A continuation is a function representing the future of a computation. When-
-   ever an expression is evaluated, something is waiting for the value it will return.
-   For example, in
+;; would be in Scheme:
 
+(let ((f (lambda (x) (1+ x))))
+  (f 2))
+```
 
-
-                                           258
-
-
-
----
-
-
-20.1                         SCHEME CONTINUATIONS                            259
-
-
-
- 1. Scheme makes no distinction between what Common Lisp calls the
- symbol-value and symbol-function of a symbol. In Scheme, a vari-
- able has a single value, which can be either a function or some other sort of
- object. Thus there is no need for sharp-quote or funcall in Scheme. The
- Common Lisp:
- (let ((f #’(lambda (x) (1+ x))))
-   (funcall f 2))
- would be in Scheme:
- (let ((f (lambda (x) (1+ x))))
-   (f 2))
-
- 2. Since Scheme has only one name-space, it doesn’t need separate operators
+2. Since Scheme has only one name-space, it doesn’t need separate operators
  (e.g. defun and setq) for assignments in each. Instead it has define, which
  is roughly equivalent to defvar, and set!, which takes the place of setq.
  Global variables must be created with define before they can be set with
  set!.
- 3. In Scheme, named functions are usually deﬁned with define, which takes
+
+3. In Scheme, named functions are usually deﬁned with define, which takes
  the place of defun as well as defvar. The Common Lisp:
 
- (defun foo (x) (1+ x))
- has two possible Scheme translations:
- (define foo (lambda (x) (1+ x)))
- (define (foo x) (1+ x))
+```
+(defun foo (x) (1+ x))
+has two possible Scheme translations:
+(define foo (lambda (x) (1+ x)))
+(define (foo x) (1+ x))
+```
 
- 4. In Common Lisp, the arguments to a function are evaluated left-to-right. In
- Scheme, the order of evaluation is deliberately unspeciﬁed. (And implementors
- delight in surprising those who forget this.)
- 5. Instead of t and nil, Scheme has #t and #f. The empty list, (), is true in
- some implementations and false in others.
- 6. The default clause in cond and case expressions has the key else in
- Scheme, instead of t as in Common Lisp.
- 7. Several built-in operators have different names: consp is pair?, null is
- null?, mapcar is (almost) map, and so on. Ordinarily these should be obvious
- from the context.
-       Figure 20.1: Some differences between Scheme and Common Lisp.
+4. In Common Lisp, the arguments to a function are evaluated
+ left-to-right. In Scheme, the order of evaluation is deliberately
+ unspeciﬁed. (And implementors delight in surprising those who forget
+ this.)
 
+5. Instead of t and nil, Scheme has #t and #f. The empty list, (), is
+ true in some implementations and false in others.
 
+6. The default clause in cond and case expressions has the key else in
+  Scheme, instead of t as in Common Lisp.
 
----
+7. Several built-in operators have different names: consp is pair?,
+ null is null?, mapcar is (almost) map, and so on. Ordinarily these
+ should be obvious from the context.
 
+> Figure 20.1: Some differences between Scheme and Common Lisp.
 
-260                               CONTINUATIONS
-
-
-
+```
 (/ (- x 1) 2)
+```
 
 when (- x 1) is evaluated, the outer / expression is waiting for the value, and
 something else is waiting for its value, and so on and so on, all the way back to
 the toplevel—where print is waiting.
-    We can think of the continuation at any given time as a function of one
+
+We can think of the continuation at any given time as a function of one
 argument. If the previous expression were typed into the toplevel, then when the
 subexpression (- x 1) was evaluated, the continuation would be:
 
+```
 (lambda (val) (/ val 2))
+```
 
 That is, the remainder of the computation could be duplicated by calling this
 function on the return value. If instead the expression occurred in the following
 context
 
+```
 (define (f1 w)
   (let ((y (f2 w)))
     (if (integer? y) (list ’a y) ’b)))
 
 (define (f2 x)
   (/ (- x 1) 2))
+```
 
 and f1 were called from the toplevel, then when (- x 1) was evaluated, the
 continuation would be equivalent to
 
+```
 (lambda (val)
   (let ((y (/ val 2)))
     (if (integer? y) (list ’a y) ’b)))
+```
 
-    In Scheme, continuations are ﬁrst-class objects, just like functions. You can
+In Scheme, continuations are ﬁrst-class objects, just like functions. You can
 ask Scheme for the current continuation, and it will make you a function of one
 argument representing the future of the computation. You can save this object for
 as long as you like, and when you call it, it will restart the computation that was
 taking place when it was created.
-    Continuations can be understood as a generalization of closures. A closure is
+
+Continuations can be understood as a generalization of closures. A closure is
 a function plus pointers to the lexical variables visible at the time it was created.
 A continuation is a function plus a pointer to the whole stack pending at the time
 it was created. When a continuation is evaluated, it returns a value using its own
 copy of the stack, ignoring the current one. If a continuation is created at T 1 and
 evaluated at T2 , it will be evaluated with the stack that was pending at T 1 .
-    Scheme programs have access to the current continuation via the built-in
+
+Scheme programs have access to the current continuation via the built-in
 operator call-with-current-continuation (call/cc for short). When a
 program calls call/cc on a function of one argument:
 
-
-
----
-
-
-20.1                          SCHEME CONTINUATIONS                             261
-
-
+```
 (call-with-current-continuation
   (lambda (cc)
     ...))
+```
+
 the function will be passed another function representing the current continuation.
 By storing the value of cc somewhere, we save the state of the computation at the
 point of the call/cc.
-    In this example, we append together a list whose last element is the value
+
+In this example, we append together a list whose last element is the value
 returned by a call/cc expression:
+
+```
 > (define frozen)
 FROZEN
 > (append ’(the call/cc returned)
@@ -12756,37 +12675,45 @@ FROZEN
                     (set! frozen cc)
                     ’a))))
 (THE CALL/CC RETURNED A)
+```
+
 The call/cc returns a, but ﬁrst saves the continuation in the global variable
 frozen.
-   Calling frozen will restart the old computation at the point of the call/cc.
+
+Calling frozen will restart the old computation at the point of the call/cc.
 Whatever value we pass to frozen will be returned as the value of the call/cc:
+
+```
 > (frozen ’again)
 (THE CALL/CC RETURNED AGAIN)
+```
+
 Continuations aren’t used up by being evaluated. They can be called repeatedly,
 just like any other functional object:
+
+```
 > (frozen ’thrice)
 (THE CALL/CC RETURNED THRICE)
-    When we call a continuation within some other computation, we see more
+```
+
+When we call a continuation within some other computation, we see more
 clearly what it means to return back up the old stack:
+
+```
 > (+ 1 (frozen ’safely))
 (THE CALL/CC RETURNED SAFELY)
+```
+
 Here, the pending + is ignored when frozen is called. The latter returns up
 the stack that was pending at the time it was ﬁrst created: through list, then
 append, to the toplevel. If frozen returned a value like a normal function call,
 the expression above would have yielded an error when + tried to add 1 to a list.
-    Continuations do not get unique copies of the stack. They may share variables
+
+Continuations do not get unique copies of the stack. They may share variables
 with other continuations, or with the computation currently in progress. In this
 example, two continuations share the same stack:
 
-
-
----
-
-
-262                                CONTINUATIONS
-
-
-
+```
 > (define froz1)
 FROZ1
 > (define froz2)
@@ -12799,68 +12726,71 @@ FROZ2
     (set! x (1+ x))
     x)
 1
+```
 
 so calls to either will return successive integers:
 
+```
 > (froz2 ())
 2
 > (froz1 ())
 3
+```
 
 Since the value of the call/cc expression will be discarded, it doesn’t matter
 what argument we give to froz1 and froz2.
-    Now that we can store the state of a computation, what do we do with it?
+
+Now that we can store the state of a computation, what do we do with it?
 Chapters 21–24 are devoted to applications which use continuations. Here we
 will consider a simple example which conveys well the ﬂavor of programming
 with saved states: we have a set of trees, and we want to generate lists containing
 one element from each tree, until we get a combination satisfying some condition.
-    Trees can be represented as nested lists. Page 70 described a way to represent
+
+Trees can be represented as nested lists. Page 70 described a way to represent
 one kind of tree as a list. Here we use another, which allows interior nodes to have
 (atomic) values, and any number of children. In this representation, an interior
 node becomes a list; its car contains the value stored at the node, and its cdr
 contains the representations of the node’s children. For example, the two trees
 shown in Figure 20.2 can be represented:
 
+```
 (define t1 ’(a (b (d h)) (c e (f i) g)))
 (define t2 ’(1 (2 (3 6 7) 4 5)))
+```
 
-    Figure 20.3 contains functions which do depth-ﬁrst traversals on such trees. In
+Figure 20.3 contains functions which do depth-ﬁrst traversals on such trees. In
 a real program we would want to do something with the nodes as we encountered
 them. Here we just print them. The function dft, given for comparison, does an
 ordinary depth-ﬁrst traversal:
 
+```
 > (dft t1)
 ABDHCEFIG()
-
-
-
----
-
-
-20.1                         SCHEME CONTINUATIONS                         263
-
-
-
-
-                           Figure 20.2: Two Trees.
+```
+> Figure 20.2: Two Trees.
 
 
 The function dft-node follows the same path through the tree, but deals out
 nodes one at a time. When dft-node reaches a node, it follows the car of the
 node, and pushes onto *saved* a continuation to explore the cdr.
 
+```
 > (dft-node t1)
 A
+```
 
 Calling restart continues the traversal, by popping the most recently saved
 continuation and calling it.
 
+```
 > (restart)
 B
+```
 
 Eventually there will be no saved states left, a fact which restart signals by
 returning done:
 
+```
 .
 .
 .
@@ -12868,82 +12798,70 @@ returning done:
 G
 > (restart)
 DONE
+```
 
 Finally, the function dft2 neatly packages up what we just did by hand:
 
+```
 > (dft2 t1)
 ABDHCEFIG()
+```
 
+```
+(define (dft tree)
+  (cond ((null? tree) ())
+        ((not (pair? tree)) (write tree))
+        (else (dft (car tree))
+              (dft (cdr tree)))))
 
+(define *saved* ())
 
----
+(define (dft-node tree)
+  (cond ((null? tree) (restart))
+        ((not (pair? tree)) tree)
+        (else (call-with-current-continuation
+                (lambda (cc)
+                  (set! *saved*
+                        (cons (lambda ()
+                                (cc (dft-node (cdr tree))))
+                              *saved*))
+                  (dft-node (car tree)))))))
 
+(define (restart)
+  (if (null? *saved*)
+      ’done
+      (let ((cont (car *saved*)))
+        (set! *saved* (cdr *saved*))
+        (cont))))
 
-264                                CONTINUATIONS
+(define (dft2 tree)
+  (set! *saved* ())
+  (let ((node (dft-node tree)))
+    (cond ((eq? node ’done) ())
+          (else (write node)
+                (restart)))))
+```
+> Figure 20.3: Tree traversal using continuations.
 
+Notice that there is no explicit recursion or iteration in the
+deﬁnition of dft2: successive nodes are printed because the
+continuations invoked by restart always return back through the same
+cond clause in dft-node.
 
-
-
- (define (dft tree)
-   (cond ((null? tree) ())
-         ((not (pair? tree)) (write tree))
-         (else (dft (car tree))
-               (dft (cdr tree)))))
-
- (define *saved* ())
-
- (define (dft-node tree)
-   (cond ((null? tree) (restart))
-         ((not (pair? tree)) tree)
-         (else (call-with-current-continuation
-                 (lambda (cc)
-                   (set! *saved*
-                         (cons (lambda ()
-                                 (cc (dft-node (cdr tree))))
-                               *saved*))
-                   (dft-node (car tree)))))))
-
- (define (restart)
-   (if (null? *saved*)
-       ’done
-       (let ((cont (car *saved*)))
-         (set! *saved* (cdr *saved*))
-         (cont))))
-
- (define (dft2 tree)
-   (set! *saved* ())
-   (let ((node (dft-node tree)))
-     (cond ((eq? node ’done) ())
-           (else (write node)
-                 (restart)))))
-
-                 Figure 20.3: Tree traversal using continuations.
-
-
-Notice that there is no explicit recursion or iteration in the deﬁnition of dft2: suc-
-cessive nodes are printed because the continuations invoked by restart always
-return back through the same cond clause in dft-node.
-    This kind of program works like a mine. It digs the initial shaft by calling
+This kind of program works like a mine. It digs the initial shaft by calling
 dft-node. So long as the value returned is not done, the code following the call
-
-
-
----
-
-
-20.2                           SCHEME CONTINUATIONS                              265
-
-
 to dft-node will call restart, which sends control back down the stack again.
 This process continues until the return value signals that the mine is empty. Instead
 of printing this value, dft2 returns #f. Search with continuations represents a
 novel way of thinking about programs: put the right code in the stack, and get the
 result by repeatedly returning up through it.
-    If we only want to traverse one tree at a time, as in dft2, then there is no
+
+If we only want to traverse one tree at a time, as in dft2, then there is no
 reason to bother using this technique. The advantage of dft-node is that we can
 have several instances of it going at once. Suppose we have two trees, and we
 want to generate, in depth-ﬁrst order, the cross-product of their elements.
 
+```
 > (set! *saved* ())
 ()
 > (let ((node1 (dft-node t1)))
@@ -12961,6 +12879,7 @@ want to generate, in depth-ﬁrst order, the cross-product of their elements.
 .
 .
 .
+```
 
 Using normal techniques, we would have had to take explicit steps to save our
 place in the two trees. With continuations, the state of the two ongoing traversals
@@ -12971,250 +12890,247 @@ about continuations is that they can just as easily save our place in the middle
 any computation, even if there are no permanent data structures associated with
 it. The computation need not even have a ﬁnite number of states, so long as we
 only want to restart a ﬁnite number of them.
-    As Chapter 24 will show, both of these considerations turn out to be important
+
+As Chapter 24 will show, both of these considerations turn out to be important
 in the implementation of Prolog. In Prolog programs, the "search trees" are not
 real data structures, but are implicit in the way the program generates results. And
 the trees are often inﬁnite, in which case we cannot hope to search the whole of
 one before searching the next; we have no choice but to save our place, one way
 or another.
 
+## 20.2 Continuation-Passing Macros
 
+Common Lisp doesn’t provide call/cc, but with a little extra effort we
+can do the same things as we can in Scheme. This section shows how to
+use macros to build continuations in Common Lisp programs. Scheme
+continuations gave us two things:
 
----
+1. The bindings of all variables at the time the continuation was made.
 
+2. The state of the computation—what was going to happen from then on.
+  In a lexically scoped Lisp, closures give us the ﬁrst of these. It
+  turns out that we can also use closures to maintain the second, by
+  storing the state of the computation in variable bindings as well.
 
-   266                                     CONTINUATIONS
+The macros shown in Figure 20.4 make it possible to do function calls
+while preserving continuations. These macros replace the built-in
+Common Lisp forms for deﬁning functions, calling them, and returning
+values.
 
+Functions which want to use continuations (or call functions which do)
+should be deﬁned with =defun instead of defun. The syntax of =defun is
+the same as that of defun, but its effect is subtly different. Instead
+of deﬁning just a function, =defun deﬁnes a function and a macro which
+expands into a call to it. (The macro must be deﬁned ﬁrst, in case the
+function calls itself.) The function will have the body that was
+passed to =defun, but will have an additional parameter, *cont*,
+consed onto its parameter list. In the expansion of the macro, this
+function will receive *cont* along with its other arguments. So
 
+```
+(=defun add1 (x) (=values (1+ x)))
+```
 
-   20.2 Continuation-Passing Macros
-   Common Lisp doesn’t provide call/cc, but with a little extra effort we can do
-   the same things as we can in Scheme. This section shows how to use macros to
-   build continuations in Common Lisp programs. Scheme continuations gave us
-   two things:
-      1. The bindings of all variables at the time the continuation was made.
+macroexpands into
 
-      2. The state of the computation—what was going to happen from then on.
-  In a lexically scoped Lisp, closures give us the ﬁrst of these. It turns out that we can
-  also use closures to maintain the second, by storing the state of the computation
-  in variable bindings as well.
-      The macros shown in Figure 20.4 make it possible to do function calls while
-  preserving continuations. These macros replace the built-in Common Lisp forms
-  for deﬁning functions, calling them, and returning values.
-      Functions which want to use continuations (or call functions which do) should
- be deﬁned with =defun instead of defun. The syntax of =defun is the same as
-  that of defun, but its effect is subtly different. Instead of deﬁning just a function,
-  =defun deﬁnes a function and a macro which expands into a call to it. (The macro
-  must be deﬁned ﬁrst, in case the function calls itself.) The function will have the
-  body that was passed to =defun, but will have an additional parameter, *cont*,
-  consed onto its parameter list. In the expansion of the macro, this function will
-  receive *cont* along with its other arguments. So
+```
+(progn (defmacro add1 (x)
+         ‘(=add1 *cont* ,x))
+       (defun =add1 (*cont* x)
+       (=values (1+ x))))
+```
 
-   (=defun add1 (x) (=values (1+ x)))
+When we call add1, we are actually calling not a function but a
+macro. The macro expands into a function call, 1 but with one extra
+parameter: *cont*. So the current value of *cont* is always passed
+implicitly in a call to an operator deﬁned with =defun.
 
-   macroexpands into
-   (progn (defmacro add1 (x)
-            ‘(=add1 *cont* ,x))
-          (defun =add1 (*cont* x)
-            (=values (1+ x))))
-   When we call add1, we are actually calling not a function but a macro. The
-   macro expands into a function call, 1 but with one extra parameter: *cont*. So
-   the current value of *cont* is always passed implicitly in a call to an operator
-   deﬁned with =defun.
-       What is *cont* for? It will be bound to the current continuation. The
-   deﬁnition of =values shows how this continuation will be used. Any function
-   deﬁned using =defun must return with =values, or call some other function
-      1 Functions created by =defun are deliberately given interned names, to make it possible to trace
-   them. If tracing were never necessary, it would be safer to gensym the names.
+What is *cont* for? It will be bound to the current continuation. The
+deﬁnition of =values shows how this continuation will be used. Any
+function deﬁned using =defun must return with =values, or call some
+other function
 
+```
+(setq *cont* #’identity)
 
+(defmacro =lambda (parms &body body)
+  ‘#’(lambda (*cont* ,@parms) ,@body))
 
----
+(defmacro =defun (name parms &body body)
+  (let ((f (intern (concatenate ’string
+                                "=" (symbol-name name)))))
+    ‘(progn
+       (defmacro ,name ,parms
+         ‘(,’,f *cont* ,,@parms))
+       (defun ,f (*cont* ,@parms) ,@body))))
 
+(defmacro =bind (parms expr &body body)
+  ‘(let ((*cont* #’(lambda ,parms ,@body))) ,expr))
 
-20.2                    CONTINUATION-PASSING MACROS                     267
+(defmacro =values (&rest retvals)
+  ‘(funcall *cont* ,@retvals))
 
+(defmacro =funcall (fn &rest args)
+  ‘(funcall ,fn *cont* ,@args))
 
-
- (setq *cont* #’identity)
-
- (defmacro =lambda (parms &body body)
-   ‘#’(lambda (*cont* ,@parms) ,@body))
-
- (defmacro =defun (name parms &body body)
-   (let ((f (intern (concatenate ’string
-                                 "=" (symbol-name name)))))
-     ‘(progn
-        (defmacro ,name ,parms
-          ‘(,’,f *cont* ,,@parms))
-        (defun ,f (*cont* ,@parms) ,@body))))
-
- (defmacro =bind (parms expr &body body)
-   ‘(let ((*cont* #’(lambda ,parms ,@body))) ,expr))
-
- (defmacro =values (&rest retvals)
-   ‘(funcall *cont* ,@retvals))
-
- (defmacro =funcall (fn &rest args)
-   ‘(funcall ,fn *cont* ,@args))
-
- (defmacro =apply (fn &rest args)
-   ‘(apply ,fn *cont* ,@args))
-
-                 Figure 20.4: Continuation-passing macros.
-
+(defmacro =apply (fn &rest args)
+  ‘(apply ,fn *cont* ,@args))
+```
+> Figure 20.4: Continuation-passing macros.
 
 which does so. The syntax of =values is the same as that of the Common Lisp
 form values. It can return multiple values if there is an =bind with the same
 number of arguments waiting for them, but can’t return multiple values to the
 toplevel.
-     The parameter *cont* tells a function deﬁned with =defun what to do with
+
+The parameter *cont* tells a function deﬁned with =defun what to do with
 its return value. When =values is macroexpanded it will capture *cont*, and
 use it to simulate returning from the function. The expression
 
+```
 > (=values (1+ n))
+```
 
 expands into
+
+```
 (funcall *cont* (1+ n))
-
-
-
----
-
-
-268                              CONTINUATIONS
-
-
+```
 
 At the toplevel, the value of *cont* is identity, which just returns whatever is
 passed to it. When we call (add1 2) from the toplevel, the call gets macroex-
 panded into the equivalent of
 
+```
 (funcall #’(lambda (*cont* n) (=values (1+ n))) *cont* 2)
+```
 
 The reference to *cont* will in this case get the global binding. The =values
 expression will thus macroexpand into the equivalent of:
 
+```
 (funcall #’identity (1+ n))
+```
 
 which just adds 1 to n and returns the result.
-   In functions like add1, we go through all this trouble just to simulate what
+
+In functions like add1, we go through all this trouble just to simulate what
 Lisp function call and return do anyway:
+
+```
 > (=defun bar (x)
     (=values (list ’a (add1 x))))
 BAR
 > (bar 5)
 (A 6)
+```
 
 The point is, we have now brought function call and return under our own control,
 and can do other things if we wish.
-    It is by manipulating *cont* that we will get the effect of continuations.
+
+It is by manipulating *cont* that we will get the effect of continuations.
 Although *cont* has a global value, this will rarely be the one used: *cont* will
 nearly always be a parameter, captured by =values and the macros deﬁned by
 =defun. Within the body of add1, for example, *cont* is a parameter and not the
 global variable. This distinction is important because these macros wouldn’t work
 if *cont* were not a local variable. That’s why *cont* is given its initial value
 in a setq instead of a defvar: the latter would also proclaim it to be special.
-    The third macro in Figure 20.4, =bind, is intended to be used in the same way
+
+The third macro in Figure 20.4, =bind, is intended to be used in the same way
 as multiple-value-bind. It takes a list of parameters, an expression, and a
 body of code: the parameters are bound to the values returned by the expression,
 and the code body is evaluated with those bindings. This macro should be used
 whenever additional expressions have to be evaluated after calling a function
 deﬁned with =defun.
 
+```
 > (=defun message ()
     (=values ’hello ’there))
 MESSAGE
-
-
-
----
-
-
-20.2                       CONTINUATION-PASSING MACROS                          269
-
-
 > (=defun baz ()
     (=bind (m n) (message)
       (=values (list m n))))
 BAZ
 > (baz)
 (HELLO THERE)
+```
 
 Notice that the expansion of an =bind creates a new variable called *cont*. The
 body of baz macroexpands into:
 
+```
 (let ((*cont* #’(lambda (m n)
                   (=values (list m n)))))
   (message))
+```
 
 which in turn becomes:
 
+```
 (let ((*cont* #’(lambda (m n)
                   (funcall *cont* (list m n)))))
   (=message *cont*))
+```
 
 The new value of *cont* is the body of the =bind expression, so when message
 "returns" by funcalling *cont*, the result will be to evaluate the body of code.
 However (and this is the key point), within the body of the =bind:
 
+```
 #’(lambda (m n)
     (funcall *cont* (list m n)))
+```
 
 the *cont* that was passed as an argument to =baz is still visible, so when the
 body of code in turn evaluates an =values, it will be able to return to the original
 calling function. The closures are knitted together: each binding of *cont* is a
 closure containing the previous binding of *cont*, forming a chain which leads
 all the way back up to the global value.
-     We can see the same phenomenon on a smaller scale here:
 
+We can see the same phenomenon on a smaller scale here:
+
+```
 > (let ((f #’identity))
     (let ((g #’(lambda (x) (funcall f (list ’a x)))))
       #’(lambda (x) (funcall g (list ’b x)))))
 #<Interpreted-Function BF6326>
 > (funcall * 2)
 (A (B 2))
+```
 
 This example creates a function which is a closure containing a reference to g,
 which is itself a closure containing a reference to f. Similar chains of closures
 were built by the network compiler on page 80.
 
+1. The parameter list of a function deﬁned with =defun must consist
+   solely of parameter names.
+2. Functions which make use of continuations, or call other functions
+   which do, must be deﬁned with =lambda or =defun.
+3. Such functions must terminate either by returning values with
+   =values, or by calling another function which obeys this
+   restriction.
+4. If an =bind, =values, =apply, or =funcall expression occurs in a
+   segment of code, it must be a tail call. Any code to be evaluated
+   after an =bind should be put in its body. So if we want to have
+   several =binds one after another, they must be nested:
 
+```
+(=defun foo (x)
+  (=bind (y) (bar x)
+    (format t "Ho ")
+    (=bind (z) (baz x)
+      (format t "Hum.")
+      (=values x y z))))
+```
+> Figure 20.5: Restrictions on continuation-passing macros.
 
----
-
-
-270                              CONTINUATIONS
-
-
-
-
- 1. The parameter list of a function deﬁned with =defun must consist solely
- of parameter names.
- 2. Functions which make use of continuations, or call other functions which
- do, must be deﬁned with =lambda or =defun.
- 3. Such functions must terminate either by returning values with =values, or
- by calling another function which obeys this restriction.
- 4. If an =bind, =values, =apply, or =funcall expression occurs in a seg-
- ment of code, it must be a tail call. Any code to be evaluated after an =bind
- should be put in its body. So if we want to have several =binds one after
- another, they must be nested:
-
- (=defun foo (x)
-   (=bind (y) (bar x)
-     (format t "Ho ")
-     (=bind (z) (baz x)
-       (format t "Hum.")
-       (=values x y z))))
-
-           Figure 20.5: Restrictions on continuation-passing macros.
-
-
-    The remaining macros, =apply and =funcall, are for use with functions
+The remaining macros, =apply and =funcall, are for use with functions
 deﬁned by =lambda. Note that "functions" deﬁned with =defun, because they
 are actually macros, cannot be given as arguments to apply or funcall. The
 way around this problem is analogous to the trick mentioned on page 110. It is to
 package up the call inside another =lambda:
+
+```
 > (=defun add1 (x)
     (=values (1+ x)))
 ADD1
@@ -13222,73 +13138,62 @@ ADD1
     (=bind (y) (=funcall fn 9)
       (format nil "9 + 1 = ~A" y)))
 "9 + 1 = 10"
-    Figure 20.5 summarizes all the restrictions imposed by the continuation-
-passing macros. Functions which neither save continuations, nor call other func-
-tions which do, need not use these special macros. Built-in functions like list,
-for example, are exempt.
-    Figure 20.6 contains the code from Figure 20.3, translated from Scheme into
+```
+
+Figure 20.5 summarizes all the restrictions imposed by the
+continuation-passing macros. Functions which neither save
+continuations, nor call other func- tions which do, need not use these
+special macros. Built-in functions like list, for example, are exempt.
+
+Figure 20.6 contains the code from Figure 20.3, translated from Scheme into
 Common Lisp, and using the continuation-passing macros instead of Scheme
 
+```
+(defun dft (tree)
+  (cond ((null tree)       nil)
+        ((atom tree)       (princ tree))
+        (t (dft (car       tree))
+           (dft (cdr       tree)))))
 
+(setq *saved* nil)
 
----
+(=defun dft-node (tree)
+  (cond ((null tree) (restart))
+        ((atom tree) (=values tree))
+        (t (push #’(lambda () (dft-node (cdr tree)))
+                 *saved*)
+           (dft-node (car tree)))))
 
+(=defun restart ()
+  (if *saved*
+      (funcall (pop *saved*))
+      (=values ’done)))
 
-20.2                      CONTINUATION-PASSING MACROS                       271
-
-
-
- (defun dft (tree)
-   (cond ((null tree)       nil)
-         ((atom tree)       (princ tree))
-         (t (dft (car       tree))
-            (dft (cdr       tree)))))
-
- (setq *saved* nil)
-
- (=defun dft-node (tree)
-   (cond ((null tree) (restart))
-         ((atom tree) (=values tree))
-         (t (push #’(lambda () (dft-node (cdr tree)))
-                  *saved*)
-            (dft-node (car tree)))))
-
- (=defun restart ()
-   (if *saved*
-       (funcall (pop *saved*))
-       (=values ’done)))
-
- (=defun dft2 (tree)
-   (setq *saved* nil)
-   (=bind (node) (dft-node tree)
-     (cond ((eq node ’done) (=values nil))
-           (t (princ node)
-              (restart)))))
-
-        Figure 20.6: Tree traversal using continuation-passing macros.
+(=defun dft2 (tree)
+  (setq *saved* nil)
+  (=bind (node) (dft-node tree)
+    (cond ((eq node ’done) (=values nil))
+          (t (princ node)
+             (restart)))))
+```
+> Figure 20.6: Tree traversal using continuation-passing macros.
 
 
 continuations. With the same example tree, dft2 works just as before:
 
+```
 > (setq t1 ’(a (b (d h)) (c e (f i) g))
         t2 ’(1 (2 (3 6 7) 4 5)))
 (1 (2 (3 6 7) 4 5))
 > (dft2 t1)
 ABDHCEFIG
 NIL
+```
 
 Saving states of multiple traversals also works as in Scheme, though the example
 becomes a bit longer:
 
-
-
----
-
-
-272                              CONTINUATIONS
-
-
-
+```
 > (=bind (node1) (dft-node t1)
     (if (eq node1 ’done)
         ’done
@@ -13305,56 +13210,57 @@ becomes a bit longer:
 .
 .
 .
+```
 
 By knitting together a chain of lexical closures, Common Lisp programs can
 build their own continuations. Fortunately, the closures are knitted together by
 the macros in the sweatshop of Figure 20.4, and the user can have the ﬁnished
 garment without giving a thought to its origins.
-    Chapters 21–24 all rely on continuations in some way. These chapters will
+
+Chapters 21–24 all rely on continuations in some way. These chapters will
 show that continuations are an abstraction of unusual power. They may not be
 overly fast, especially when implemented on top of the language as macros, but
 the abstractions we can build upon them make certain programs much faster to
 write, and there is a place for that kind of speed too.
 
+## 20.3 Code-Walkers and CPS Conversion
 
-20.3 Code-Walkers and CPS Conversion
 The macros described in the previous section represent a compromise. They give
 us the power of continuations, but only if we write our programs in a certain way.
 Rule 4 in Figure 20.5 means that we always have to write
 
+```
 (=bind (x) (fn y)
   (list ’a x))
+```
 
 rather than
 
+```
 (list ’a                                                                ; wrong
       (=bind (x) (fn y) x))
+```
 
 A true call/cc imposes no such restrictions on the programmer. A call/cc can
 grab the continuation at any point in a program of any shape. We could implement
 an operator with the full power of call/cc, but it would be a lot more work. This
 section outlines how it could be done.
 
-
-
----
-
-
-20.3                    CODE-WALKERS AND CPS CONVERSION                          273
-
-
-    A Lisp program can be transformed into a form called "continuation-passing
+A Lisp program can be transformed into a form called "continuation-passing
 style." Programs which have undergone complete CPS conversion are impossible
 to read, but one can grasp the spirit of this process by looking at code which has
 been partially transformed. The following function to reverse lists:
 
+```
 (defun rev (x)
   (if (null x)
       nil
       (append (rev (cdr x)) (list (car x)))))
+```
 
 yields an equivalent continuation-passing version:
 
+```
 (defun rev2 (x)
   (revc x #’identity))
 
@@ -13364,42 +13270,38 @@ yields an equivalent continuation-passing version:
       (revc (cdr x)
             #’(lambda (w)
                 (funcall k (append w (list (car x))))))))
+```
 
-    In the continuation-passing style, functions get an additional parameter (here k)
+In the continuation-passing style, functions get an additional parameter (here k)
 whose value will be the continuation. The continuation is a closure representing
 what should be done with the current value of the function. On the ﬁrst recursion,
 the continuation is identity; what should be done is that the function should
 just return its current value. On the second recursion, the continuation will be
 equivalent to:
 
+```
 #’(lambda (w)
     (identity (append w (list (car x)))))
+```
 
 which says that what should be done is to append the car of the list to the current
 value, and return it.
-    Once you can do CPS conversion, it is easy to write call/cc. In a program
+
+Once you can do CPS conversion, it is easy to write call/cc. In a program
 which has undergone CPS conversion, the entire current continuation is always
 present, and call/cc can be implemented as a simple macro which calls some
 function with it as an argument.
-    To do CPS conversion we need a code-walker, a program that traverses the
+
+To do CPS conversion we need a code-walker, a program that traverses the
 trees representing the source code of a program. Writing a code-walker for
 Common Lisp is a serious undertaking. To be useful, a code-walker has to do
 more than simply traverse expressions. It also has to know a fair amount about
 what the expressions mean. A code-walker can’t just think in terms of symbols,
-
-
-
----
-
-
-274                               CONTINUATIONS
-
-
-
 for example. A symbol could represent, among other things, itself, a function, a
 variable, a block name, or a tag for go. The code-walker has to use the context to
 distinguish one kind of symbol from another, and act accordingly.
-    Since writing a code-walker would be beyond the scope of this book, the
+
+Since writing a code-walker would be beyond the scope of this book, the
 macros described in this chapter are the most practical alternative. The macros
 in this chapter split the work of building continuations with the user. If the user
 writes programs in something sufﬁciently close to CPS, the macros can do the
@@ -13407,18 +13309,12 @@ rest. That’s what rule 4 really amounts to: if everything following an =bind
 expression is within its body, then between the value of *cont* and the code
 in the body of the =bind, the program has enough information to construct the
 current continuation.
-    The =bind macro is deliberately written to make this style of programming
+
+The =bind macro is deliberately written to make this style of programming
 feel natural. In practice the restrictions imposed by the continuation-passing
 macros are bearable.
 
-
-
----
-
-
-21
-
-Multiple Processes
+# 21 Multiple Processes
 
 The previous chapter showed how continuations allow a running program to get
 hold of its own state, and store it away to be restarted later. This chapter deals
@@ -13428,8 +13324,8 @@ closely with our concept of the state of a program. By writing an additional lay
 of macros on top of those in the previous chapter, we can embed multiprocessing
 in Common Lisp programs.
 
+## 21.1 The Process Abstraction
 
-21.1 The Process Abstraction
 Multiple processes are a convenient way of expressing programs which must do
 several things at once. A traditional processor executes one instruction at a time.
 To say that multiple processes do more than one thing at once is not to say that
@@ -13439,197 +13335,178 @@ what the computer is doing at any given time. Just as virtual memory allows us t
 act as though the computer had more memory than it actually does, the notion of
 a process allows us to act as if the computer could run more than one program at
 a time.
-    The study of processes is traditionally in the domain of operating systems. But
+
+The study of processes is traditionally in the domain of operating systems. But
 the usefulness of processes as an abstraction is not limited to operating systems.
 They are equally useful in other real-time applications, and in simulations.
-    Much of the work done on multiple processes has been devoted to avoiding
-certain types of problems. Deadlock is one classic problem with multiple pro-
 
-                                        275
-
-
-
----
-
-
-276                             MULTIPLE PROCESSES
-
-
-
-cesses: two processes both stand waiting for the other to do something, like two
+Much of the work done on multiple processes has been devoted to avoiding
+certain types of problems. Deadlock is one classic problem with multiple processes:
+two processes both stand waiting for the other to do something, like two
 people who each refuse to cross a threshold before the other. Another problem is
-the query which catches the system in an inconsistent state—say, a balance inquiry
+the query which catches the system in an inconsistent state, say, a balance inquiry
 which arrives while the system is transferring funds from one account to another.
 This chapter deals only with the process abstraction itself; the code presented here
 could be used to test algorithms for preventing deadlock or inconsistent states, but
 it does not itself provide any protection against these problems.
-    The implementation in this chapter follows a rule implicit in all the programs
+
+The implementation in this chapter follows a rule implicit in all the programs
 in this book: disturb Lisp as little as possible. In spirit, a program ought to be
 as much as possible like a modiﬁcation of the language, rather than a separate
 application written in it. Making programs harmonize with Lisp makes them
 more robust, like a machine whose parts ﬁt together well. It also saves effort;
 sometimes you can make Lisp do a surprising amount of your work for you.
-    The aim of this chapter is to make a language which supports multiple pro-
+
+The aim of this chapter is to make a language which supports multiple pro-
 cesses. Our strategy will be to turn Lisp into such a language, by adding a few
 new operators. The basic elements of our language will be as follows:
 
-      Functions will be deﬁned with the =defun or =lambda macros from the
-      previous chapter.
+> Functions will be deﬁned with the =defun or =lambda macros from the
+> previous chapter.
 
-      Processes will be instantiated from function calls. There is no limit on the
-      number of active processes, or the number of processes instantiated from
-      any one function. Each process will have a priority, initially given as an
-      argument when it is created.
+> Processes will be instantiated from function calls. There is no
+> limit on the number of active processes, or the number of processes
+> instantiated from any one function. Each process will have a
+> priority, initially given as an argument when it is created.
 
-      Wait expressions may occur within functions. A wait expression will take
-      a variable, a test expression, and a body of code. If a process encounters
-      a wait, the process will be suspended at that point until the test expression
-      returns true. Once the process restarts, the body of code will be evaluated,
-      with the variable bound to the value of the test expression. Test expressions
-      should not ordinarily have side-effects, because there are no guarantees
-      about when, or how often, they will be evaluated.
+> Wait expressions may occur within functions. A wait expression will
+> take a variable, a test expression, and a body of code. If a process
+> encounters a wait, the process will be suspended at that point until
+> the test expression returns true. Once the process restarts, the
+> body of code will be evaluated, with the variable bound to the value
+> of the test expression. Test expressions should not ordinarily have
+> side-effects, because there are no guarantees about when, or how
+> often, they will be evaluated.
 
-      Scheduling will be done by priority. Of all the processes able to restart, the
-      system will run the one with the highest priority.
+> Scheduling will be done by priority. Of all the processes able to
+> restart, the system will run the one with the highest priority.
 
-      The default process will run if no other process can. It is a read-eval-print
-      loop.
+> The default process will run if no other process can. It is a
+> read-eval-print loop.
 
-      Creation and deletion of most objects will be possible on the ﬂy. From run-
-      ning processes it will be possible to deﬁne new functions, and to instantiate
-      and kill processes.
+> Creation and deletion of most objects will be possible on the
+> ﬂy. From running processes it will be possible to deﬁne new
+> functions, and to instantiate and kill processes.
 
+```
+(defstruct proc         pri state wait)
 
+(proclaim ’(special *procs* *proc*))
 
----
+(defvar *halt* (gensym))
 
+(defvar *default-proc*
+        (make-proc :state #’(lambda (x)
+                              (format t "~%>> ")
+                              (princ (eval (read)))
+                              (pick-process))))
 
-21.2                               IMPLEMENTATION                                 277
+(defmacro fork (expr pri)
+  ‘(prog1 ’,expr
+          (push (make-proc
+                  :state #’(lambda (,(gensym))
+                             ,expr
+                             (pick-process))
+                  :pri   ,pri)
+                *procs*)))
 
-
-
- (defstruct proc         pri state wait)
-
- (proclaim ’(special *procs* *proc*))
-
- (defvar *halt* (gensym))
-
- (defvar *default-proc*
-         (make-proc :state #’(lambda (x)
-                               (format t "~%>> ")
-                               (princ (eval (read)))
-                               (pick-process))))
-
- (defmacro fork (expr pri)
-   ‘(prog1 ’,expr
-           (push (make-proc
-                   :state #’(lambda (,(gensym))
-                              ,expr
-                              (pick-process))
-                   :pri   ,pri)
-                 *procs*)))
-
- (defmacro program (name args &body body)
-   ‘(=defun ,name ,args
-      (setq *procs* nil)
-      ,@body
-      (catch *halt* (loop (pick-process)))))
-
-                 Figure 21.1: Process structure and instantiation.
-
+(defmacro program (name args &body body)
+  ‘(=defun ,name ,args
+     (setq *procs* nil)
+     ,@body
+     (catch *halt* (loop (pick-process)))))
+```
+> Figure 21.1: Process structure and instantiation.
 
 Continuations make it possible to store the state of a Lisp program. Being able to
 store several states at once is not very far from having multiple processes. Starting
 with the macros deﬁned in the previous chapter, we need less than 60 lines of code
 to implement multiple processes.
 
+## 21.2 Implementation
 
-21.2 Implementation
-    Figures 21.1 and 21.2 contain all the code needed to support multiple processes.
-Figure 21.1 contains code for the basic data structures, the default process, initial-
-ization, and instantiation of processes. Processes, or procs, have the following
+Figures 21.1 and 21.2 contain all the code needed to support multiple processes.
+Figure 21.1 contains code for the basic data structures, the default process, initialization,
+and instantiation of processes. Processes, or procs, have the following
 structure:
 
 
+`pri` is the priority of the process, which should be a positive number.
 
----
+`state` is a continuation representing the state of a suspended process. A process
+is restarted by funcalling its state.
 
+`wait` is usually a function which must return true in order for the process to be
+restarted, but initially the wait of a newly created process is nil. A process
+with a null wait can always be restarted.
 
-278                             MULTIPLE PROCESSES
-
-
-
-pri is the priority of the process, which should be a positive number.
-
-state is a continuation representing the state of a suspended process. A process
-     is restarted by funcalling its state.
-
-wait is usually a function which must return true in order for the process to be
-     restarted, but initially the wait of a newly created process is nil. A process
-     with a null wait can always be restarted.
-
-    The program uses three global variables: *procs*, the list of currently sus-
+The program uses three global variables: *procs*, the list of currently sus-
 pended processes; *proc*, the process now running; and *default-proc*, the
 default process.
-    The default process runs only when no other process can. It simulates the
+
+The default process runs only when no other process can. It simulates the
 Lisp toplevel. Within this loop, the user can halt the program, or type expressions
 which enable suspended processes to restart. Notice that the default process calls
 eval explicitly. This is one of the few situations in which it is legitimate to do so.
 Generally it is not a good idea to call eval at runtime, for two reasons:
 
-   1. It’s inefﬁcient: eval is handed a raw list, and either has to compile it on the
-      spot, or evaluate it in an interpreter. Either way is slower than compiling
-      the code beforehand, and just calling it.
+1. It’s inefﬁcient: eval is handed a raw list, and either has to
+   compile it on the spot, or evaluate it in an interpreter. Either
+   way is slower than compiling the code beforehand, and just calling
+   it.
 
-   2. It’s less powerful, because the expression is evaluated with no lexical con-
-      text. Among other things, this means that you can’t refer to ordinary
-      variables visible outside the expression being evaluated.
+2. It’s less powerful, because the expression is evaluated with no
+   lexical con- text. Among other things, this means that you can’t
+   refer to ordinary variables visible outside the expression being
+   evaluated.
 
 Usually, calling eval explicitly is like buying something in an airport gift-shop.
 Having waited till the last moment, you have to pay high prices for a limited
 selection of second-rate goods.
-    Cases like this are rare instances when neither of the two preceding arguments
+
+Cases like this are rare instances when neither of the two preceding arguments
 applies. We couldn’t possibly have compiled the expressions beforehand. We are
 just now reading them; there is no beforehand. Likewise, the expression can’t
 refer to surrounding lexical variables, because expressions typed at the toplevel
 are in the null lexical environment. In fact, the deﬁnition of this function simply
 reﬂects its English description: it reads and evaluates what the user types.
-    The macro fork instantiates a process from a function call. Functions are
+
+The macro fork instantiates a process from a function call. Functions are
 deﬁned as usual with =defun:
 
+```
 (=defun foo (x)
   (format t "Foo was called with ~A.~%" x)
   (=values (1+ x)))
+```
 
 Now when we call fork with a function call and a priority number:
 
-
-
----
-
-
-21.2                              IMPLEMENTATION                                279
-
-
+```
 (fork (foo 2) 25)
+```
 
 a new process is pushed onto *procs*. The new process has a priority of 25, a
 proc-wait of nil, since it hasn’t been started yet, and a proc-state consisting
 of a call to foo with the argument 2.
-    The macro program allows us to create a group of processes and run them
+
+The macro program allows us to create a group of processes and run them
 together. The deﬁnition:
 
+```
 (program two-foos (a b)
   (fork (foo a) 99)
   (fork (foo b) 99))
+```
 
-macroexpands into the two fork expressions, sandwiched between code which
+macro expands into the two fork expressions, sandwiched between code which
 clears out the suspended processes, and other code which repeatedly chooses a
 process to run. Outside this loop, the macro establishes a tag to which control can
 be thrown to end the program. As a gensym, this tag will not conﬂict with tags
 established by user code. A group of processes deﬁned as a program returns no
 particular value, and is only meant to be called from the toplevel.
-    After the processes are instantiated, the process scheduling code takes over.
+
+After the processes are instantiated, the process scheduling code takes over.
 This code is shown in Figure 21.2. The function pick-process selects and runs
 the highest priority process which is able to restart. Selecting this process is the
 job of most-urgent-process. A suspended process is eligible to run if it has
@@ -13638,240 +13515,217 @@ the one with the highest priority is chosen. The winning process and the value
 returned by its wait function (if there is one) are returned to pick-process.
 There will always be some winning process, because the default process always
 wants to run.
-    The remainder of the code in Figure 21.2 deﬁnes the operators used to switch
+
+The remainder of the code in Figure 21.2 deﬁnes the operators used to switch
 control between processes. The standard wait expression is wait, as used in the
 function pedestrian in Figure 21.3. In this example, the process waits until
 there is something in the list *open-doors*, then prints a message:
 
+```
 > (ped)
 >> (push ’door2 *open-doors*)
 Entering DOOR2
 >> (halt)
 NIL
+```
 
-    A wait is similar in spirit to an =bind (page 267), and carries the same
+A wait is similar in spirit to an =bind (page 267), and carries the same
 restriction that it must be the last thing to be evaluated. Anything we want to
 happen after the wait must be put in its body. Thus, if we want to have a process
 wait several times, the wait expressions must be nested. By asserting facts aimed
 at one another, processes can cooperate in reaching some goal, as in Figure 21.4.
 
+```
+(defun pick-process ()
+  (multiple-value-bind (p val) (most-urgent-process)
+    (setq *proc* p
+          *procs* (delete p *procs*))
+    (funcall (proc-state p) val)))
 
+(defun most-urgent-process ()
+  (let ((proc1 *default-proc*) (max -1) (val1 t))
+    (dolist (p *procs*)
+      (let ((pri (proc-pri p)))
+        (if (> pri max)
+            (let ((val (or (not (proc-wait p))
+                           (funcall (proc-wait p)))))
+              (when val
+                (setq proc1 p
+                      max   pri
+                      val1 val))))))
+    (values proc1 val1)))
 
----
+(defun arbitrator (test cont)
+  (setf (proc-state *proc*) cont
+        (proc-wait *proc*) test)
+  (push *proc* *procs*)
+  (pick-process))
 
+(defmacro wait (parm test &body body)
+  ‘(arbitrator #’(lambda () ,test)
+               #’(lambda (,parm) ,@body)))
 
-280                     MULTIPLE PROCESSES
+(defmacro yield (&body body)
+  ‘(arbitrator nil #’(lambda (,(gensym)) ,@body)))
 
+(defun setpri (n) (setf (proc-pri *proc*) n))
 
+(defun halt (&optional val) (throw *halt* val))
 
+(defun kill (&optional obj &rest args)
+  (if obj
+      (setq *procs* (apply #’delete obj *procs* args))
+      (pick-process)))
+```
+> Figure 21.2: Process scheduling.
 
- (defun pick-process ()
-   (multiple-value-bind (p val) (most-urgent-process)
-     (setq *proc* p
-           *procs* (delete p *procs*))
-     (funcall (proc-state p) val)))
+```
+(defvar *open-doors* nil)
 
- (defun most-urgent-process ()
-   (let ((proc1 *default-proc*) (max -1) (val1 t))
-     (dolist (p *procs*)
-       (let ((pri (proc-pri p)))
-         (if (> pri max)
-             (let ((val (or (not (proc-wait p))
-                            (funcall (proc-wait p)))))
-               (when val
-                 (setq proc1 p
-                       max   pri
-                       val1 val))))))
-     (values proc1 val1)))
+(=defun pedestrian ()
+  (wait d (car *open-doors*)
+    (format t "Entering ~A~%" d)))
 
- (defun arbitrator (test cont)
-   (setf (proc-state *proc*) cont
-         (proc-wait *proc*) test)
-   (push *proc* *procs*)
-   (pick-process))
-
- (defmacro wait (parm test &body body)
-   ‘(arbitrator #’(lambda () ,test)
-                #’(lambda (,parm) ,@body)))
-
- (defmacro yield (&body body)
-   ‘(arbitrator nil #’(lambda (,(gensym)) ,@body)))
-
- (defun setpri (n) (setf (proc-pri *proc*) n))
-
- (defun halt (&optional val) (throw *halt* val))
-
- (defun kill (&optional obj &rest args)
-   (if obj
-       (setq *procs* (apply #’delete obj *procs* args))
-       (pick-process)))
-
-                  Figure 21.2: Process scheduling.
-
-
-
----
-
-
-21.2                              IMPLEMENTATION                                 281
-
-
-
- (defvar *open-doors* nil)
-
- (=defun pedestrian ()
-   (wait d (car *open-doors*)
-     (format t "Entering ~A~%" d)))
-
- (program ped ()
-   (fork (pedestrian) 1))
-
-                     Figure 21.3: One process with one wait.
-
+(program ped ()
+  (fork (pedestrian) 1))
+```
+> Figure 21.3: One process with one wait.
 
 Processes instantiated from visitor and host, if given the same door, will
 exchange control via messages on a blackboard:
+
+```
 > (ballet)
 Approach DOOR2. Open DOOR2. Enter DOOR2. Close DOOR2.
 Approach DOOR1. Open DOOR1. Enter DOOR1. Close DOOR1.
 >>
+```
 
-     There is another, simpler type of wait expression: yield, whose only purpose
+There is another, simpler type of wait expression: yield, whose only purpose
 is to give other higher-priority processes a chance to run. A process might want to
 yield after executing a setpri expression, which resets the priority of the current
 process. As with a wait, any code to be executed after a yield must be put
 within its body.
-     The program in Figure 21.5 illustrates how the two operators work together.
+
+The program in Figure 21.5 illustrates how the two operators work together.
 Initially, the barbarians have two aims: to capture Rome and to plunder it. Captur-
 ing the city has (slightly) higher priority, and so will run ﬁrst. However, after the
 city has been reduced, the priority of the capture process decreases to 1. Then
 there is a vote, and plunder, as the highest-priority process, starts running.
+
+```
 > (barbarians)
 Liberating ROME.
 Nationalizing ROME.
 Refinancing ROME.
 Rebuilding ROME.
 >>
+```
 
 Only after the barbarians have looted Rome’s palaces and ransomed the patricians,
 does the capture process resume, and the barbarians turn to fortifying their own
 position.
-    Underlying wait expressions is the more general arbitrator. This function
+
+
+```
+(defvar *bboard* nil)
+
+(defun claim        (&rest f) (push f *bboard*))
+
+(defun unclaim (&rest f) (pull f *bboard* :test #’equal))
+
+(defun check        (&rest f) (find f *bboard* :test #’equal))
+
+(=defun visitor (door)
+  (format t "Approach ~A. " door)
+  (claim ’knock door)
+  (wait d (check ’open door)
+    (format t "Enter ~A. " door)
+    (unclaim ’knock door)
+    (claim ’inside door)))
+
+(=defun host (door)
+  (wait k (check ’knock door)
+    (format t "Open ~A. " door)
+    (claim ’open door)
+    (wait g (check ’inside door)
+      (format t "Close ~A.~%" door)
+      (unclaim ’open door))))
+
+(program ballet ()
+  (fork (visitor ’door1) 1)
+  (fork (host ’door1) 1)
+  (fork (visitor ’door2) 1)
+  (fork (host ’door2) 1))
+```
+> Figure 21.4: Synchronization with a blackboard.
+
+
+Underlying wait expressions is the more general arbitrator. This function
 stores the current process, and then calls pick-process to start some process
-
-
-
----
-
-
-282                            MULTIPLE PROCESSES
-
-
-
-
- (defvar *bboard* nil)
-
- (defun claim        (&rest f) (push f *bboard*))
-
- (defun unclaim (&rest f) (pull f *bboard* :test #’equal))
-
- (defun check        (&rest f) (find f *bboard* :test #’equal))
-
- (=defun visitor (door)
-   (format t "Approach ~A. " door)
-   (claim ’knock door)
-   (wait d (check ’open door)
-     (format t "Enter ~A. " door)
-     (unclaim ’knock door)
-     (claim ’inside door)))
-
- (=defun host (door)
-   (wait k (check ’knock door)
-     (format t "Open ~A. " door)
-     (claim ’open door)
-     (wait g (check ’inside door)
-       (format t "Close ~A.~%" door)
-       (unclaim ’open door))))
-
- (program ballet ()
-   (fork (visitor ’door1) 1)
-   (fork (host ’door1) 1)
-   (fork (visitor ’door2) 1)
-   (fork (host ’door2) 1))
-
-                Figure 21.4: Synchronization with a blackboard.
-
-
 (perhaps the same one) running again. It will be given two arguments: a test
 function and a continuation. The former will be stored as the proc-wait of
 the process being suspended, and called later to determine if it can be restarted.
 The latter will become the proc-state, and calling it will restart the suspended
 process.
-    The macros wait and yield build this continuation function simply by wrap-
+
+The macros wait and yield build this continuation function simply by wrap-
 ping their bodies in lambda-expressions. For example,
 
+```
 (wait d (car *bboard*) (=values d))
+```
 
+```
+(=defun capture (city)
+  (take city)
+  (setpri 1)
+  (yield
+    (fortify city)))
 
+(=defun plunder (city)
+  (loot city)
+  (ransom city))
 
----
+(defun    take (c)        (format    t   "Liberating ~A.~%" c))
+(defun    fortify (c)     (format    t   "Rebuilding ~A.~%" c))
+(defun    loot (c)        (format    t   "Nationalizing ~A.~%" c))
+(defun    ransom (c)      (format    t   "Refinancing ~A.~%" c))
 
+(program barbarians ()
+  (fork (capture ’rome) 100)
+  (fork (plunder ’rome) 98))
+```
 
-21.2                              IMPLEMENTATION                                 283
-
-
-
- (=defun capture (city)
-   (take city)
-   (setpri 1)
-   (yield
-     (fortify city)))
-
- (=defun plunder (city)
-   (loot city)
-   (ransom city))
-
- (defun    take (c)        (format    t   "Liberating ~A.~%" c))
- (defun    fortify (c)     (format    t   "Rebuilding ~A.~%" c))
- (defun    loot (c)        (format    t   "Nationalizing ~A.~%" c))
- (defun    ransom (c)      (format    t   "Refinancing ~A.~%" c))
-
- (program barbarians ()
-   (fork (capture ’rome) 100)
-   (fork (plunder ’rome) 98))
-
-                    Figure 21.5: Effect of changing priorities.
-
+> Figure 21.5: Effect of changing priorities.
 
 expands into:
+
+```
 (arbitrator #’(lambda () (car *bboard*))
             #’(lambda (d) (=values d)))
+```
 
 If the code obeys the restrictions listed in Figure 20.5, making a closure of the
 wait’s body will preserve the whole current continuation. With its =values
 expanded the second argument becomes:
+
+```
 #’(lambda (d) (funcall *cont* d))
+```
 
 Since the closure contains a reference to *cont*, the suspended process with
 this wait function will have a handle on where it was headed at the time it was
 suspended.
-    The halt operator stops the whole program, by throwing control back to the
+
+The halt operator stops the whole program, by throwing control back to the
 tag established by the expansion of program. It takes an optional argument,
 which will be returned as the value of the program. Because the default process is
 always willing to run, the only way programs end is by explicit halts. It doesn’t
 matter what code follows a halt, since it won’t be evaluated.
-    Individual processes can be killed by calling kill. If given no arguments,
+
+Individual processes can be killed by calling kill. If given no arguments,
 this operator kills the current process. In this case, kill is like a wait expression
-
-
-
----
-
-
-284                             MULTIPLE PROCESSES
-
-
-
 which neglects to store the current process. If kill is given arguments, they
 become the arguments to a delete on the list of processes. In the current code,
 there is not much one can say in a kill expression, because processes do not have
@@ -13879,33 +13733,36 @@ many properties to refer to. However, a more elaborate system would associate
 more information with processes—time stamps, owners, and so on. The default
 process can’t be killed, because it isn’t kept in the list *procs*.
 
+## 21.3 The Less-than-Rapid Prototype
 
-21.3 The Less-than-Rapid Prototype
 Processes simulated with continuations are not going to be nearly as efﬁcient as
 real operating system processes. What’s the use, then, of programs like the one
 in this chapter?
-    Such programs are useful in the same way that sketches are. In exploratory
+
+Such programs are useful in the same way that sketches are. In exploratory
 programming or rapid prototyping, the program is not an end in itself so much
 as a vehicle for working out one’s ideas. In many other ﬁelds, something which
 serves this purpose is called a sketch. An architect could, in principle, design an
 entire building in his head. However, most architects seem to think better with
 pencils in their hands: the design of a building is usually worked out in a series
 of preparatory sketches.
-    Rapid prototyping is sketching software. Like an architect’s ﬁrst sketches,
+
+Rapid prototyping is sketching software. Like an architect’s ﬁrst sketches,
 software prototypes tend to be drawn with a few sweeping strokes. Considerations
 of cost and efﬁciency are ignored in an initial push to develop an idea to the full.
 The result, at this stage, is likely to be an unbuildable building or a hopelessly
 inefﬁcient piece of software. But the sketches are valuable all the same, because
 
-   1. They convey information brieﬂy.
-   2. They offer a chance to experiment.
+1. They convey information brieﬂy.
+2. They offer a chance to experiment.
 
 The program described in this chapter is, like those in succeeding chapters, a
 sketch. It suggests the outlines of multiprocessing in a few, broad strokes. And
 though it would not be efﬁcient enough for use in production software, it could
 be quite useful for experimenting with other aspects of multiple processes, like
 scheduling algorithms.
-    Chapters 22–24 present other applications of continuations. None of them is
+
+Chapters 22–24 present other applications of continuations. None of them is
 efﬁcient enough for use in production software. Because Lisp and rapid proto-
 typing evolved together, Lisp includes a lot of features speciﬁcally intended for
 prototypes: inefﬁcient but convenient features like property lists, keyword param-
@@ -13914,15 +13771,7 @@ They save more state than a program is likely to need. So our continuation-based
 implementation of Prolog, for example, is a good way to understand the language,
 but an inefﬁcient way to implement it.
 
-
-
----
-
-
-21.3                      THE LESS-THAN-RAPID PROTOTYPE                         285
-
-
-     This book is concerned more with the kinds of abstractions one can build
+This book is concerned more with the kinds of abstractions one can build
 in Lisp than with efﬁciency issues. It’s important to realize, though, that Lisp
 is a language for writing production software as well as a language for writing
 prototypes. If Lisp has a reputation for slowness, it is largely because so many
@@ -13930,7 +13779,8 @@ programmers stop with the prototype. It is easy to write fast programs in Lisp.
 Unfortunately, it is very easy to write slow ones. The initial version of a Lisp
 program can be like a diamond: small, clear, and very expensive. There may be
 a great temptation to leave it that way.
-     In other languages, once you succeed in the arduous task of getting your
+
+In other languages, once you succeed in the arduous task of getting your
 program to work, it may already be acceptably efﬁcient. If you tile a ﬂoor
 with tiles the size of your thumbnail, you don’t waste many. Someone used to
 developing software on this principle may ﬁnd it difﬁcult to overcome the idea
@@ -13940,36 +13790,32 @@ You can get fast programs, but you have to work for them. In this respect, using
 Lisp is like living in a rich country instead of a poor one: it may seem unfortunate
 that one has to work to stay thin, but surely this is better than working to stay
 alive, and being thin as a matter of course.
-     In less abstract languages, you work for functionality. In Lisp you work for
+
+In less abstract languages, you work for functionality. In Lisp you work for
 speed. Fortunately, working for speed is easier: most programs only have a few
 critical sections in which speed matters.
 
-
-
----
-
-
-22
-
-Nondeterminism
+# 22 Nondeterminism
 
 Programming languages save us from being swamped by a mass of detail. Lisp is
 a good language because it handles so many details itself, enabling programmers
 to make the most of their limited tolerance for complexity. This chapter describes
 how macros can make Lisp handle another important class of details: the details
 of transforming a nondeterministic algorithm into a deterministic one.
-     This chapter is divided into ﬁve parts. The ﬁrst explains what nondeterminism
+
+This chapter is divided into ﬁve parts. The ﬁrst explains what nondeterminism
 is. The second describes a Scheme implementation of nondeterministic choose and
 fail which uses continuations. The third part presents Common Lisp versions of
 choose and fail which build upon the continuation-passing macros of Chapter 20.
 The fourth part shows how the cut operator can be understood independently
 of Prolog. The ﬁnal part suggests reﬁnements of the original nondeterministic
 operators.
-     The nondeterministic choice operators deﬁned in this chapter will be used to
+
+The nondeterministic choice operators deﬁned in this chapter will be used to
 write an ATN compiler in Chapter 23 and an embedded Prolog in Chapter 24.
 
+## 22.1 The Concept
 
-22.1 The Concept
 A nondeterministic algorithm is one which relies on a certain sort of supernatural
 foresight. Why talk about such algorithms when we don’t have access to computers
 with supernatural powers? Because a nondeterministic algorithm can be simulated
@@ -13978,100 +13824,93 @@ no side-effects—simulating nondeterminism is particularly straightforward. In
 purely functional programs, nondeterminism can be implemented by search with
 backtracking.
 
-                                       286
-
-
-
----
-
-
-22.1                               THE CONCEPT                                287
-
-
-    This chapter shows how to simulate nondeterminism in functional programs.
+This chapter shows how to simulate nondeterminism in functional programs.
 If we have a simulator for nondeterminism, we can expect it to produce results
 whenever a truly nondeterministic machine would. In many cases, writing a
 program which depends on supernatural insight to solve a problem is easier than
 writing one which doesn’t, so such a simulator would be a good thing to have.
-    In this section we will deﬁne the class of powers that nondeterminism allows
+
+In this section we will deﬁne the class of powers that nondeterminism allows
 us; the next section demonstrates their utility in some sample programs. The
 examples in these ﬁrst two sections are written in Scheme. (Some differences
 between Scheme and Common Lisp are summarized on page 259.)
-    A nondeterministic algorithm differs from a deterministic one because it can
+
+A nondeterministic algorithm differs from a deterministic one because it can
 use the two special operators choose and fail. Choose is a function which takes a
 ﬁnite set and returns one element. To explain how choose chooses, we must ﬁrst
 introduce the concept of a computational future.
-    Here we will represent choose as a function choose which takes a list and
+
+Here we will represent choose as a function choose which takes a list and
 returns one element. For each element, there is a set of futures the computation
 could have if that element were chosen. In the following expression
 
+```
 (let ((x (choose ’(1 2 3))))
   (if (odd? x)
       (+ x 1)
       x))
+```
 
 there are three possible futures for the computation when it reaches the point of
 the choose:
 
-   1. If choose returns 1, the computation will go through the then-clause of the
-      if, and will return 2.
+1. If choose returns 1, the computation will go through the
+   then-clause of the if, and will return 2.
 
-   2. If choose returns 2, the computation will go through the else-clause of the
-      if, and will return 2.
+2. If choose returns 2, the computation will go through the
+   else-clause of the if, and will return 2.
 
-   3. If choose returns 3, the computation will go through the then-clause of the
-      if, and will return 4.
+3. If choose returns 3, the computation will go through the
+   then-clause of the if, and will return 4.
 
 In this case, we know exactly what the future of the computation will be as soon
 as we see what choose returns. In the general case, each choice is associated with
 a set of possible futures, because within some futures there could be additional
 chooses. For example, with
 
+```
 (let ((x (choose ’(2 3))))
   (if (odd? x)
       (choose ’(a b))
       x))
-
-
-
----
-
-
-288                              NONDETERMINISM
-
-
+```
 
 there are two sets of futures at the time of the ﬁrst choose:
 
-   1. If choose returns 2, the computation will go through the else-clause of the
-      if, and will return 2.
-   2. If choose returns 3, the computation will go through the then-clause of
-      the if. At this point, the path of the computation splits into two possible
-      futures, one in which a is returned, and one in which b is.
+1. If choose returns 2, the computation will go through the else-clause of the
+   if, and will return 2.
+2. If choose returns 3, the computation will go through the then-clause of
+   the if. At this point, the path of the computation splits into two possible
+   futures, one in which a is returned, and one in which b is.
 
 The ﬁrst set has one future and the second set has two, so the computation has
 three possible futures.
-    The point to remember is, if choose is given a choice of several alternatives,
+
+The point to remember is, if choose is given a choice of several alternatives,
 each one is associated with a set of possible futures. Which choice will it return?
 We can assume that choose works as follows:
 
-   1. It will only return a choice for which some future does not contain a call to
-      fail.
+1. It will only return a choice for which some future does not contain a call to
+   fail.
 
-   2. A choose over zero alternatives is equivalent to a fail.
+2. A choose over zero alternatives is equivalent to a fail.
 
 So, for example, in
 
+```
 (let ((x (choose ’(1 2))))
   (if (odd? x)
       (fail)
       x))
+```
 
 each of the possible choices has exactly one future. Since the future for a choice
 of 1 contains a call to fail, only 2 can be chosen. So the expression as a whole
 is deterministic: it always returns 2.
-    However, the following expression is not deterministic:
 
+However, the following expression is not deterministic:
+
+```
 (let ((x (choose ’(1 2))))
   (if (odd? x)
       (let ((y (choose ’(a b))))
@@ -14079,54 +13918,55 @@ is deterministic: it always returns 2.
             (fail)
             y))
       x))
+```
 
 At the ﬁrst choose, there are two possible futures for a choice of 1, and one for a
 choice of 2. Within the former, though, the future is really deterministic, because
 a choice of a would result in a call to fail. So the expression as a whole could
 return either b or 2.
-    Finally, there is only one possible value for the expression
 
+Finally, there is only one possible value for the expression
 
-
----
-
-
-22.2                                THE CONCEPT                                  289
-
-
+```
 (let ((x (choose ’(1 2))))
   (if (odd? x)
       (choose ’())
       x))
+```
 
 because if 1 is chosen, the future goes through a choose with no choices. This
 example is thus equivalent to the last but one.
-    It may not be clear yet from the preceding examples, but we have just got
+
+It may not be clear yet from the preceding examples, but we have just got
 ourselves an abstraction of astounding power. In nondeterministic algorithms we
 are allowed to say "choose an element such that nothing we do later will result in a
 call to fail." For example, this is a perfectly legitimate nondeterministic algorithm
 for discovering whether you have a known ancestor called Igor:
 
+```
 Function Ig(n)
   if name(n) = ‘Igor’
      then return n
   else if parents(n)
      then return Ig(choose(parents(n)))
   else fail
+```
 
-    The fail operator is used to inﬂuence the value returned by choose. If we
+The fail operator is used to inﬂuence the value returned by choose. If we
 ever encounter a fail, choose would have chosen incorrectly. By deﬁnition choose
 guesses correctly. So if we want to guarantee that the computation will never
 pursue a certain path, all we need do is put a fail somewhere in it, and that path
 will never be followed. Thus, as it works recursively through generations of
 ancestors, the function Ig is able to choose at each step a path which leads to an
 Igor—to guess whether to follow the mother’s or father’s line.
-    It is as if a program can specify that choose pick some element from a set of
+
+It is as if a program can specify that choose pick some element from a set of
 alternatives, use the value returned by choose for as long as it wants, and then
 retroactively decide, by using fail as a veto, what it wants choose to have picked.
 And, presto, it turns out that that’s just what choose did return. Hence the model
 in which choose has foresight.
-    In reality choose cannot have supernatural powers. Any implementation of
+
+In reality choose cannot have supernatural powers. Any implementation of
 choose must simulate correct guessing by backtracking when it discovers mistakes,
 like a rat ﬁnding its way through a maze. But all this backtracking can be done
 beneath the surface. Once you have some form of choose and fail, you get to write
@@ -14134,41 +13974,32 @@ algorithms like the one above, as if it really were possible to guess what ances
 to follow. By using choose it is possible to write an algorithm to search some
 problem space just by writing an algorithm to traverse it.
 
+```
+(define (descent n1 n2)
+  (if (eq? n1 n2)
+      (list n2)
+      (let ((p (try-paths (kids n1) n2)))
+        (if p (cons n1 p) #f))))
+
+(define (try-paths ns n2)
+  (if (null? ns)
+      #f
+      (or (descent (car ns) n2)
+          (try-paths (cdr ns) n2))))
+```
+> Figure 22.1: Deterministic tree search.
+
+```
+(define (descent n1 n2)
+  (cond ((eq? n1 n2) (list n2))
+        ((null? (kids n1)) (fail))
+        (else (cons n1 (descent (choose (kids n1)) n2)))))
+```
+> Figure 22.2: Nondeterministic tree search.
 
 
----
+## 22.2 Search
 
-
-290                             NONDETERMINISM
-
-
-
-
- (define (descent n1 n2)
-   (if (eq? n1 n2)
-       (list n2)
-       (let ((p (try-paths (kids n1) n2)))
-         (if p (cons n1 p) #f))))
-
- (define (try-paths ns n2)
-   (if (null? ns)
-       #f
-       (or (descent (car ns) n2)
-           (try-paths (cdr ns) n2))))
-
-                     Figure 22.1: Deterministic tree search.
-
-
-
- (define (descent n1 n2)
-   (cond ((eq? n1 n2) (list n2))
-         ((null? (kids n1)) (fail))
-         (else (cons n1 (descent (choose (kids n1)) n2)))))
-
-                   Figure 22.2: Nondeterministic tree search.
-
-
-22.2 Search
 Many classic problems can be formulated as search problems, and for such prob-
 lems nondeterminism often turns out to be a useful abstraction. Suppose nodes
 is bound to a list of nodes in a tree, and (kids n) is a function which returns
@@ -14176,189 +14007,175 @@ the descendants of node n, or #f if there are none. We want to write a function
 (descent n1 n2 ) which returns a list of nodes on some path from n 1 to its de-
 scendant n2 , if there is one. Figure 22.1 shows a deterministic version of this
 function.
-     Nondeterminism allows the programmer to ignore the details of ﬁnding a path.
+
+Nondeterminism allows the programmer to ignore the details of ﬁnding a path.
 It’s possible simply to tell choose to ﬁnd a node n such that there is a path from
 n to our destination. Using nondeterminism we can write the simpler version of
 descent shown in Figure 22.2.
-     The version shown in Figure 22.2 does not explicitly search for a node on the
+
+The version shown in Figure 22.2 does not explicitly search for a node on the
 right path. It is written on the assumption that choose has chosen an n with the
 desired properties. If we are used to looking at deterministic programs, we may
 not perceive that choose has to work as if it could guess what n would make it
 
+```
+(define (two-numbers)
+  (list (choose ’(0 1 2 3 4 5))
+        (choose ’(0 1 2 3 4 5))))
 
-
----
-
-
-22.2                                       SEARCH                                       291
-
-
-
- (define (two-numbers)
-   (list (choose ’(0 1 2 3 4 5))
-         (choose ’(0 1 2 3 4 5))))
-
- (define (parlor-trick sum)
-   (let ((nums (two-numbers)))
-     (if (= (apply + nums) sum)
-         ‘(the sum of ,@nums)
-         (fail))))
-
-                         Figure 22.3: Choice in a subroutine.
-
+(define (parlor-trick sum)
+  (let ((nums (two-numbers)))
+    (if (= (apply + nums) sum)
+        ‘(the sum of ,@nums)
+        (fail))))
+```
+> Figure 22.3: Choice in a subroutine.
 
 through the computation which follows without failing.
-     Perhaps a more convincing example of the power of choose is its ability to
+
+Perhaps a more convincing example of the power of choose is its ability to
 guess what will happen even in calling functions. Figure 22.3 contains a pair
 of functions to guess two numbers which sum to a number given by the caller.
 The ﬁrst function, two-numbers, nondeterministically chooses two numbers and
 returns them in a list. When we call parlor-trick, it calls two-numbers for a
 list of two integers. Note that, in making its choice, two-numbers doesn’t have
 access to the number entered by the user.
-     If the two numbers guessed by choose don’t sum to the number entered by the
+
+If the two numbers guessed by choose don’t sum to the number entered by the
 user, the computation fails. We can rely on choose having avoided computational
 paths which fail, if there are any which don’t. Thus we can assume that if the
 caller gives a number in the right range, choose will have guessed right, as indeed
 it does:1
 
+```
 > (parlor-trick 7)
 (THE SUM OF 2 5)
+```
 
-    In simple searches, the built-in Common Lisp function find-if would do
-just as well. Where is the advantage of nondeterministic choice? Why not just
-iterate through the list of alternatives in search of the element with the desired
-properties? The crucial difference between choose and conventional iteration is
-that its extent with respect to fails is unbounded. Nondeterministic choose can
-see arbitrarily far into the future; if something is going to happen at any point in
-the future which would have invalidated some guess choose might make, we can
-assume that choose knows to avoid guessing it. As we saw in parlor-trick,
-  1 Since the order of argument evaluation is unspeciﬁed in Scheme (as opposed to Common Lisp,
+In simple searches, the built-in Common Lisp function find-if would do
+just as well. Where is the advantage of nondeterministic choice? Why
+not just iterate through the list of alternatives in search of the
+element with the desired properties? The crucial difference between
+choose and conventional iteration is that its extent with respect to
+fails is unbounded. Nondeterministic choose can see arbitrarily far
+into the future; if something is going to happen at any point in the
+future which would have invalidated some guess choose might make, we
+can assume that choose knows to avoid guessing it. As we saw in
+parlor-trick, the fail operator works even after we return from the
+function in which the choose occurs.
 
-which speciﬁes left-to-right), this call might also return (THE SUM OF 5 2).
+This kind of failure happens in the search done by Prolog, for
+example.  Nondeterminism is useful in Prolog because one of the
+central features of this language is its ability to return answers to
+a query one at a time. By following this course instead of returning
+all the valid answers at once, Prolog can handle recursive rules which
+would otherwise yield inﬁnitely large sets of answers.
 
+The initial reaction to descent may be like the initial reaction to a
+merge sort: where does the work get done? As in a merge sort, the work
+gets done implicitly, but it does get done. Section 22.3 describes an
+implementation of choose in which all the code examples presented so
+far are real running programs.
 
+These examples show the value of nondeterminism as an abstraction. The
+best programming language abstractions save not just typing, but
+thought. In automata theory, some proofs are difﬁcult even to conceive
+of without relying on nonde- terminism. A language which allows
+nondeterminism may give programmers a similar advantage.
 
----
+## 22.3 Scheme Implementation
 
+This section explains how to use continuations to simulate
+nondeterminism. Fig ure 22.4 contains Scheme implementations of choose
+and fail. Beneath the surface, choose and fail simulate nondeterminism
+by backtracking. A backtracking search program must somehow store
+enough information to pursue other alterna- tives if the chosen one
+fails. This information is stored in the form of continuations on the
+global list *paths*.
 
-   292                               NONDETERMINISM
+The function choose is passed a list of alternatives in choices. If
+choices is empty, then choose calls fail, which sends the computation
+back to the previous choose. If choices is (ﬁrst . rest), choose ﬁrst
+pushes onto *paths* a continuation in which choose is called on rest,
+then returns ﬁrst.
 
+The function fail is simpler: it just pops a continuation off *paths*
+and calls it. If there aren’t any saved paths left, then fail returns
+the symbol @.  However, it won’t do simply to return it as a function
+ordinarily returns values, or it will be returned as the value of the
+most recent choose. What we really want to do is return @ right to the
+toplevel. We do this by binding cc to the continuation where fail is
+deﬁned, which presumably is the toplevel. By calling cc, fail can
+return straight there.
 
+The implementation in Figure 22.4 treats *paths* as a stack, always
+failing back to the most recent choice point. This strategy, known as
+chronological backtracking, results in depth-ﬁrst search of the
+problem space. The word "non- determinism" is often used as if it were
+synonymous with the depth-ﬁrst implementation. Floyd’s classic paper
+on nondeterministic algorithms uses the term in this sense, and this
+is also the kind of nondeterminism we ﬁnd in nondetermin- istic
+parsers and in Prolog. However, it should be noted that the
+implementation given in Figure 22.4 is not the only possible
+implementation, nor even a correct one. In principle, choose ought to
+be able to choose an object which meets any computable
+speciﬁcation. But a program which used these versions of choose and
+fail to search a graph might not terminate, if the graph contained
+cycles.
 
-   the fail operator works even after we return from the function in which the choose
-   occurs.
-        This kind of failure happens in the search done by Prolog, for example.
-   Nondeterminism is useful in Prolog because one of the central features of this
-   language is its ability to return answers to a query one at a time. By following
-   this course instead of returning all the valid answers at once, Prolog can handle
-   recursive rules which would otherwise yield inﬁnitely large sets of answers.
-        The initial reaction to descent may be like the initial reaction to a merge sort:
-   where does the work get done? As in a merge sort, the work gets done implicitly,
-   but it does get done. Section 22.3 describes an implementation of choose in which
-   all the code examples presented so far are real running programs.
-        These examples show the value of nondeterminism as an abstraction. The best
-   programming language abstractions save not just typing, but thought. In automata
-   theory, some proofs are difﬁcult even to conceive of without relying on nonde-
-   terminism. A language which allows nondeterminism may give programmers a
-   similar advantage.
+```
+(define *paths* ())
+(define failsym ’@)
 
+(define (choose choices)
+  (if (null? choices)
+      (fail)
+      (call-with-current-continuation
+        (lambda (cc)
+          (set! *paths*
+                (cons (lambda ()
+                        (cc (choose (cdr choices))))
+                      *paths*))
+        (car choices)))))
 
-   22.3 Scheme Implementation
-  This section explains how to use continuations to simulate nondeterminism. Fig-
- ure 22.4 contains Scheme implementations of choose and fail. Beneath the surface,
-  choose and fail simulate nondeterminism by backtracking. A backtracking
-  search program must somehow store enough information to pursue other alterna-
-  tives if the chosen one fails. This information is stored in the form of continuations
-  on the global list *paths*.
-      The function choose is passed a list of alternatives in choices. If choices is
-  empty, then choose calls fail, which sends the computation back to the previous
-  choose. If choices is (ﬁrst . rest), choose ﬁrst pushes onto *paths* a
-  continuation in which choose is called on rest, then returns ﬁrst.
-      The function fail is simpler: it just pops a continuation off *paths* and
-  calls it. If there aren’t any saved paths left, then fail returns the symbol @.
-  However, it won’t do simply to return it as a function ordinarily returns values, or
-  it will be returned as the value of the most recent choose. What we really want to
-  do is return @ right to the toplevel. We do this by binding cc to the continuation
-  where fail is deﬁned, which presumably is the toplevel. By calling cc, fail
-  can return straight there.
-      The implementation in Figure 22.4 treats *paths* as a stack, always fail-
-  ing back to the most recent choice point. This strategy, known as chronological
-  backtracking, results in depth-ﬁrst search of the problem space. The word "non-
-  determinism" is often used as if it were synonymous with the depth-ﬁrst imple-
+(define fail)
 
+(call-with-current-continuation
+  (lambda (cc)
+    (set! fail
+          (lambda ()
+            (if (null? *paths*)
+                (cc failsym)
+                (let ((p1 (car *paths*)))
+                  (set! *paths* (cdr *paths*))
+                  (p1)))))))
+```
+> Figure 22.4: Scheme implementation of choose and fail.
 
-
----
-
-
-22.4                        SCHEME IMPLEMENTATION                           293
-
-
-
- (define *paths* ())
- (define failsym ’@)
-
- (define (choose choices)
-   (if (null? choices)
-       (fail)
-       (call-with-current-continuation
-         (lambda (cc)
-           (set! *paths*
-                 (cons (lambda ()
-                         (cc (choose (cdr choices))))
-                       *paths*))
-         (car choices)))))
-
- (define fail)
-
- (call-with-current-continuation
-   (lambda (cc)
-     (set! fail
-           (lambda ()
-             (if (null? *paths*)
-                 (cc failsym)
-                 (let ((p1 (car *paths*)))
-                   (set! *paths* (cdr *paths*))
-                   (p1)))))))
-
-            Figure 22.4: Scheme implementation of choose and fail.
-
-
-mentation. Floyd’s classic paper on nondeterministic algorithms uses the term in
-this sense, and this is also the kind of nondeterminism we ﬁnd in nondetermin-
-istic parsers and in Prolog. However, it should be noted that the implementation
-given in Figure 22.4 is not the only possible implementation, nor even a correct
-one. In principle, choose ought to be able to choose an object which meets any
-computable speciﬁcation. But a program which used these versions of choose
-and fail to search a graph might not terminate, if the graph contained cycles.
-     In practice, nondeterminism usually means using a depth-ﬁrst implementation
+In practice, nondeterminism usually means using a depth-ﬁrst implementation
 equivalent to the one in Figure 22.4, and leaving it to the user to avoid loops in
 the search space. However, for readers who are interested, the last section in this
 chapter describes how to implement true choose and fail.
 
+## 22.4 Common Lisp Implementation
 
-
----
-
-
-294                              NONDETERMINISM
-
-
-
-22.4 Common Lisp Implementation
-This section describes how to write a form of choose and fail in Common Lisp.
-As the previous section showed, call/cc makes it easy to simulate nondetermin-
-ism in Scheme. Continuations provide the direct embodiment of our theoretical
-concept of a computational future. In Common Lisp, we can use instead the
-continuation-passing macros of Chapter 20. With these macros we will be able to
-provide a form of choose slightly uglier than the Scheme version presented in the
+This section describes how to write a form of choose and fail in
+Common Lisp.  As the previous section showed, call/cc makes it easy to
+simulate nondeterminism in Scheme. Continuations provide the direct
+embodiment of our theoretical concept of a computational future. In
+Common Lisp, we can use instead the continuation-passing macros of
+Chapter 20. With these macros we will be able to provide a form of
+choose slightly uglier than the Scheme version presented in the
 previous section, but equivalent in practice.
-    Figure 22.5 contains a Common Lisp implementation of fail, and two versions
+
+Figure 22.5 contains a Common Lisp implementation of fail, and two versions
 of choose. The syntax of a Common Lisp choose is slightly different from the
 Scheme version. The Scheme choose took one argument: a list of choices from
 which to select a value. The Common Lisp version has the syntax of a progn.
 It can be followed by any number of expressions, from which it chooses one to
 evaluate:
+
+```
 > (defun do2 (x)
     (choose (+ x 2) (* x 2) (expt x 2)))
 DO2
@@ -14366,6 +14183,8 @@ DO2
 5
 > (fail)
 6
+```
+
 At the toplevel, we see more clearly the backtracking which underlies nondeter-
 ministic search. The variable *paths* is used to store paths which have not yet
 been followed. When the computation reaches a choose expression with several
@@ -14373,165 +14192,164 @@ alternatives, the ﬁrst alternative is evaluated, and the remaining choices are
 on *paths*. If the program later on encounters a fail, the last stored choice
 will be popped off *paths* and restarted. When there are no more paths left to
 restart, fail returns a special value:
+
+```
 > (fail)
 9
 > (fail)
 @
+```
+
 In Figure 22.5 the constant failsym, which represents failure, is deﬁned to be
 the symbol @. If you wanted to be able to have @ as an ordinary return value, you
 could make failsym a gensym instead.
-    The other nondeterministic choice operator, choose-bind, has a slightly
+
+The other nondeterministic choice operator, choose-bind, has a slightly
 different form. It should be given a symbol, a list of choices, and a body of code.
 It will do a choose on the list of choices, bind the symbol to the value chosen, and
 evaluate the body of code:
 
+```
+(defparameter *paths* nil)
+(defconstant failsym ’@)
 
+(defmacro choose (&rest choices)
+  (if choices
+      ‘(progn
+         ,@(mapcar #’(lambda (c)
+                       ‘(push #’(lambda () ,c) *paths*))
+                   (reverse (cdr choices)))
+         ,(car choices))
+      ’(fail)))
 
----
+(defmacro choose-bind (var choices &body body)
+  ‘(cb #’(lambda (,var) ,@body) ,choices))
 
+(defun cb (fn choices)
+  (if choices
+     (progn
+       (if (cdr choices)
+           (push #’(lambda () (cb fn (cdr choices)))
+                 *paths*))
+       (funcall fn (car choices)))
+     (fail)))
 
-22.4                    COMMON LISP IMPLEMENTATION                     295
+(defun fail ()
+  (if *paths*
+      (funcall (pop *paths*))
+      failsym))
+```
+> Figure 22.5: Nondeterministic operators in Common Lisp.
 
-
-
- (defparameter *paths* nil)
- (defconstant failsym ’@)
-
- (defmacro choose (&rest choices)
-   (if choices
-       ‘(progn
-          ,@(mapcar #’(lambda (c)
-                        ‘(push #’(lambda () ,c) *paths*))
-                    (reverse (cdr choices)))
-          ,(car choices))
-       ’(fail)))
-
- (defmacro choose-bind (var choices &body body)
-   ‘(cb #’(lambda (,var) ,@body) ,choices))
-
- (defun cb (fn choices)
-   (if choices
-      (progn
-        (if (cdr choices)
-            (push #’(lambda () (cb fn (cdr choices)))
-                  *paths*))
-        (funcall fn (car choices)))
-      (fail)))
-
- (defun fail ()
-   (if *paths*
-       (funcall (pop *paths*))
-       failsym))
-
-          Figure 22.5: Nondeterministic operators in Common Lisp.
-
-
+```
 > (choose-bind x ’(marrakesh strasbourg vegas)
     (format nil "Let’s go to ~A." x))
 "Let’s go to MARRAKESH."
 > (fail)
 "Let’s go to STRASBOURG."
+```
+
 It is only for convenience that the Common Lisp implementation provides two
 choice operators. You could get the effect of choose from choose-bind by
 always translating
+
+```
 (choose (foo) (bar))
-
-
-
----
-
-
-296                                   NONDETERMINISM
-
-
+```
 
 into
 
+```
 (choose-bind x ’(1 2)
   (case x
     (1 (foo))
     (2 (bar))))
+```
 
 but programs are easier to read if we have a separate operator for this case. 2
-    The Common Lisp choice operators store the bindings of relevant variables
+
+The Common Lisp choice operators store the bindings of relevant variables
 using closures and variable capture. As macros, choose and choose-bind get
 expanded within the lexical environment of the containing expressions. Notice
 that what they push onto *paths* is a closure over the choice to be saved, locking
 in all the bindings of the lexical variables referred to within it. For example, in
 the expression
 
+```
 (let ((x 2))
   (choose
     (+ x 1)
     (+ x 100)))
+```
 
 the value of x will be needed when the saved choices are restarted. This is why
 choose is written to wrap its arguments in lambda-expressions. The expression
 above gets macroexpanded into:
 
+```
 (let ((x 2))
   (progn
     (push #’(lambda () (+ x 100))
           *paths*)
     (+ x 1)))
+```
 
 The object which gets stored on *paths* is a closure containing a pointer to x. It
 is the need to preserve variables in closures which dictates the difference between
 the syntax of the Scheme and Common Lisp choice operators.
-     If we use choose and fail together with the continuation-passing macros
+
+If we use choose and fail together with the continuation-passing macros
 of Chapter 20, a pointer to our continuation variable *cont* will get saved as
 well. By deﬁning functions with =defun, calling them with =bind, and having
 them return values with =values, we will be able to use nondeterminism in any
 Common Lisp program.
-     With these macros, we can successfully run the example in which the nonde-
+
+With these macros, we can successfully run the example in which the nonde-
 terministic choice occurs in a subroutine. Figure 22.6 shows the Common Lisp
 version of parlor-trick, which works as it did in Scheme:
-   2 If
-     desired, the exported interface to this code could consist of just a single operator, because
-(fail) is equivalent to (choose).
 
+```
+(=defun two-numbers ()
+  (choose-bind n1 ’(0 1 2 3 4 5)
+    (choose-bind n2 ’(0 1 2 3 4 5)
+      (=values n1 n2))))
 
+(=defun parlor-trick (sum)
+  (=bind (n1 n2) (two-numbers)
+    (if (= (+ n1 n2) sum)
+        ‘(the sum of ,n1 ,n2)
+        (fail))))
+```
+> Figure 22.6: Common Lisp choice in a subroutine.
 
----
-
-
-22.4                       COMMON LISP IMPLEMENTATION                            297
-
-
-
- (=defun two-numbers ()
-   (choose-bind n1 ’(0 1 2 3 4 5)
-     (choose-bind n2 ’(0 1 2 3 4 5)
-       (=values n1 n2))))
-
- (=defun parlor-trick (sum)
-   (=bind (n1 n2) (two-numbers)
-     (if (= (+ n1 n2) sum)
-         ‘(the sum of ,n1 ,n2)
-         (fail))))
-
-               Figure 22.6: Common Lisp choice in a subroutine.
-
-
+```
 > (parlor-trick 7)
 (THE SUM OF 2 5)
+```
 
 This works because the expression
 
+```
 (=values n1 n2)
+```
 
-gets macroexpanded into
+gets macro expanded into
+
+```
 (funcall *cont* n1 n2)
+```
 
-within the choose-binds. Each choose-bind is in turn macroexpanded into a
-closure, which keeps pointers to all the variables referred to in the body, including
-*cont*.
-    The restrictions on the use of choose, choose-bind, and fail are the same
+within the choose-binds. Each choose-bind is in turn macroexpanded
+into a closure, which keeps pointers to all the variables referred to
+in the body, including *cont*.
+
+The restrictions on the use of choose, choose-bind, and fail are the same
 as the restrictions given in Figure 20.5 for code which uses the continuation-
 passing macros. Where a choice expression occurs, it must be the last thing to
 be evaluated. Thus if we want to make sequential choices, in Common Lisp the
 choices have to be nested:
 
+```
 > (choose-bind first-name ’(henry william)
     (choose-bind last-name ’(james higgins)
       (=values (list first-name last-name))))
@@ -14540,245 +14358,227 @@ choices have to be nested:
 (HENRY HIGGINS)
 > (fail)
 (WILLIAM JAMES)
+```
+
+which will, as usual, result in depth-ﬁrst search.
+
+The operators deﬁned in Chapter 20 claimed the right to be the last
+expressions evaluated. This right is now preempted by the new layer of
+macros; an =values expression should appear within a choose
+expression, and not vice versa. That is,
+
+```
+(choose (=values 1) (=values 2))
+```
+
+will work, but
+
+```
+(=values (choose 1 2))                                                   ; wrong
+```
+
+will not. (In the latter case, the expansion of the choose would be unable to
+capture the instance of *cont* in the expansion of the =values.)
+
+As long as we respect the restrictions outlined here and in Figure
+20.5, nondeterministic choice in Common Lisp will now work as it
+does in Scheme. Figure 22.7 shows a Common Lisp version of the
+nondeterministic tree search program given in Figure 22.2. The Common
+Lisp descent is a direct translation, though it comes out slightly
+longer and uglier.
+
+We now have Common Lisp utilities which make it possible to do
+nondeterministic search without explicit backtracking. Having taken
+trouble to write this code, we can reap the beneﬁts by writing in very
+few lines programs which would otherwise be large and messy. By
+building another layer of macros on top of those presented here, we
+will be able to write an ATN compiler in one page of code (Chapter
+23), and a sketch of Prolog in two (Chapter 24).
+
+Common Lisp programs which use choose should be compiled with tail-
+recursion optimization—not just to make them faster, but to avoid
+running out of stack space. Programs which "return" values by calling
+continuation functions never actually return until the ﬁnal
+fail. Without the optimization of tail-calls, the stack would just
+grow and grow.
 
 
+## 22.5 Cuts
 
----
+This section shows how to use cuts in Scheme programs which do
+nondeterministic choice. Though the word cut comes from Prolog, the
+concept belongs to nondeterminism generally. You might want to use
+cuts in any program that made nondeterministic choices.
 
+Cuts are easier to understand when considered independently of
+Prolog. Let’s imagine a real-life example. Suppose that the
+manufacturer of Chocoblob candies decides to run a promotion. A small
+number of boxes of Chocoblobs will also contain tokens entitling the
+recipient to valuable prizes. To ensure fairness, no two of the
+winning boxes are sent to the same city.
 
-   298                              NONDETERMINISM
+```
+> (=defun descent (n1 n2)
+    (cond ((eq n1 n2) (=values (list n2)))
+          ((kids n1) (choose-bind n (kids n1)
+                       (=bind (p) (descent n n2)
+                          (=values (cons n1 p)))))
+          (t (fail))))
+DESCENT
+> (defun kids (n)
+    (case n
+      (a ’(b c))
+      (b ’(d e))
+      (c ’(d f))
+      (f ’(g))))
+KIDS
+> (descent ’a ’g)
+(A C F G)
+> (fail)
+@
+> (descent ’a ’d)
+(A B D)
+> (fail)
+(A C D)
+> (fail)
+@
+> (descent ’a ’h)
+@
+```
+> Figure 22.7: Nondeterministic search in Common Lisp
 
-
-
-   which will, as usual, result in depth-ﬁrst search.
-       The operators deﬁned in Chapter 20 claimed the right to be the last expressions
-   evaluated. This right is now preempted by the new layer of macros; an =values
-   expression should appear within a choose expression, and not vice versa. That
-   is,
-
-   (choose (=values 1) (=values 2))
-
-   will work, but
-   (=values (choose 1 2))                                                   ; wrong
-
-  will not. (In the latter case, the expansion of the choose would be unable to
-  capture the instance of *cont* in the expansion of the =values.)
-      As long as we respect the restrictions outlined here and in Figure 20.5, non-
-  deterministic choice in Common Lisp will now work as it does in Scheme. Fig-
-  ure 22.7 shows a Common Lisp version of the nondeterministic tree search pro-
-  gram given in Figure 22.2. The Common Lisp descent is a direct translation,
-  though it comes out slightly longer and uglier.
-      We now have Common Lisp utilities which make it possible to do nondeter-
-  ministic search without explicit backtracking. Having taken trouble to write this
-  code, we can reap the beneﬁts by writing in very few lines programs which would
-  otherwise be large and messy. By building another layer of macros on top of
-  those presented here, we will be able to write an ATN compiler in one page of code
-  (Chapter 23), and a sketch of Prolog in two (Chapter 24).
-      Common Lisp programs which use choose should be compiled with tail-
-  recursion optimization—not just to make them faster, but to avoid running out of
-  stack space. Programs which "return" values by calling continuation functions
-  never actually return until the ﬁnal fail. Without the optimization of tail-calls,
- the stack would just grow and grow.
-
-
-   22.5 Cuts
-   This section shows how to use cuts in Scheme programs which do nondetermin-
-   istic choice. Though the word cut comes from Prolog, the concept belongs to
-   nondeterminism generally. You might want to use cuts in any program that made
-   nondeterministic choices.
-        Cuts are easier to understand when considered independently of Prolog. Let’s
-   imagine a real-life example. Suppose that the manufacturer of Chocoblob candies
-   decides to run a promotion. A small number of boxes of Chocoblobs will also
-   contain tokens entitling the recipient to valuable prizes. To ensure fairness, no
-   two of the winning boxes are sent to the same city.
-
-
-
----
-
-
-22.5                                     CUTS                                     299
-
-
-
- > (=defun descent (n1 n2)
-     (cond ((eq n1 n2) (=values (list n2)))
-           ((kids n1) (choose-bind n (kids n1)
-                        (=bind (p) (descent n n2)
-                           (=values (cons n1 p)))))
-           (t (fail))))
- DESCENT
- > (defun kids (n)
-     (case n
-       (a ’(b c))
-       (b ’(d e))
-       (c ’(d f))
-       (f ’(g))))
- KIDS
- > (descent ’a ’g)
- (A C F G)
- > (fail)
- @
- > (descent ’a ’d)
- (A B D)
- > (fail)
- (A C D)
- > (fail)
- @
- > (descent ’a ’h)
- @
-
-             Figure 22.7: Nondeterministic search in Common Lisp
-
-
-    After the promotion has begun, it emerges that the tokens are small enough to
+After the promotion has begun, it emerges that the tokens are small enough to
 be swallowed by children. Hounded by visions of lawsuits, Chocoblob lawyers
 begin a frantic search for all the special boxes. Within each city, there are multiple
 stores that sell Chocoblobs; within each store, there are multiple boxes. But the
 lawyers may not have to open every box: once they ﬁnd a coin-containing box in
 a given city, they do not have to search any of the other boxes in that city, because
 each city has at most one special box. To realize this is to do a cut.
-    What’s cut is a portion of the search tree. For Chocoblobs, the search tree
+
+What’s cut is a portion of the search tree. For Chocoblobs, the search tree
 exists physically: the root node is at the company’s head ofﬁce; the children of this
 node are the cities where the special boxes were sent; the children of those nodes
 are the stores in each city; and the children of each store represent the boxes in
 
+```
+(define (find-boxes)
+  (set! *paths* ())
+  (let ((city (choose ’(la ny bos))))
+    (newline)
+    (let* ((store (choose ’(1 2)))
+           (box (choose ’(1 2))))
+      (let ((triple (list city store box)))
+        (display triple)
+        (if (coin? triple)
+            (display ’c))
+        (fail)))))
 
-
----
-
-
-300                              NONDETERMINISM
-
-
-
-
- (define (find-boxes)
-   (set! *paths* ())
-   (let ((city (choose ’(la ny bos))))
-     (newline)
-     (let* ((store (choose ’(1 2)))
-            (box (choose ’(1 2))))
-       (let ((triple (list city store box)))
-         (display triple)
-         (if (coin? triple)
-             (display ’c))
-         (fail)))))
-
- (define (coin? x)
-   (member x ’((la 1 2) (ny 1 1) (bos 2 2))))
-
-                   Figure 22.8: Exhaustive Chocoblob search.
-
+(define (coin? x)
+  (member x ’((la 1 2) (ny 1 1) (bos 2 2))))
+```
+> Figure 22.8: Exhaustive Chocoblob search.
 
 that store. When the lawyers searching this tree ﬁnd one of the boxes containing
 a coin, they can prune off all the unexplored branches descending from the city
 they’re in now.
-    Cuts actually take two operations: you can do a cut when you know that part
+
+Cuts actually take two operations: you can do a cut when you know that part
 of the search tree is useless, but ﬁrst you have to mark the tree at the point where
 it can be cut. In the Chocoblob example, common sense tells us that the tree is
 marked as we enter each city. It’s hard to describe in abstract terms what a Prolog
 cut does, because the marks are implicit. With an explicit mark operator, the effect
 of a cut will be more easily understood.
-    Figure 22.8 shows a program that nondeterministically searches a smaller
+
+Figure 22.8 shows a program that nondeterministically searches a smaller
 version of the Chocoblob tree. As each box is opened, the program displays a list
 of (city store box). If the box contains a coin, a c is printed after it:
 
+```
 > (find-boxes)
 (LA 1 1)(LA 1 2)C(LA 2 1)(LA 2 2)
 (NY 1 1)C(NY 1 2)(NY 2 1)(NY 2 2)
 (BOS 1 1)(BOS 1 2)(BOS 2 1)(BOS 2 2)C
 @
+```
 
-    To implement the optimized search technique discovered by the Chocoblob
-lawyers, we need two new operators: mark and cut. Figure 22.9 shows one way
-to deﬁne them. Whereas nondeterminism itself can be understood independently
-of any particular implementation, pruning the search tree is an optimization tech-
-nique, and depends very much on how choose is implemented. The mark and
+To implement the optimized search technique discovered by the
+Chocoblob lawyers, we need two new operators: mark and cut. Figure
+22.9 shows one way to deﬁne them. Whereas nondeterminism itself can be
+understood independently of any particular implementation, pruning the
+search tree is an optimization technique, and depends very much on how
+choose is implemented. The mark and
 
+```
+(define (mark) (set! *paths* (cons fail *paths*)))
 
+(define (cut)
+  (cond ((null? *paths*))
+        ((equal? (car *paths*) fail)
+         (set! *paths* (cdr *paths*)))
+        (else
+         (set! *paths* (cdr *paths*))
+         (cut))))
+```
+> Figure 22.9: Marking and pruning search trees.
 
----
-
-
-22.5                                    CUTS                                    301
-
-
-
- (define (mark) (set! *paths* (cons fail *paths*)))
-
- (define (cut)
-   (cond ((null? *paths*))
-         ((equal? (car *paths*) fail)
-          (set! *paths* (cdr *paths*)))
-         (else
-          (set! *paths* (cdr *paths*))
-          (cut))))
-
-                 Figure 22.9: Marking and pruning search trees.
-
-
-
- (define (find-boxes)
-   (set! *paths* ())
-   (let ((city (choose ’(la ny bos))))
-     (mark)                                                                       ;
-     (newline)
-     (let* ((store (choose ’(1 2)))
-            (box (choose ’(1 2))))
-       (let ((triple (list city store box)))
-         (display triple)
-         (if (coin? triple)
-             (begin (cut) (display ’c)))                                          ;
-         (fail)))))
-
-                    Figure 22.10: Pruned Chocoblob search.
-
+```
+(define (find-boxes)
+  (set! *paths* ())
+  (let ((city (choose ’(la ny bos))))
+    (mark)                                                                       ;
+    (newline)
+    (let* ((store (choose ’(1 2)))
+           (box (choose ’(1 2))))
+      (let ((triple (list city store box)))
+        (display triple)
+        (if (coin? triple)
+            (begin (cut) (display ’c)))                                          ;
+        (fail)))))
+```
+> Figure 22.10: Pruned Chocoblob search.
 
 cut deﬁned in Figure 22.9 are suitable for use with the depth-ﬁrst implementation
 of choose (Figure 22.4).
-    The general idea is for mark to store markers in *paths*, the list of unexplored
+
+The general idea is for mark to store markers in *paths*, the list of unexplored
 choice-points. Calling cut pops *paths* all the way down to the most recent
 marker. What should we use as a marker? We could use e.g. the symbol m, but
 that would require us to rewrite fail to ignore the ms when it encountered them.
 Fortunately, since functions are data objects too, there is at least one marker that
 will allow us to use fail as is: the function fail itself. Then if fail happens
 on a marker, it will just call itself.
-    Figure 22.10 shows how these operators would be used to prune the search
+
+Figure 22.10 shows how these operators would be used to prune the search
 tree in the Chocoblob case. (Changed lines are indicated by semicolons.) We call
 mark upon choosing a city. At this point, *paths* contains one continuation,
 
-
-
----
-
-
-302                               NONDETERMINISM
-
-
-
-
-                   Figure 22.11: A directed graph with a loop.
-
+```
+[ MISSING ]
+```
+> Figure 22.11: A directed graph with a loop.
 
 representing the search of the remaining cities.
-    If we ﬁnd a box with a coin in it, we call cut, which sets *paths* back to the
+
+If we ﬁnd a box with a coin in it, we call cut, which sets *paths* back to the
 value it had at the time of the mark. The effects of the cut are not visible until the
 next call to fail. But when it comes, after the display, the next fail sends the
 search all the way up to the topmost choose, even if there would otherwise have
 been live choice-points lower in the search tree. The upshot is, as soon as we ﬁnd
 a box with a coin in it, we resume the search at the next city:
 
+```
 > (find-boxes)
 (LA 1 1)(LA 1 2)C
 (NY 1 1)C
 (BOS 1 1)(BOS 1 2)(BOS 2 1)(BOS 2 2)C
 @
+```
 
 In this case, we open seven boxes instead of twelve.
 
 
-22.6 True Nondeterminism
+## 22.6 True Nondeterminism
+
 A deterministic graph-searching program would have to take explicit steps to
 avoid getting caught in a circular path. Figure 22.11 shows a directed graph
 containing a loop. A program searching for a path from node a to node e risks
@@ -14786,175 +14586,148 @@ getting caught in the circular path a, b, c . Unless a deterministic searcher us
 randomization, breadth-ﬁrst search, or checked explicitly for circular paths, the
 search might never terminate. The implementation of path shown in Figure 22.12
 avoids circular paths by searching breadth-ﬁrst.
-    In principle, nondeterminism should save us the trouble of even considering
+
+In principle, nondeterminism should save us the trouble of even considering
 circular paths. The depth-ﬁrst implementation of choose and fail given in Sec-
 tion 22.3 is vulnerable to the problem of circular paths, but if we were being
 picky, we would expect nondeterministic choose to be able to select an object
 
+```
+(define (path node1 node2)
+  (bf-path node2 (list (list node1))))
 
+(define (bf-path dest queue)
+  (if (null? queue)
+      ’@
+      (let* ((path (car queue))
+              (node (car path)))
+         (if (eq? node dest)
+             (cdr (reverse path))
+             (bf-path dest
+                      (append (cdr queue)
+                              (map (lambda (n)
+                                     (cons n path))
+                                   (neighbors node))))))))
+```
+> Figure 22.12: Deterministic search.
 
----
-
-
-22.6                         TRUE NONDETERMINISM                           303
-
-
-
- (define (path node1 node2)
-   (bf-path node2 (list (list node1))))
-
- (define (bf-path dest queue)
-   (if (null? queue)
-       ’@
-       (let* ((path (car queue))
-               (node (car path)))
-          (if (eq? node dest)
-              (cdr (reverse path))
-              (bf-path dest
-                       (append (cdr queue)
-                               (map (lambda (n)
-                                      (cons n path))
-                                    (neighbors node))))))))
-
-                      Figure 22.12: Deterministic search.
-
-
-
- (define (path node1 node2)
-   (cond ((null? (neighbors node1)) (fail))
-         ((memq node2 (neighbors node1)) (list node2))
-         (else (let ((n (true-choose (neighbors node1))))
-                 (cons n (path n node2))))))
-
-                    Figure 22.13: Nondeterministic search.
-
+```
+(define (path node1 node2)
+  (cond ((null? (neighbors node1)) (fail))
+        ((memq node2 (neighbors node1)) (list node2))
+        (else (let ((n (true-choose (neighbors node1))))
+                (cons n (path n node2))))))
+```
+> Figure 22.13: Nondeterministic search.
 
 which meets any computable speciﬁcation, and this case is no exception. Using a
 correct choose, we should be able to write the shorter and clearer version of path
 shown in Figure 22.13.
-    This section shows how to implement versions choose and fail which are safe
+
+This section shows how to implement versions choose and fail which are safe
 even from circular paths. Figure 22.14 contains a Scheme implementation of true
 nondeterministic choose and fail. Programs which use these versions of choose
 and fail should ﬁnd solutions whenever the equivalent nondeterministic algorithms
 would, subject to hardware limitations.
-    The implementation of true-choose deﬁned in Figure 22.14 works by treat-
-ing the list of stored paths as a queue. Programs using true-choose will search
-their state-space breadth-ﬁrst. When the program reaches a choice-point, contin-
-uations to follow each choice are appended to the end of the list of stored paths.
 
+The implementation of true-choose deﬁned in Figure 22.14 works by
+treating the list of stored paths as a queue. Programs using
+true-choose will search their state-space breadth-ﬁrst. When the
+program reaches a choice-point, continuations to follow each choice
+are appended to the end of the list of stored paths.
 
+```
+(define *paths* ())
+(define failsym ’@)
 
----
+(define (true-choose choices)
+  (call-with-current-continuation
+    (lambda (cc)
+      (set! *paths* (append *paths*
+                            (map (lambda (choice)
+                                   (lambda () (cc choice)))
+                                 choices)))
+      (fail))))
 
+(define fail)
 
-304                             NONDETERMINISM
-
-
-
-
- (define *paths* ())
- (define failsym ’@)
-
- (define (true-choose choices)
-   (call-with-current-continuation
-     (lambda (cc)
-       (set! *paths* (append *paths*
-                             (map (lambda (choice)
-                                    (lambda () (cc choice)))
-                                  choices)))
-       (fail))))
-
- (define fail)
-
- (call-with-current-continuation
-   (lambda (cc)
-     (set! fail
-           (lambda ()
-             (if (null? *paths*)
-                 (cc failsym)
-                 (let ((p1 (car *paths*)))
-                   (set! *paths* (cdr *paths*))
-                   (p1)))))))
-
-                   Figure 22.14: Correct choose in Scheme.
-
+(call-with-current-continuation
+  (lambda (cc)
+    (set! fail
+          (lambda ()
+            (if (null? *paths*)
+                (cc failsym)
+                (let ((p1 (car *paths*)))
+                  (set! *paths* (cdr *paths*))
+                  (p1)))))))
+```
+> Figure 22.14: Correct choose in Scheme.
 
 (Scheme’s map returns the same values as Common Lisp’s mapcar.) After this
 there is a call to fail, which is unchanged.
-     This version of choose would allow the implementation of path deﬁned in
+
+This version of choose would allow the implementation of path deﬁned in
 Figure 22.13 to ﬁnd a path—indeed, the shortest path—from a to e in the graph
 displayed in Figure 22.11.
-     Although for the sake of completeness this chapter has provided correct ver-
-sions of choose and fail, the original implementations will usually sufﬁce. The
-value of a programming language abstraction is not diminished just because its
-implementation isn’t formally correct. In some languages we act as if we had
-access to all the integers, even though the largest one may be only 32767. As
-long as we know how far we can push the illusion, there is little danger to it—
-little enough, at least, to make the abstraction a bargain. The conciseness of
-the programs presented in the next two chapters is due largely to their use of
-nondeterministic choose and fail.
 
+Although for the sake of completeness this chapter has provided
+correct versions of choose and fail, the original implementations will
+usually sufﬁce. The value of a programming language abstraction is not
+diminished just because its implementation isn’t formally correct. In
+some languages we act as if we had access to all the integers, even
+though the largest one may be only 32767. As long as we know how far
+we can push the illusion, there is little danger to it little enough,
+at least, to make the abstraction a bargain. The conciseness of the
+programs presented in the next two chapters is due largely to their
+use of nondeterministic choose and fail.
 
+# 23 Parsing with ATNs
 
----
+This chapter shows how to write a nondeterministic parser as an
+embedded language. The ﬁrst part explains what ATN parsers are, and
+how they represent grammar rules. The second part presents an ATN
+compiler which uses the nondeterministic operators deﬁned in the
+previous chapter. The ﬁnal sections present a small ATN grammar, and
+show it in action parsing sample input.
 
+## 23.1 Background
 
-23
-
-Parsing with ATNs
-
-This chapter shows how to write a nondeterministic parser as an embedded lan-
-guage. The ﬁrst part explains what ATN parsers are, and how they represent
-grammar rules. The second part presents an ATN compiler which uses the nonde-
-terministic operators deﬁned in the previous chapter. The ﬁnal sections present a
-small ATN grammar, and show it in action parsing sample input.
-
-
-23.1 Background
 Augmented Transition Networks, or ATNs, are a form of parser described by
 Bill Woods in 1970. Since then they have become a widely used formalism for
 parsing natural language. In an hour you can write an ATN grammar which parses
 interesting English sentences. For this reason, people are often held in a sort of
 spell when they ﬁrst encounter them.
-    In the 1970s, some people thought that ATNs might one day be components
-of truly intelligent-seeming programs. Though few hold this position today, ATNs
-have found a niche. They aren’t as good as you are at parsing English, but they
-can still parse an impressive variety of sentences.
-    ATNs are useful if you observe the following four restrictions:
 
-   1. Use them in a semantically limited domain—in a front-end to a particular
-      database, for example.
+In the 1970s, some people thought that ATNs might one day be
+components of truly intelligent-seeming programs. Though few hold this
+position today, ATNs have found a niche. They aren’t as good as you
+are at parsing English, but they can still parse an impressive variety
+of sentences.
 
-   2. Don’t feed them very difﬁcult input. Among other things, don’t expect
-      them to understand wildly ungrammatical sentences the way people can.
+ATNs are useful if you observe the following four restrictions:
 
+1. Use them in a semantically limited domain—in a front-end to a particular
+   database, for example.
 
-                                      305
+2. Don’t feed them very difﬁcult input. Among other things, don’t expect
+   them to understand wildly ungrammatical sentences the way people can.
 
+3. Only use them for English, or other languages in which word order
+   determines grammatical structure. ATNs would not be useful in
+   pasarsing inﬂected languages like Latin.
 
-
----
-
-
-306                             PARSING WITH ATNS
-
-
-
-   3. Only use them for English, or other languages in which word order deter-
-      mines grammatical structure. ATNs would not be useful in parsing inﬂected
-      languages like Latin.
-
-   4. Don’t expect them to work all the time. Use them in applications where it’s
-      helpful if they work ninety percent of the time, not those where it’s critical
-      that they work a hundred percent of the time.
+4. Don’t expect them to work all the time. Use them in applications
+   where it’s helpful if they work ninety percent of the time, not
+   those where it’s critical that they work a hundred percent of the
+   time.
 
 Within these limits there are plenty of useful applications. The canonical example
 is as the front-end of a database. If you attach an ATN-driven interface to such
 a system, then instead of making a formal query, users can ask questions in a
 constrained form of English.
 
+## 23.2 The Formalism
 
-23.2 The Formalism
 To understand what ATNs do, we should recall their full name: augmented transi-
 tion networks. A transition network is a set of nodes joined together by directed
 arcs—essentially, a ﬂow-chart. One node is designated the start node, and some
@@ -14964,113 +14737,108 @@ sentence, with a pointer to the current word. Following some arcs will cause the
 pointer to be advanced. To parse a sentence on a transition network is to ﬁnd a
 path from the start node to some terminal node, along which all the conditions
 can be met.
-    ATNs add two features to this model:
 
-   1. ATNs have registers—named slots for storing away information as the parse
-      proceeds. As well as performing tests, arcs can modify the contents of the
-      registers.
+ATNs add two features to this model:
 
-   2. ATNs are recursive. Arcs may require that, in order to follow them, the
-      parse must successfully make it through some sub-network.
+1. ATNs have registers—named slots for storing away information as the
+   parse proceeds. As well as performing tests, arcs can modify the
+   contents of the registers.
+
+2. ATNs are recursive. Arcs may require that, in order to follow them, the
+   parse must successfully make it through some sub-network.
 
 Terminal nodes use the information which has accumulated in the registers to
 build list structures, which they return in much the same way that functions return
 values. In fact, with the exception of being nondeterministic, ATNs behave a lot
 like a functional programming language.
-    The ATN deﬁned in Figure 23.1 is nearly the simplest possible. It parses noun-
+
+The ATN deﬁned in Figure 23.1 is nearly the simplest possible. It parses noun-
 verb sentences of the form "Spot runs." The network representation of this ATN is
 shown in Figure 23.2.
-    What does this ATN do when given the input (spot runs)? The ﬁrst node has
+
+What does this ATN do when given the input (spot runs)? The ﬁrst node has
 one outgoing arc, a cat, or category arc, leading to node s2. It says, effectively,
 
+```
+(defnode s
+  (cat noun s2
+    (setr subj *)))
 
+(defnode s2
+  (cat verb s3
+    (setr v *)))
 
----
-
-
-23.2                               THE FORMALISM                                 307
-
-
-
- (defnode s
-   (cat noun s2
-     (setr subj *)))
-
- (defnode s2
-   (cat verb s3
-     (setr v *)))
-
- (defnode s3
-   (up ‘(sentence
-          (subject ,(getr subj))
-          (verb ,(getr v)))))
-
-                         Figure 23.1: A very small ATN.
+(defnode s3
+  (up ‘(sentence
+         (subject ,(getr subj))
+         (verb ,(getr v)))))
+```
+> Figure 23.1: A very small ATN.
 
 
 
-
-                       Figure 23.2: Graph of a small ATN.
-
+```
+[ MISSING ]
+```
+> Figure 23.2: Graph of a small ATN.
 
 you can follow me if the current word is a noun, and if you do, you must store
 the current word (indicated by *) in the subj register. So we leave this node with
 spot stored in the subj register.
-    There is always a pointer to the current word. Initially it points to the ﬁrst
+
+There is always a pointer to the current word. Initially it points to the ﬁrst
 word in the sentence. When cat arcs are followed, this pointer is moved forward
 one. So when we get to node s2, the current word is the second, runs. The
 second arc is just like the ﬁrst, except that it is looking for a verb. It ﬁnds runs,
 stores it in register v, and proceeds to s3.
-    The ﬁnal node, s3, has only a pop, or terminal, arc. (Nodes with pop arcs have
+
+The ﬁnal node, s3, has only a pop, or terminal, arc. (Nodes with pop arcs have
 dashed borders.) Because we arrive at the pop arc just as we run out of input, we
 have a successful parse. The pop arc returns the backquoted expression within it:
 
-
+```
 (sentence (subject spot)
           (verb runs))
-   An ATN corresponds to the grammar of the language it is designed to parse. A
-decent-sized ATN for parsing English will have a main network for parsing sen-
+```
 
+An ATN corresponds to the grammar of the language it is designed to
+parse. A decent-sized ATN for parsing English will have a main network
+for parsing sentences, and sub-networks for parsing noun-phrases,
+prepositional phrases, modi- ﬁer groups, and so on. The need for
+recursion is obvious when we consider that noun-phrases may contain
+prepositional phrases which may contain noun-phrases, ad inﬁnitum, as
+in
 
+> "the key on the table in the hall of the house on the hill"
 
----
+## 23.3 Nondeterminism
 
-
-308                             PARSING WITH ATNS
-
-
-
-tences, and sub-networks for parsing noun-phrases, prepositional phrases, modi-
-ﬁer groups, and so on. The need for recursion is obvious when we consider that
-noun-phrases may contain prepositional phrases which may contain noun-phrases,
-ad inﬁnitum, as in
-
-            "the key on the table in the hall of the house on the hill"
-
-
-23.3 Nondeterminism
 Although we didn’t see it in this small example, ATNs are nondeterministic. A
 node can have several outgoing arcs, more than one of which could be followed
 with a given input. For example, a reasonably good ATN should be able to parse
 both imperative and declarative sentences. Thus the ﬁrst node could have outgoing
 cat arcs for both nouns (in statements) and verbs (in commands).
-    What if the ﬁrst word of the sentence is "time," which is both a noun and a
+
+What if the ﬁrst word of the sentence is "time," which is both a noun and a
 verb? How does the parser know which arc to follow? When ATNs are described
 as nondeterministic, it means that users can assume that the parser will correctly
 guess which arc to follow. If some arcs lead only to failed parses, they won’t be
 followed.
-    In reality the parser cannot look into the future. It simulates correct guessing
+
+In reality the parser cannot look into the future. It simulates correct guessing
 by backtracking when it runs out of arcs, or input. But all the machinery of
 backtracking is inserted automatically into the code generated by the ATN compiler.
 We can write ATNs as if the parser really could guess which arcs to follow.
-    Like many (perhaps most) programs which use nondeterminism, ATNs use
+
+Like many (perhaps most) programs which use nondeterminism, ATNs use
 the depth-ﬁrst implementation. Experience parsing English quickly teaches one
 that any given sentence has a slew of legal parsings, most of them junk. On a
 conventional single-processor machine, one is better off trying to get good parses
 quickly. Instead of getting all the parses at once, we get just the most likely. If
 it has a reasonable interpretation, then we have saved the effort of ﬁnding other
 parses; if not, we can call fail to get more.
-    To control the order in which parses are generated, the programmer needs to
+
+To control the order in which parses are generated, the programmer needs to
 have some way of controlling the order in which choose tries alternatives. The
 depth-ﬁrst implementation isn’t the only way of controlling the order of the search.
 Any implementation except a randomizing one imposes some kind of order. How-
@@ -15078,15 +14846,8 @@ ever, ATNs, like Prolog, have the depth-ﬁrst implementation conceptually built
 In an ATN, the arcs leaving a node are tried in the order in which they were deﬁned.
 This convention allows the programmer to order arcs by priority.
 
+## 23.4 An ATN Compiler
 
-
----
-
-
-23.4                              AN ATN COMPILER                                 309
-
-
-23.4 An ATN Compiler
 Ordinarily, an ATN-based parser needs three components: the ATN itself, an inter-
 preter for traversing it, and a dictionary which can tell it, for example, that "runs"
 is a verb. Dictionaries are a separate topic—here we will use a rudimentary hand-
@@ -15094,206 +14855,196 @@ made one. Nor will we need to deal with a network interpreter, because we will
 translate the ATN directly into Lisp code. The program described here is called an
 ATN compiler because it transforms a whole ATN into code. Nodes are transformed
 into functions, and arcs become blocks of code within them.
-     Chapter 6 introduced the use of functions as a form of representation. This
+
+Chapter 6 introduced the use of functions as a form of representation. This
 practice usually makes programs faster. Here it means that there will be no
 overhead of interpreting the network at runtime. The disadvantage is that there is
 less to inspect when something goes wrong, especially if you’re using a Common
 Lisp implementation which doesn’t provide function-lambda-expression.
-     Figure 23.3 contains all the code for transforming ATN nodes into Lisp code.
+
+Figure 23.3 contains all the code for transforming ATN nodes into Lisp code.
 The macro defnode is used to deﬁne nodes. It generates little code itself, just a
 choose over the expressions generated for each of the arcs. The two parameters
 of a node-function get the following values: pos is the current input pointer (an
 integer), and regs is the current set of registers (a list of assoc-lists).
-     The macro defnode deﬁnes a macro with the same name as the corresponding
+
+The macro defnode deﬁnes a macro with the same name as the corresponding
 node. Node s will be deﬁned as macro s. This convention enables arcs to know
 how to refer to their destination nodes—they just call the macro with that name.
 It also means that you shouldn’t give nodes the names of existing functions or
 macros, or these will be redeﬁned.
-     Debugging ATNs requires some sort of trace facility. Because nodes become
+
+Debugging ATNs requires some sort of trace facility. Because nodes become
 functions, we don’t have to write our own. We can use the built-in Lisp function
 trace. As mentioned on page 266, using =defun to deﬁne nodes means that we
 can trace parses going through node mods by saying (trace =mods).
-     The arcs within the body of a node are simply macro calls, returning code which
+
+The arcs within the body of a node are simply macro calls, returning code which
 gets embedded in the node function being made by defnode. The parser uses
 nondeterminism at each node by executing a choose over the code representing
 each of the arcs leaving that node. A node with several outgoing arcs, say
+
+```
 (defnode foo
   <arc 1>
   <arc 2>)
+```
+
 gets translated into a function deﬁnition of the following form:
+
+```
 (=defun foo (pos regs)
   (choose
     <translation of arc 1>
     <translation of arc 2>))
+```
 
+```
+(defmacro defnode (name &rest arcs)
+  ‘(=defun ,name (pos regs) (choose ,@arcs)))
 
+(defmacro down (sub next &rest cmds)
+  ‘(=bind (* pos regs) (,sub pos (cons nil regs))
+     (,next pos ,(compile-cmds cmds))))
 
----
+(defmacro cat (cat next &rest cmds)
+  ‘(if (= (length *sent*) pos)
+       (fail)
+       (let ((* (nth pos *sent*)))
+         (if (member ’,cat (types *))
+             (,next (1+ pos) ,(compile-cmds cmds))
+             (fail)))))
 
+(defmacro jump (next &rest cmds)
+  ‘(,next pos ,(compile-cmds cmds)))
 
-310                      PARSING WITH ATNS
+(defun compile-cmds (cmds)
+  (if (null cmds)
+      ’regs
+      ‘(,@(car cmds) ,(compile-cmds (cdr cmds)))))
 
+(defmacro up (expr)
+  ‘(let ((* (nth pos *sent*)))
+     (=values ,expr pos (cdr regs))))
 
+(defmacro getr (key &optional (regs ’regs))
+  ‘(let ((result (cdr (assoc ’,key (car ,regs)))))
+     (if (cdr result) result (car result))))
 
+(defmacro set-register (key val regs)
+  ‘(cons (cons (cons ,key ,val) (car ,regs))
+         (cdr ,regs)))
 
- (defmacro defnode (name &rest arcs)
-   ‘(=defun ,name (pos regs) (choose ,@arcs)))
+(defmacro setr (key val regs)
+  ‘(set-register ’,key (list ,val) ,regs))
 
- (defmacro down (sub next &rest cmds)
-   ‘(=bind (* pos regs) (,sub pos (cons nil regs))
-      (,next pos ,(compile-cmds cmds))))
+(defmacro pushr (key val regs)
+  ‘(set-register ’,key
+                 (cons ,val (cdr (assoc ’,key (car ,regs))))
+                 ,regs))
+```
+> Figure 23.3: Compilation of nodes and arcs.
 
- (defmacro cat (cat next &rest cmds)
-   ‘(if (= (length *sent*) pos)
+```
+(defnode s
+  (down np s/subj
+    (setr mood ’decl)
+    (setr subj *))
+  (cat v v
+    (setr mood ’imp)
+    (setr subj ’(np (pron you)))
+    (setr aux nil)
+    (setr v *)))
+
+;; is macroexpanded into:
+
+(=defun s (pos regs)
+  (choose
+    (=bind (* pos regs) (np pos (cons nil regs))
+      (s/subj pos
+              (setr mood ’decl
+                    (setr subj * regs))))
+    (if (= (length *sent*) pos)
         (fail)
         (let ((* (nth pos *sent*)))
-          (if (member ’,cat (types *))
-              (,next (1+ pos) ,(compile-cmds cmds))
-              (fail)))))
-
- (defmacro jump (next &rest cmds)
-   ‘(,next pos ,(compile-cmds cmds)))
-
- (defun compile-cmds (cmds)
-   (if (null cmds)
-       ’regs
-       ‘(,@(car cmds) ,(compile-cmds (cdr cmds)))))
-
- (defmacro up (expr)
-   ‘(let ((* (nth pos *sent*)))
-      (=values ,expr pos (cdr regs))))
-
- (defmacro getr (key &optional (regs ’regs))
-   ‘(let ((result (cdr (assoc ’,key (car ,regs)))))
-      (if (cdr result) result (car result))))
-
- (defmacro set-register (key val regs)
-   ‘(cons (cons (cons ,key ,val) (car ,regs))
-          (cdr ,regs)))
-
- (defmacro setr (key val regs)
-   ‘(set-register ’,key (list ,val) ,regs))
-
- (defmacro pushr (key val regs)
-   ‘(set-register ’,key
-                  (cons ,val (cdr (assoc ’,key (car ,regs))))
-                  ,regs))
-
-             Figure 23.3: Compilation of nodes and arcs.
-
-
-
----
-
-
-23.4                            AN ATN COMPILER                              311
-
-
-
- (defnode s
-   (down np s/subj
-     (setr mood ’decl)
-     (setr subj *))
-   (cat v v
-     (setr mood ’imp)
-     (setr subj ’(np (pron you)))
-     (setr aux nil)
-     (setr v *)))
-
- is macroexpanded into:
- (=defun s (pos regs)
-   (choose
-     (=bind (* pos regs) (np pos (cons nil regs))
-       (s/subj pos
-               (setr mood ’decl
-                     (setr subj * regs))))
-     (if (= (length *sent*) pos)
-         (fail)
-         (let ((* (nth pos *sent*)))
-           (if (member ’v (types *))
-               (v (1+ pos)
-                  (setr mood ’imp
-                        (setr subj ’(np (pron you))
-                              (setr aux nil
-                                    (setr v * regs)))))
-               (fail))))))
-
-               Figure 23.4: Macroexpansion of a node function.
-
+          (if (member ’v (types *))
+              (v (1+ pos)
+                 (setr mood ’imp
+                       (setr subj ’(np (pron you))
+                             (setr aux nil
+                                   (setr v * regs)))))
+              (fail))))))
+```
+> Figure 23.4: Macroexpansion of a node function.
 
 Figure 23.4 shows the macroexpansion of the ﬁrst node in the sample ATN of
 Figure 23.11. When called at runtime, node functions like s nondeterministically
 choose an arc to follow. The parameter pos will be the current position in the
 input sentence, and regs the current registers.
-    Cat arcs, as we saw in our original example, insist that the current word of
+
+Cat arcs, as we saw in our original example, insist that the current word of
 input belong to a certain grammatical category. Within the body of a cat arc, the
 symbol * will be bound to the current word of input.
-    Push arcs, deﬁned with down, require successful calls to sub-networks. They
-take two destination nodes, the sub-network destination sub, and the next node
-in the current network, next. Notice that whereas the code generated for a cat
 
+Push arcs, deﬁned with down, require successful calls to
+sub-networks. They take two destination nodes, the sub-network
+destination sub, and the next node in the current network,
+next. Notice that whereas the code generated for a cat arc simply
+calls the next node in the network, the code generated for a push arc
+uses =bind. The push arc must successfully return from the sub-network
+before continuing on to the node which follows it. A clean set of
+registers (nil) gets consed onto the front of regs before they are
+passed to the sub-network.  In the bodies of other types of arcs, the
+symbol * will be bound to the current word of input, but in push arcs
+it will be bound to the expression returned by the sub-network.
 
+Jump arcs are like short-circuits. The parser skips right across to
+the destination node—no tests are required, and the input pointer
+isn’t advanced.
 
----
+The ﬁnal type of arc is the pop arc, deﬁned with up. Pop arcs are
+unusual in that they don’t have a destination. Just as a Lisp return
+leads not to a subroutine but the calling function, a pop arc leads
+not to a new node but back to the "calling" push arc. The =values in a
+pop arc "returns" a value to the =bind in the most recent push
+arc. But, as Section 20.2 explained, what’s happening is not a normal
+Lisp return: the body of the =bind has been wrapped up into a
+continuation and passed down as a parameter through any number of
+arcs, until the =values of the pop arc ﬁnally calls it on the "return"
+values.  Chapter 22 described two versions of nondeterministic choose:
+a fast choose (page 293) that wasn’t guaranteed to terminate when
+there were loops in the search space, and a slower true-choose (page
+304) which was safe from such loops.  There can be cycles in an ATN,
+of course, but as long as at least one arc in each cycle advances the
+input pointer, the parser will eventually run off the end of the
+sentence. The problem arises with cycles which don’t advance the input
+pointer.  Here we have two alternatives:
 
+1. Use the slower, correct nondeterministic choice operator (the depth-ﬁrst
+    ersion given on page 396).
 
-   312                              PARSING WITH ATNS
+2. Use the fast choose, and specify that it is an error to deﬁne networks
+   containing cycles which could be traversed by following just jump arcs.
 
+The code deﬁned in Figure 23.3 takes the second approach.
 
+The last four deﬁnitions in Figure 23.3 deﬁne the macros used to read
+and set registers within arc bodies. In this program, register sets
+are represented as assoc-lists. An ATN deals not with sets of
+registers, but sets of sets of registers.  When the parser moves down
+to a sub-network, it gets a clean set of registers pushed on top of
+the existing ones. Thus the whole collection of registers, at any
+given time, is a list of assoc-lists.
 
-   arc simply calls the next node in the network, the code generated for a push
-   arc uses =bind. The push arc must successfully return from the sub-network
-   before continuing on to the node which follows it. A clean set of registers (nil)
-   gets consed onto the front of regs before they are passed to the sub-network.
-   In the bodies of other types of arcs, the symbol * will be bound to the current
-   word of input, but in push arcs it will be bound to the expression returned by the
-   sub-network.
-       Jump arcs are like short-circuits. The parser skips right across to the destination
-   node—no tests are required, and the input pointer isn’t advanced.
-       The ﬁnal type of arc is the pop arc, deﬁned with up. Pop arcs are unusual in
-   that they don’t have a destination. Just as a Lisp return leads not to a subroutine
-   but the calling function, a pop arc leads not to a new node but back to the "calling"
-   push arc. The =values in a pop arc "returns" a value to the =bind in the most
-   recent push arc. But, as Section 20.2 explained, what’s happening is not a normal
-   Lisp return: the body of the =bind has been wrapped up into a continuation and
-   passed down as a parameter through any number of arcs, until the =values of the
-   pop arc ﬁnally calls it on the "return" values.
-       Chapter 22 described two versions of nondeterministic choose: a fast choose
-   (page 293) that wasn’t guaranteed to terminate when there were loops in the search
-   space, and a slower true-choose (page 304) which was safe from such loops.
-   There can be cycles in an ATN, of course, but as long as at least one arc in each
-   cycle advances the input pointer, the parser will eventually run off the end of the
-   sentence. The problem arises with cycles which don’t advance the input pointer.
-   Here we have two alternatives:
-
-      1. Use the slower, correct nondeterministic choice operator (the depth-ﬁrst
-         version given on page 396).
-
-      2. Use the fast choose, and specify that it is an error to deﬁne networks
-         containing cycles which could be traversed by following just jump arcs.
-
-  The code deﬁned in Figure 23.3 takes the second approach.
-      The last four deﬁnitions in Figure 23.3 deﬁne the macros used to read and
-  set registers within arc bodies. In this program, register sets are represented as
-  assoc-lists. An ATN deals not with sets of registers, but sets of sets of registers.
-  When the parser moves down to a sub-network, it gets a clean set of registers
-  pushed on top of the existing ones. Thus the whole collection of registers, at any
-  given time, is a list of assoc-lists.
-      The predeﬁned register operators work on the current, or topmost, set of regis-
- ters: getr reads a register; setr sets one; and pushr pushes a value into one. Both
-  getr and pushr use the primitive register manipulation macro set-register.
-
-
-
----
-
-
-23.4                              AN ATN COMPILER                               313
-
+The predeﬁned register operators work on the current, or topmost, set
+of registers: getr reads a register; setr sets one; and pushr pushes a
+value into one. Both getr and pushr use the primitive register
+manipulation macro set-register.
 
 Note that registers don’t have to be declared. If set-register is sent a certain
 name, it will create a register with that name.
-    The register operators are all completely nondestructive. Cons, cons, cons,
+
+The register operators are all completely nondestructive. Cons, cons, cons,
 says set-register. This makes them slow and generates a lot of garbage, but,
 as explained on page 261, objects used in a part of a program where continuations
 are made should not be destructively modiﬁed. An object in one thread of control
@@ -15301,31 +15052,38 @@ may be shared by another thread which is currently suspended. In this case, the
 registers found in one parse will share structure with the registers in many of the
 other parses. If speed became an issue, we could store registers in vectors instead
 of assoc-lists, and recycle used vectors into a common pool.
-    Push, cat, and jump arcs can all contain bodies of expressions. Ordinarily
+
+Push, cat, and jump arcs can all contain bodies of expressions. Ordinarily
 these will be just setrs. By calling compile-cmds on their bodies, the expansion
 functions of these arc types string a series of setrs into a single expression:
 
+```
 > (compile-cmds ’((setr a b) (setr c d)))
 (SETR A B (SETR C D REGS))
+```
 
 Each expression has the next expression inserted as its last argument, except the
 last, which gets regs. So a series of expressions in the body of an arc will be
 transformed into a single expression returning the new registers.
-    This approach allows users to insert arbitrary Lisp code into the bodies of arcs
+
+This approach allows users to insert arbitrary Lisp code into the bodies of arcs
 by wrapping it in a progn. For example:
 
+```
 > (compile-cmds ’((setr a b)
                   (progn (princ "ek!"))
                   (setr c d)))
 (SETR A B (PROGN (PRINC "ek!") (SETR C D REGS)))
+```
 
-    Certain variables are left visible to code occurring in arc bodies. The sentence
+Certain variables are left visible to code occurring in arc bodies. The sentence
 will be in the global *sent*. Two lexical variables will also be visible: pos,
 containing the current input pointer, and regs, containing the current registers.
 This is another example of intentional variable capture. If it were desirable to
 prevent the user from referring to these variables, they could be replaced with
 gensyms.
-    The macro with-parses,deﬁned in Figure 23.5, gives us a way of invoking an
+
+The macro with-parses,deﬁned in Figure 23.5, gives us a way of invoking an
 ATN. It should be called with the name of a start node, an expression to be parsed,
 and a body of code describing what to do with the returned parses. The body of
 code within a with-parses expression will be evaluated once for each successful
@@ -15334,218 +15092,184 @@ Superﬁcially with-parses resembles operators like dolist, but underneath it
 uses backtracking search instead of simple iteration. A with-parses expression
 will return @, because that’s what fail returns when it runs out of choices.
 
+```
+(defmacro with-parses (node sent &body body)
+  (with-gensyms (pos regs)
+    ‘(progn
+       (setq *sent* ,sent)
+       (setq *paths* nil)
+       (=bind (parse ,pos ,regs) (,node 0 ’(nil))
+         (if (= ,pos (length *sent*))
+             (progn ,@body (fail))
+             (fail))))))
+```
+> Figure 23.5: Toplevel macro.
 
-
----
-
-
-314                             PARSING WITH ATNS
-
-
-
-
- (defmacro with-parses (node sent &body body)
-   (with-gensyms (pos regs)
-     ‘(progn
-        (setq *sent* ,sent)
-        (setq *paths* nil)
-        (=bind (parse ,pos ,regs) (,node 0 ’(nil))
-          (if (= ,pos (length *sent*))
-              (progn ,@body (fail))
-              (fail))))))
-
-                          Figure 23.5: Toplevel macro.
-
-
-    Before going on to look at a more representative ATN, let’s look at a parsing
+Before going on to look at a more representative ATN, let’s look at a parsing
 generated from the tiny ATN deﬁned earlier. The ATN compiler (Figure 23.3)
 generates code which calls types to determine the grammatical roles of a word,
 so ﬁrst we have to give it some deﬁnition:
 
+```
 (defun types (w)
   (cdr (assoc w ’((spot noun) (runs verb)))))
+```
 
 Now we just call with-parses with the name of the start node as the ﬁrst
 argument:
 
+```
 > (with-parses s ’(spot runs)
     (format t "Parsing: ~A~%" parse))
 Parsing: (SENTENCE (SUBJECT SPOT) (VERB RUNS))
 @
+```
 
+## 23.5 A Sample ATN
 
-23.5 A Sample ATN
 Now that the whole ATN compiler has been described, we can go on to try out
 some parses using a sample network. In order to make an ATN parser handle a
 richer variety of sentences, you make the ATNs themselves more complicated, not
 the ATN compiler. The compiler presented here is a toy mainly in the sense that
 it’s slow, not in the sense of having limited power.
-     The power (as distinct from speed) of a parser is in the grammar, and here
+
+The power (as distinct from speed) of a parser is in the grammar, and here
 limited space really will force us to use a toy version. Figures 23.8 through 23.11
 deﬁne the ATN (or set of ATNs) represented in Figure 23.6. This network is just
 big enough to yield several parsings for the classic parser fodder "Time ﬂies like
 an arrow."
 
+```
+[ MISSING ]
+```
 
+> Figure 23.6: Graph of a larger ATN.
 
----
+```
+(defun types (word)
+  (case word
+    ((do does did) ’(aux v))
+    ((time times) ’(n v))
+    ((fly flies) ’(n v))
+    ((like) ’(v prep))
+    ((liked likes) ’(v))
+    ((a an the) ’(det))
+    ((arrow arrows) ’(n))
+    ((i you he she him her it) ’(pron))))
+```
+> Figure 23.7: Nominal dictionary.
 
-
-23.5                              A SAMPLE ATN                               315
-
-
-
-
-                      Figure 23.6: Graph of a larger ATN.
-
-
-
- (defun types (word)
-   (case word
-     ((do does did) ’(aux v))
-     ((time times) ’(n v))
-     ((fly flies) ’(n v))
-     ((like) ’(v prep))
-     ((liked likes) ’(v))
-     ((a an the) ’(det))
-     ((arrow arrows) ’(n))
-     ((i you he she him her it) ’(pron))))
-
-                       Figure 23.7: Nominal dictionary.
-
-
-   We need a slightly larger dictionary to parse more complex input. The function
+We need a slightly larger dictionary to parse more complex input. The function
 types (Figure 23.7) provides a dictionary of the most primitive sort. It deﬁnes a
 22-word vocabulary, and associates each word with a list of one or more simple
 grammatical roles.
 
+```
+(defnode mods
+  (cat n mods/n
+    (setr mods *)))
 
+(defnode mods/n
+  (cat n mods/n
+    (pushr mods *))
+  (up ‘(n-group ,(getr mods))))
+```
+> Figure 23.8: Sub-network for strings of modiﬁers.
 
----
-
-
-316                             PARSING WITH ATNS
-
-
-
-
- (defnode mods
-   (cat n mods/n
-     (setr mods *)))
-
- (defnode mods/n
-   (cat n mods/n
-     (pushr mods *))
-   (up ‘(n-group ,(getr mods))))
-
-               Figure 23.8: Sub-network for strings of modiﬁers.
-
-
-     The components of an ATN are themselves ATNs. The smallest ATN in our set
+The components of an ATN are themselves ATNs. The smallest ATN in our set
 is the one in Figure 23.8. It parses strings of modiﬁers, which in this case means
 just strings of nouns. The ﬁrst node, mods, accepts a noun. The second node,
 mods/n, can either look for more nouns, or return a parsing.
-     Section 3.4 explained how writing programs in a functional style makes them
+
+Section 3.4 explained how writing programs in a functional style makes them
 easier to test:
 
-   1. In a functional program, components can be tested individually.
-   2. In Lisp, functions can be tested interactively, in the toplevel loop.
+1. In a functional program, components can be tested individually.
+2. In Lisp, functions can be tested interactively, in the toplevel loop.
 
 Together these two principles allow interactive development: when we write
 functional programs in Lisp, we can test each piece as we write it.
-    ATNs are so like functional programs—in this implementation, they macroex-
+
+ATNs are so like functional programs—in this implementation, they macroex-
 pand into functional programs—that the possibility of interactive development
 applies to them as well. We can test an ATN starting from any node, simply by
 giving its name as the ﬁrst argument to with-parses:
+
+```
 > (with-parses mods ’(time arrow)
     (format t "Parsing: ~A~%" parse))
 Parsing: (N-GROUP (ARROW TIME))
 @
+```
 
-    The next two networks have to be discussed together,because they are mutually
+The next two networks have to be discussed together,because they are mutually
 recursive. The network deﬁned in Figure 23.9, which begins with the node np,
 is used to parse noun phrases. The network deﬁned in Figure 23.10 parses
 prepositional phrases. Noun phrases may contain prepositional phrases and vice
 versa, so the two networks each contain a push arc which calls the other.
-    The noun phrase network contains six nodes. The ﬁrst node, np has three
+
+The noun phrase network contains six nodes. The ﬁrst node, np has three
 choices. If it reads a pronoun, then it can move to node pron, which pops out of
 the network:
 
+```
+(defnode np
+  (cat det np/det
+    (setr det *))
+  (jump np/det
+    (setr det nil))
+  (cat pron pron
+    (setr n *)))
 
+(defnode pron
+  (up ‘(np (pronoun ,(getr n)))))
 
----
+(defnode np/det
+  (down mods np/mods
+    (setr mods *))
+  (jump np/mods
+    (setr mods nil)))
 
+(defnode np/mods
+  (cat n np/n
+    (setr n *)))
 
-23.5                        A SAMPLE ATN               317
+(defnode np/n
+  (up ‘(np (det ,(getr det))
+           (modifiers ,(getr mods))
+           (noun ,(getr n))))
+  (down pp np/pp
+    (setr pp *)))
 
+(defnode np/pp
+  (up ‘(np (det ,(getr det))
+           (modifiers ,(getr mods))
+           (noun ,(getr n))
+           ,(getr pp))))
+```
+> Figure 23.9: Noun phrase sub-network.
 
-
- (defnode np
-   (cat det np/det
-     (setr det *))
-   (jump np/det
-     (setr det nil))
-   (cat pron pron
-     (setr n *)))
-
- (defnode pron
-   (up ‘(np (pronoun ,(getr n)))))
-
- (defnode np/det
-   (down mods np/mods
-     (setr mods *))
-   (jump np/mods
-     (setr mods nil)))
-
- (defnode np/mods
-   (cat n np/n
-     (setr n *)))
-
- (defnode np/n
-   (up ‘(np (det ,(getr det))
-            (modifiers ,(getr mods))
-            (noun ,(getr n))))
-   (down pp np/pp
-     (setr pp *)))
-
- (defnode np/pp
-   (up ‘(np (det ,(getr det))
-            (modifiers ,(getr mods))
-            (noun ,(getr n))
-            ,(getr pp))))
-
-               Figure 23.9: Noun phrase sub-network.
-
-
+```
 > (with-parses np ’(it)
     (format t "Parsing: ~A~%" parse))
 Parsing: (NP (PRONOUN IT))
 @
+```
 
+```
+(defnode pp
+  (cat prep pp/prep
+    (setr prep *)))
 
+(defnode pp/prep
+  (down np pp/np
+    (setr op *)))
 
----
-
-
-318                            PARSING WITH ATNS
-
-
-
-
- (defnode pp
-   (cat prep pp/prep
-     (setr prep *)))
-
- (defnode pp/prep
-   (down np pp/np
-     (setr op *)))
-
- (defnode pp/np
-   (up ‘(pp (prep ,(getr prep))
-            (obj ,(getr op)))))
-
-                Figure 23.10: Prepositional phrase sub-network.
-
+(defnode pp/np
+  (up ‘(pp (prep ,(getr prep))
+           (obj ,(getr op)))))
+```
+> Figure 23.10: Prepositional phrase sub-network.
 
 Both the other arcs lead to node np/det: one arc reads a determiner (e.g. "the"),
 and the other arc simply jumps, reading no input. At node np/det, both arcs
@@ -15554,9 +15278,11 @@ up a string of modiﬁers, or jumping. Node np-mods reads a noun and continues
 to np/n. This node can either pop a result, or push to the prepositional phrase
 network to try to pick up a prepositional phrase. The ﬁnal node, np/pp, pops a
 result.
-    Different types of noun phrases will have different parse paths. Here are two
+
+Different types of noun phrases will have different parse paths. Here are two
 parsings on the noun phrase network:
 
+```
 > (with-parses np ’(arrows)
     (pprint parse))
 (NP (DET NIL)
@@ -15571,19 +15297,18 @@ parsings on the noun phrase network:
     (PP (PREP LIKE)
         (OBJ (NP (PRONOUN HIM)))))
 @
+```
 
-The ﬁrst parse succeeds by jumping to np/det, jumping again to np/mods,
-reading a noun, then popping at np/n. The second never jumps, pushing ﬁrst for
+The ﬁrst parse succeeds by jumping to np/det, jumping again to
+np/mods, reading a noun, then popping at np/n. The second never jumps,
+pushing ﬁrst for a string of modiﬁers, and again for a prepositional
+phrase. As is often the case with parsers, expressions which are
+syntactically well-formed are such nonsense semantically that it’s
+difﬁcult for humans even to detect the syntactic structure.  Here the
+noun phrase "a time ﬂy like him" has the same form as "a Lisp hacker
+like him."
 
-
-
----
-
-
-23.5                               A SAMPLE ATN                               319
-
-
-
+```
  (defnode s
    (down np s/subj
      (setr mood ’decl)
@@ -15613,29 +15338,15 @@ reading a noun, then popping at np/n. The second never jumps, pushing ﬁrst for
            (vcl (aux ,(getr aux))
                 (v ,(getr v)))
            (obj ,(getr obj)))))
+```
+> Figure 23.11: Sentence network.
 
-                        Figure 23.11: Sentence network.
+Now all we need is a network for recognizing sentence structure. The
+network shown in Figure 23.11 parses both commands and statements. The
+start node is conventionally called s. The ﬁrst node leaving it pushes
+for a noun phrase,
 
-
-a string of modiﬁers, and again for a prepositional phrase. As is often the case
-with parsers, expressions which are syntactically well-formed are such nonsense
-semantically that it’s difﬁcult for humans even to detect the syntactic structure.
-Here the noun phrase "a time ﬂy like him" has the same form as "a Lisp hacker
-like him."
-    Now all we need is a network for recognizing sentence structure. The network
-shown in Figure 23.11 parses both commands and statements. The start node
-is conventionally called s. The ﬁrst node leaving it pushes for a noun phrase,
-
-
-
----
-
-
-320                             PARSING WITH ATNS
-
-
-
-
+```
  > (with-parses s ’(time flies like an arrow)
      (pprint parse))
 
@@ -15661,9 +15372,8 @@ is conventionally called s. The ﬁrst node leaving it pushes for a noun phrase,
                           (MODIFIERS NIL)
                           (NOUN ARROW)))))))
  @
-
-                   Figure 23.12: Two parsings for a sentence.
-
+```
+> Figure 23.12: Two parsings for a sentence.
 
 which will be the subject of the sentence. The second outgoing arc reads a verb.
 When a sentence is syntactically ambiguous, both arcs could succeed, ultimately
@@ -15671,20 +15381,14 @@ yielding two or more parsings, as in Figure 23.12. The ﬁrst parsing is analogo
 to "Island nations like a navy," and the second is analogous to "Find someone like
 a policeman." More complex ATNs are able to ﬁnd six or more parsings for "Time
 ﬂies like an arrow."
-    The ATN compiler in this chapter is presented more as a distillation of the idea
+
+The ATN compiler in this chapter is presented more as a distillation of the idea
 of an ATN than as production software. A few obvious changes would make this
 code much more efﬁcient. When speed is important, the whole idea of simulating
 nondeterminism with closures may be too slow. But when it isn’t essential, the
 programming techniques described here lead to very concise programs.
 
-
-
----
-
-
-24
-
-Prolog
+# 24 Prolog
 
 This chapter describes how to write Prolog as an embedded language. Chapter 19
 showed how to write a program which answered complex queries on databases.
@@ -15692,41 +15396,34 @@ Here we add one new ingredient: rules, which make it possible to infer facts fro
 those already known. A set of rules deﬁnes a tree of implications. In order to use
 rules which would otherwise imply an unlimited number of facts, we will search
 this implication tree nondeterministically.
-    Prolog makes an excellent example of an embedded language. It combines
+
+Prolog makes an excellent example of an embedded language. It combines
 three ingredients: pattern-matching, nondeterminism, and rules. Chapters 18
 and 22 give us the ﬁrst two independently. By building Prolog on top of the
 pattern-matching and nondeterministic choice operators we have already, we will
 have an example of a real, multi-layer bottom-up system. Figure 24.1 shows the
 layers of abstraction involved.
-    The secondary aim of this chapter is to study Prolog itself. For experienced
+
+The secondary aim of this chapter is to study Prolog itself. For experienced
 programmers, the most convenient explanation of Prolog may be a sketch of its
 implementation. Writing Prolog in Lisp is particularly interesting, because it
 brings out the similarities between the two languages.
 
 
-24.1 Concepts
+## 24.1 Concepts
+
 Chapter 19 showed how to write a database system which would accept complex
 queries containing variables, and generate all the bindings which made the query
 true in the database. In the following example, (after calling clear-db) we assert
 two facts and then query the database:
 
 
+```
+[ MISSING ]
+```
+> Figure 24.1: Layers of abstraction.
 
-                                       321
-
-
-
----
-
-
-322                                         PROLOG
-
-
-
-
-                           Figure 24.1: Layers of abstraction.
-
-
+```
 > (fact painter reynolds)
 (REYNOLDS)
 > (fact painter gainsborough)
@@ -15736,88 +15433,84 @@ two facts and then query the database:
 GAINSBOROUGH
 REYNOLDS
 NIL
+```
 
 Conceptually, Prolog is the database program with the addition of rules, which
 make it possible to satisfy a query not just by looking it up in the database, but by
 inferring it from other known facts. For example, if we have a rule like:
 
+```
 If   (hungry ?x) and (smells-of ?x turpentine)
 Then (painter ?x)
+```
 
 then the query (painter ?x) will be satisﬁed for ?x = raoul when the database
 contains both (hungry raoul) and (smells-of raoul turpentine), even
 if it doesn’t contain (painter raoul).
-     In Prolog, the if-part of a rule is called the body, and the then-part the head.
+
+In Prolog, the if-part of a rule is called the body, and the then-part the head.
 (In logic, the names are antecedent and consequent, but it is just as well to have
 separate names, to emphasize that Prolog inference is not the same as logical
 implication.) When trying to establish bindings 1 for a query, the program looks
 ﬁrst at the head of a rule. If the head matches the query that the program is trying
 to answer, the program will then try to establish bindings for the body of the rule.
 Bindings which satisfy the body will, by deﬁnition, satisfy the head.
-     The facts used in the body of the rule may in turn be inferred from other rules:
-   1 Many  of the concepts used in this chapter, including this sense of bindings, are explained in
-Section 18.4.
 
+The facts used in the body of the rule may in turn be inferred from other rules:
 
-
----
-
-
-24.2                                 AN INTERPRETER                            323
-
-
+```
 If   (gaunt ?x) or (eats-ravenously ?x)
 Then (hungry ?x)
+```
 
 and rules may be recursive, as in:
 
+```
 If   (surname ?f ?n) and (father ?f ?c)
 Then (surname ?c ?n)
+```
 
-    Prolog will be able to establish bindings for a query if it can ﬁnd some path
+Prolog will be able to establish bindings for a query if it can ﬁnd some path
 through the rules which leads eventually to known facts. So it is essentially a
 search engine: it traverses the tree of logical implications formed by the rules,
 looking for a successful path.
-    Though rules and facts sound like distinct types of objects, they are conceptu-
+
+Though rules and facts sound like distinct types of objects, they are conceptu-
 ally interchangeable. Rules can be seen as virtual facts. If we want our database
 to reﬂect the discovery that big, ﬁerce animals are rare, we could look for all the
 x such that there are facts (species x), (big x), and (fierce x), and add a
 new fact (rare x). However, by deﬁning a rule to say
 
+```
 If   (species ?x) and (big ?x) and (fierce ?x)
 Then (rare ?x)
+```
 
 we get the same effect, without actually having to add all the (rare x) to the
 database. We can even deﬁne rules which imply an inﬁnite number of facts. Thus
 rules make the database smaller at the expense of extra processing when it comes
 time to answer questions.
-    Facts, meanwhile, are a degenerate case of rules. The effect of any fact F
+
+Facts, meanwhile, are a degenerate case of rules. The effect of any fact F
 could be duplicated by a rule whose body was always true:
 
+```
 If   true
 Then F
+```
 
 To simplify our implementation, we will take advantage of this principle and
 represent facts as bodyless rules.
 
+## 24.2 An Interpreter
 
-24.2 An Interpreter
 Section 18.4 showed two ways to deﬁne if-match. The ﬁrst was simple but
 inefﬁcient. Its successor was faster because it did much of its work at compile-
 time. We will follow a similar strategy here. In order to introduce some of the
 topics involved, we will begin with a simple interpreter. Later we will show how
 to write the same program much more efﬁciently.
 
-
-
----
-
-
-324                                  PROLOG
-
-
-
-
+```
  (defmacro with-inference (query &body body)
   ‘(progn
      (setq *paths* nil)
@@ -15843,11 +15536,10 @@ to write the same program much more efﬁciently.
 
  (defun varsym? (x)
    (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
+```
+> Figure 24.2: Toplevel macro.
 
-                          Figure 24.2: Toplevel macro.
-
-
-    Figures 24.2–24.4 contain the code for a simple Prolog interpreter. It ac-
+Figures 24.2–24.4 contain the code for a simple Prolog interpreter. It ac-
 cepts the same queries as the query interpreter of Section 19.3, but uses rules
 instead of the database to generate bindings. The query interpreter was invoked
 through a macro called with-answer. The interface to the Prolog interpreter
@@ -15855,22 +15547,16 @@ will be through a similar macro, called with-inference. Like with-answer,
 with-inference is given a query and a series of Lisp expressions. Variables in
 the query are symbols beginning with a question mark:
 
+```
 (with-inference (painter ?x)
   (print ?x))
+```
 
 A call to with-inference expands into code that will evaluate the Lisp expres-
 sions for each set of bindings generated by the query. The call above, for example,
-
-
-
----
-
-
-24.2                               AN INTERPRETER                                325
-
-
 will print each x for which it is possible to infer (painter x).
-    Figure 24.2 shows the deﬁnition of with-inference, together with the func-
+
+Figure 24.2 shows the deﬁnition of with-inference, together with the func-
 tion it calls to retrieve bindings. One notable difference between with-answer
 and with-inference is that the former simply collected all the valid bindings.
 The new program searches nondeterministically. We see this in the deﬁnition of
@@ -15878,51 +15564,49 @@ with-inference: instead of expanding into a loop, it expands into code which
 will return one set of bindings, followed by a fail to restart the search. This
 gives us iteration implicitly, as in:
 
+```
 > (choose-bind x ’(0 1 2 3 4 5 6 7 8 9)
     (princ x)
     (if (= x 6) x (fail)))
 0123456
 6
+```
 
-     The function fullbind points to another difference between with-answer
+The function fullbind points to another difference between with-answer
 and with-inference. Tracing back through a series of rules can build up binding
 lists in which the binding of a variable is a list of other variables. To make use of
 the results of a query we now need a recursive function for retrieving bindings.
 This is the purpose of fullbind:
 
+```
 > (setq b ’((?x . (?y . ?z)) (?y . foo) (?z . nil)))
 ((?X ?Y . ?Z) (?Y . FOO) (?Z))
 > (values (binding ’?x b))
 (?Y . ?Z)
 > (fullbind ’?x b)
 (FOO)
+```
 
-    Bindings for the query are generated by a call to prove-query in the expansion
+Bindings for the query are generated by a call to prove-query in the expansion
 of with-inference. Figure 24.3 shows the deﬁnition of this function and the
 functions it calls. This code is structurally isomorphic to the query interpreter
 described in Section 19.3. Both programs use the same functions for matching,
 but where the query interpreter used mapping or iteration, the Prolog interpreter
 uses equivalent chooses.
-    Using nondeterministic search instead of iteration does make the interpretation
+
+Using nondeterministic search instead of iteration does make the interpretation
 of negated queries a bit more complex. Given a query like
 
+```
 (not (painter ?x))
+```
 
 the query interpreter could just try to establish bindings for (painter ?x),
 returning nil if any were found. With nondeterministic search we have to be
 more careful: we don’t want the interpretation of (painter ?x) to fail back
 outside the scope of the not, nor do we want it to leave saved paths that might
 
-
-
----
-
-
-326                                  PROLOG
-
-
-
-
+```
  (=defun prove-query (expr binds)
    (case (car expr)
      (and (prove-and (cdr expr) binds))
@@ -15953,27 +15637,19 @@ outside the scope of the not, nor do we want it to leave saved paths that might
  (=defun prove-simple (query binds)
    (choose-bind r *rlist*
      (implies r query binds)))
-
-                     Figure 24.3: Interpretation of queries.
-
+```
+> Figure 24.3: Interpretation of queries.
 
 be restarted later. So now the test for (painter ?x) is done with a temporarily
 empty list of saved states, and the old list is restored on the way out.
-     Another difference between this program and the query interpreter is in the
+
+Another difference between this program and the query interpreter is in the
 interpretation of simple patterns—expressions such as (painter ?x) which con-
 sist just of a predicate and some arguments. When the query interpreter generated
 bindings for a simple pattern, it called lookup (page 251). Now, instead of calling
 lookup, we have to get any bindings implied by the rules.
 
-
-
----
-
-
-24.2                             AN INTERPRETER                             327
-
-
-
+```
  (defvar *rlist* nil)
 
  (defmacro <- (con &rest ant)
@@ -15993,11 +15669,10 @@ lookup, we have to get any bindings implied by the rules.
                        (cons v (symb ’? (gensym))))
                    (vars-in r #’atom))
            r))
+```
+> Figure 24.4: Code involving rules.
 
-                      Figure 24.4: Code involving rules.
-
-
-
+```
   rule     :   (<- sentence query )
   query    :   (not query )
            :   (and query *)
@@ -16008,134 +15683,136 @@ lookup, we have to get any bindings implied by the rules.
            :    symbol
            :    number
   variable :   ? symbol
+```
+> Figure 24.5: Syntax of rules.
 
-                         Figure 24.5: Syntax of rules.
-
-
-    Code for deﬁning and using rules is shown in Figure 24.4. The rules are kept
+Code for deﬁning and using rules is shown in Figure 24.4. The rules are kept
 in a global list, *rlist*. Each rule is represented as a dotted pair of body and
 head. At the time a rule is deﬁned, all the underscores are replaced with unique
 variables.
 
-
-
----
-
-
-328                                   PROLOG
-
-
-
-    The deﬁnition of <- follows three conventions often used in programs of this
+The deﬁnition of <- follows three conventions often used in programs of this
 type:
 
-   1. New rules are added to the end rather than the front of the list, so that they
-      will be applied in the order that they were deﬁned.
+1. New rules are added to the end rather than the front of the list, so that they
+   will be applied in the order that they were deﬁned.
 
-   2. Rules are expressed head ﬁrst, since that’s the order in which the program
-      examines them.
+2. Rules are expressed head ﬁrst, since that’s the order in which the program
+   examines them.
 
-   3. Multiple expressions in the body are within an implicit and.
+3. Multiple expressions in the body are within an implicit and.
 
 The outermost call to length in the expansion of <- is simply to avoid printing a
 huge list when <- is called from the toplevel.
-    The syntax of rules is given in Figure 24.5. The head of a rule must be a pattern
+
+The syntax of rules is given in Figure 24.5. The head of a rule must be a pattern
 for a fact: a list of a predicate followed by zero or more arguments. The body
 may be any query that could be handled by the query interpreter of Chapter 19.
 Here is the rule from earlier in this chapter:
 
+```
 (<- (painter ?x) (and (hungry ?x)
                       (smells-of ?x turpentine)))
+```
 
 or just
 
+```
 (<- (painter ?x) (hungry ?x)
                  (smells-of ?x turpentine))
+```
 
 As in the query interpreter, arguments like turpentine do not get evaluated, so
 they don’t have to be quoted.
-    When prove-simple is asked to generate bindings for a query, it nondeter-
+
+When prove-simple is asked to generate bindings for a query, it nondeter-
 ministically chooses a rule and sends both rule and query to implies. The latter
 function then tries to match the query with the head of the rule. If the match
 succeeds, implies will call prove-query to establish bindings for the body.
 Thus we recursively search the tree of implications.
-    The function change-vars replaces all the variables in a rule with fresh ones.
+
+The function change-vars replaces all the variables in a rule with fresh ones.
 An ?x used in one rule is meant to be independent of one used in another. In order
 to avoid conﬂicts with existing bindings, change-vars is called each time a rule
 is used.
-    For the convenience of the user, it is possible to use (underscore) as a wildcard
+
+For the convenience of the user, it is possible to use (underscore) as a wildcard
 variable in rules. When a rule is deﬁned, the function rep is called to change
 each underscore into a real variable. Underscores can also be used in the queries
 given to with-inference.
 
+## 24.3 Rules
 
-
----
-
-
-24.3                                     RULES                                329
-
-
-24.3 Rules
 This section shows how to write rules for our Prolog. To start with, here are the
 two rules from Section 24.1:
 
+```
 (<- (painter ?x) (hungry ?x)
                  (smells-of ?x turpentine))
+```
 
+```
 (<- (hungry ?x) (or (gaunt ?x) (eats-ravenously ?x)))
+```
 
 If we also assert the following facts:
+
+```
 (<- (gaunt raoul))
 (<- (smells-of raoul turpentine))
 (<- (painter rubens))
+```
+
 Then we will get the bindings they generate according to the order in which they
 were deﬁned:
+
+```
 > (with-inference (painter ?x)
     (print ?x))
 RAOUL
 RUBENS
 @
+```
+
 The with-inference macro has exactly the same restrictions on variable binding
 as with-answer. (See Section 19.4.)
-    We can write rules which imply that facts of a given form are true for all
+
+We can write rules which imply that facts of a given form are true for all
 possible bindings. This happens, for example, when some variable occurs in the
 head of a rule but not in the body. The rule
 
+```
 (<- (eats ?x ?f) (glutton ?x))
+```
 
 Says that if ?x is a glutton, then ?x eats everything. Because ?f doesn’t occur in
 the body, we can prove any fact of the form (eats ?x y) simply by establishing
 a binding for ?x. If we make a query with a literal value as the second argument
 to eats,
 
+```
 > (<- (glutton hubert))
 7
 > (with-inference (eats ?x spinach)
     (print ?x))
 HUBERT
 @
+```
 
 then any literal value will work. When we give a variable as the second argument:
 
-
-
----
-
-
-330                                  PROLOG
-
-
-
+```
 > (with-inference (eats ?x ?y)
     (print (list ?x ?y)))
 (HUBERT #:G229)
 @
+```
 
 we get a gensym back. Returning a gensym as the binding of a variable in the
 query is a way of signifying that any value would be true there. Programs can be
 written explicitly to take advantage of this convention:
 
+```
 > (progn
     (<- (eats monster bad-children))
     (<- (eats warhol candy)))
@@ -16148,20 +15825,23 @@ HUBERT eats EVERYTHING.
 MONSTER eats BAD-CHILDREN.
 WARHOL eats CANDY.
 @
+```
 
 Finally, if we want to specify that facts of a certain form will be true for any
 arguments, we make the body a conjunction with no arguments. The expression
 (and) will always behave as a true fact. In the macro <- (Figure 24.4), the body
 defaults to (and), so for such rules we can simply omit the body:
 
+```
 > (<- (identical ?x ?x))
 10
 > (with-inference (identical a ?x)
     (print ?x))
 A
 @
+```
 
-    For readers with some knowledge of Prolog, Figure 24.6 shows the translation
+For readers with some knowledge of Prolog, Figure 24.6 shows the translation
 from Prolog syntax into that of our program. The traditional ﬁrst Prolog program
 is append, which would be written as at the end of Figure 24.6. In an instance of
 appending, two shorter lists are joined together to form a single larger one. Any
@@ -16170,39 +15850,36 @@ the two shorter lists as arguments and returns the longer one. Prolog append is
 more general; the two rules in Figure 24.6 deﬁne a program which, given any two
 of the lists involved, can ﬁnd the third.
 
+Our syntax differs from traditional Prolog syntax as follows:
 
+1. Variables are represented by symbols beginning with question marks
+   instead of capital letters. Common Lisp is not case-sensitive by
+   default, so it would be more trouble than it’s worth to use
+   capitals.
+2. `[ ]` becomes `nil`.
+3. Expressions of the form `[x | y]` become `(x . y)`.
+4. Expressions of the form `[x, y, ...]` become `(x y ...)`.
+5. Predicates are moved inside parentheses, and no commas separate
+   arguments: `pred(x, y, ...)` becomes `(pred x y ...)`.
 
----
+Thus the Prolog deﬁnition of append:
 
+```
+append([ ], Xs, Xs).
+append([X | Xs], Ys, [X | Zs]) <- append(Xs, Ys, Zs).
+```
 
-24.3                                     RULES                                   331
+becomes:
 
-
-
- Our syntax differs from traditional Prolog syntax as follows:
-
-       1. Variables are represented by symbols beginning with question marks
-          instead of capital letters. Common Lisp is not case-sensitive by default,
-          so it would be more trouble than it’s worth to use capitals.
-       2. [ ] becomes nil.
-       3. Expressions of the form [x | y] become (x . y).
-       4. Expressions of the form [x, y, ...] become (x y ...).
-       5. Predicates are moved inside parentheses, and no commas separate argu-
-          ments: pred(x, y, ...) becomes (pred x y ...).
-
- Thus the Prolog deﬁnition of append:
-
- append([ ], Xs, Xs).
- append([X | Xs], Ys, [X | Zs]) <- append(Xs, Ys, Zs).
-
- becomes:
+```
  (<- (append nil ?xs ?xs))
  (<- (append (?x . ?xs) ?ys (?x . ?zs))
      (append ?xs ?ys ?zs))
+```
 
-                       Figure 24.6: Prolog syntax equivalence.
+> Figure 24.6: Prolog syntax equivalence.
 
-
+```
 > (with-inference (append ?x (c d) (a b c d))
     (format t "Left: ~A~%" ?x))
 Left: (A B)
@@ -16215,19 +15892,12 @@ Right: (C D)
     (format t "Whole: ~A~%" ?x))
 Whole: (A B C D)
 @
+```
 
 Not only that, but given only the last list, it can ﬁnd all the possibilities for the
 ﬁrst two:
 
-
-
----
-
-
-332                                  PROLOG
-
-
-
+```
 > (with-inference (append ?x ?y (a b c))
     (format t "Left: ~A Right: ~A~%" ?x ?y))
 Left: NIL Right: (A B C)
@@ -16235,72 +15905,79 @@ Left: (A) Right: (B C)
 Left: (A B) Right: (C)
 Left: (A B C) Right: NIL
 @
+```
 
-    The case of append points to a great difference between Prolog and other
+The case of append points to a great difference between Prolog and other
 languages. A collection of Prolog rules does not have to yield a speciﬁc value. It
 can instead yield constraints, which, when combined with constraints generated
 by other parts of the program, yield a speciﬁc value. For example, if we deﬁne
 member thus:
 
+```
 (<- (member ?x (?x . ?rest)))
 (<- (member ?x (_ . ?rest)) (member ?x ?rest))
+```
 
 then we can use it to test for list membership, as we would use the Lisp function
 member:
 
+```
 > (with-inference (member a (a b)) (print t))
 T
 @
+```
 
 but we can also use it to establish a constraint of membership, which, combined
 with other constraints, yields a speciﬁc list. If we also have a predicate cara
 
+```
 (<- (cara (a _)))
+```
 
 which is true of any two-element list whose car is a, then between that and member
 we have enough constraint for Prolog to construct a deﬁnite answer:
 
+```
 > (with-inference (and (cara ?lst) (member b ?lst))
     (print ?lst))
 (A B)
 @
+```
 
-    This is a rather trivial example, but bigger programs can be constructed on the
+This is a rather trivial example, but bigger programs can be constructed on the
 same principle. Whenever we want to program by combining partial solutions,
 Prolog may be useful. Indeed, a surprising variety of problems can be expressed
 in such terms: Figure 24.14, for example, shows a sorting algorithm expressed as
 a collection of constraints on the solution.
 
+## 24.4 The Need for Nondeterminism
 
-
----
-
-
-24.4                       THE NEED FOR NONDETERMINISM                            333
-
-
-24.4 The Need for Nondeterminism
 Chapter 22 explained the relation between deterministic and nondeterministic
 search. A deterministic search program could take a query and generate all the
 solutions which satisﬁed it. A nondeterministic search program will use choose
 to generate solutions one at a time, and if more are needed, will call fail to restart
 the search.
-    When we have rules which all yield ﬁnite sets of bindings, and we want all of
+
+When we have rules which all yield ﬁnite sets of bindings, and we want all of
 them at once, there is no reason to prefer nondeterministic search. The difference
 between the two strategies becomes apparent when we have queries which would
 generate an inﬁnite number of bindings, of which we want a ﬁnite subset. For
 example, the rules
 
+```
 (<- (all-elements ?x nil))
 (<- (all-elements ?x (?x . ?rest))
     (all-elements ?x ?rest))
+```
 
 imply all the facts of the form (all-elements x y), where every member of y
 is equal to x. Without backtracking we could handle queries like:
 
+```
 (all-elements a (a a a))
 (all-elements a (a a b))
 (all-elements ?x (a a a))
+```
 
 However, the query (all-elements a ?x) is satisﬁed for an inﬁnite number of
 possible ?x: nil, (a), (a a), and so on. If we try to generate answers for this
@@ -16308,12 +15985,14 @@ query by iteration, the iteration will never terminate. Even if we only wanted o
 of the answers, we would never get a result from an implementation which had to
 generate all the bindings for the query before it could begin to iterate through the
 Lisp expressions following it.
-    This is why with-inference interleaves the generation of bindings with the
+
+This is why with-inference interleaves the generation of bindings with the
 evaluation of its body. Where queries could lead to an inﬁnite number of answers,
 the only successful approach will be to generate answers one at a time, and return
 to pick up new ones by restarting the suspended search. Because it uses choose
 and fail, our program can handle this case:
 
+```
 > (block nil
     (with-inference (all-elements a ?x)
       (if (= (length ?x) 3)
@@ -16321,33 +16000,30 @@ and fail, our program can handle this case:
           (princ ?x))))
 NIL(A)(A A)
 (A A A)
+```
 
-
-
----
-
-
-334                                   PROLOG
-
-
-
-    Like any other Prolog implementation, ours simulates nondeterminism by
+Like any other Prolog implementation, ours simulates nondeterminism by
 doing depth-ﬁrst search with backtracking. In theory, "logic programs" run under
 true nondeterminism. In fact, Prolog implementations always use depth-ﬁrst
 search. Far from being inconvenienced by this choice, typical Prolog programs
 depend on it. In a truly nondeterministic world, the query
 
+```
 (and (all-elements a ?x) (length ?x 3))
+```
 
 has an answer, but it takes you arbitrarily long to ﬁnd out what it is.
-    Not only does Prolog use the depth-ﬁrst implementation of nondeterminism,
+
+Not only does Prolog use the depth-ﬁrst implementation of nondeterminism,
 it uses a version equivalent to that deﬁned on page 293. As explained there, this
 implementation is not always guaranteed to terminate. So Prolog programmers
 must take deliberate steps to avoid loops in the search space. For example, if we
 had deﬁned member in the reverse order
 
+```
 (<- (member ?x (_ . ?rest)) (member ?x ?rest))
 (<- (member ?x (?x . ?rest)))
+```
 
 then logically it would have the same meaning, but as a Prolog program it would
 have a different effect. The original deﬁnition of member would yield an inﬁnite
@@ -16355,7 +16031,8 @@ stream of answers in response to the query (member ’a ?x), but the reversed
 deﬁnition will yield an inﬁnite recursion, and no answers.
 
 
-24.5 New Implementation
+## 24.5 New Implementation
+
 In this section we will see another instance of a familiar pattern. In Section 18.4,
 we found after writing the initial version that if-match could be made much
 faster. By taking advantage of information known at compile-time, we were
@@ -16363,26 +16040,20 @@ able to write a new version which did less work at runtime. We saw the same
 phenomenon on a larger scale in Chapter 19. Our query interpreter was replaced
 by an equivalent but faster version. The same thing is about to happen to our
 Prolog interpreter.
-    Figures 24.7, 24.8, and 24.10 deﬁne Prolog in a different way. The macro
+
+Figures 24.7, 24.8, and 24.10 deﬁne Prolog in a different way. The macro
 with-inference used to be just the interface to a Prolog interpreter. Now it is
 most of the program. The new program has the same general shape as the old one,
 but of the functions deﬁned in Figure 24.8, only prove is called at runtime. The
 others are called by with-inference in order to generate its expansion.
-    Figure 24.7 shows the new deﬁnition of with-inference. As in if-match
+
+Figure 24.7 shows the new deﬁnition of with-inference. As in if-match
 or with-answer, pattern variables are initially bound to gensyms to indicate
 that they haven’t yet been assigned real values by matching. Thus the function
 varsym?, which match and fullbind use to detect variables, has to be changed
 to look for gensyms.
 
-
-
----
-
-
-24.5                           NEW IMPLEMENTATION                              335
-
-
-
+```
  (defmacro with-inference (query &rest body)
    (let ((vars (vars-in query #’simple?)) (gb (gensym)))
      ‘(with-gensyms ,vars
@@ -16396,11 +16067,11 @@ to look for gensyms.
 
  (defun varsym? (x)
    (and (symbolp x) (not (symbol-package x))))
+```
 
-                        Figure 24.7: New toplevel macro.
+> Figure 24.7: New toplevel macro.
 
-
-    To generate the code to establish bindings for the query, with-inference
+To generate the code to establish bindings for the query, with-inference
 calls gen-query (Figure 24.8). The ﬁrst thing gen-query does is look to see
 whether its ﬁrst argument is a complex query beginning with an operator like and
 or or. This process continues recursively until it reaches simple queries, which
@@ -16409,15 +16080,19 @@ structure was analyzed at runtime. A complex expression occurring in the body
 of a rule had to be analyzed anew each time the rule was used. This is wasteful
 because the logical structure of rules and queries is known beforehand. The new
 implementation decomposes complex expressions at compile-time.
-    As in the previous implementation, a with-inference expression expands
+
+As in the previous implementation, a with-inference expression expands
 into code which iterates through the Lisp code following the query with the pattern
 variables bound to successive values established by the rules. The expansion of
 with-inference concludes with a fail, which will restart any saved states.
-    The remaining functions in Figure 24.8 generate expansions for complex
+
+The remaining functions in Figure 24.8 generate expansions for complex
 queries—queries joined together by operators like and, or, and not. If we have
 a query like
 
+```
 (and (big ?x) (red ?x))
+```
 
 then we want the Lisp code to be evaluated only with those ?x for which both
 conjuncts can be proved. So to generate the expansion of an and, we nest
@@ -16425,16 +16100,7 @@ the expansion of the second conjunct within that of the ﬁrst. When (big ?x)
 succeeds we try (red ?x), and if that succeeds, we evaluate the Lisp expressions.
 So the whole expression expands as in Figure 24.9.
 
-
-
----
-
-
-336                           PROLOG
-
-
-
-
+```
  (defun gen-query (expr &optional binds)
    (case (car expr)
      (and (gen-and (cdr expr) binds))
@@ -16474,18 +16140,10 @@ So the whole expression expands as in Figure 24.9.
    (if (simple? pat)
        pat
        ‘(cons ,(form (car pat)) ,(form (cdr pat)))))
+```
+> Figure 24.8: Compilation of queries.
 
-                Figure 24.8: Compilation of queries.
-
-
-
----
-
-
-24.6                          ADDING PROLOG FEATURES                            337
-
-
-
+```
  (with-inference (and (big ?x) (red ?x))
    (print ?x))
 
@@ -16498,45 +16156,41 @@ So the whole expression expands as in Figure 24.9.
       (let ((?x (fullbind ?x #:g1)))
         (print ?x))
       (fail)))
+```
+> Figure 24.9: Expansion of a conjunction.
 
-                    Figure 24.9: Expansion of a conjunction.
 
+An and means nesting; an or means a choose. Given a query like
 
-   An and means nesting; an or means a choose. Given a query like
-
+```
 (or (big ?x) (red ?x))
+```
 
 we want the Lisp expressions to be evaluated for values of ?x established by either
 subquery. The function gen-or expands into a choose over the gen-query of
 each of the arguments. As for not, gen-not is almost identical to prove-not
 (Figure 24.3).
-    Figure 24.10 shows the code for deﬁning rules. Rules are translated directly
+
+Figure 24.10 shows the code for deﬁning rules. Rules are translated directly
 into Lisp code generated by rule-fn. Since <- now expands rules into Lisp code,
 compiling a ﬁle full of rule deﬁnitions will cause rules to be compiled functions.
-    When a rule-function is sent a pattern, it tries to match it with the head of
+
+When a rule-function is sent a pattern, it tries to match it with the head of
 the rule it represents. If the match succeeds, the rule-function will then try to
 establish bindings for the body. This task is essentially the same as that done by
 with-inference, and in fact rule-fn ends by calling gen-query. The rule-
 function eventually returns the bindings established for the variables occurring in
 the head of the rule.
 
+## 24.6 Adding Prolog Features
 
-24.6 Adding Prolog Features
 The code already presented can run most "pure" Prolog programs. The ﬁnal step
 is to add extras like cuts, arithmetic, and I/O.
-     Putting a cut in a Prolog rule causes the search tree to be pruned. Ordinarily,
+
+Putting a cut in a Prolog rule causes the search tree to be pruned. Ordinarily,
 when our program encounters a fail, it backtracks to the last choice point. The
 
-
-
----
-
-
-338                                   PROLOG
-
-
-
-
+```
  (defvar *rules* nil)
 
  (defmacro <- (con &rest ant)
@@ -16559,33 +16213,29 @@ when our program encounters a fail, it backtracks to the last choice point. The
             (if ,win
                 ,(gen-query ant val)
                 (fail)))))))
-
-                      Figure 24.10: Code for deﬁning rules.
-
+```
+> Figure 24.10: Code for deﬁning rules.
 
 implementation of choose in Section 22.4 stores choice points in the global variable
 *paths*. Calling fail restarts the search at the most recent choice point, which
 is the car of *paths*. Cuts introduce a new complication. When the program
 encounters a cut, it will throw away some of the most recent choice points stored
 on *paths*—speciﬁcally, all those stored since the last call to prove.
-    The effect is to make rules mutually exclusive. We can use cuts to get the
+
+The effect is to make rules mutually exclusive. We can use cuts to get the
 effect of a case statement in Prolog programs. For example, if we deﬁne minimum
 this way:
 
+```
 (<- (minimum ?x ?y ?x) (lisp (<= ?x ?y)))
 (<- (minimum ?x ?y ?y) (lisp (> ?x ?y)))
+```
 
 it will work correctly, but inefﬁciently. Given the query
 
+```
 (minimum 1 2 ?x)
-
-
-
----
-
-
-24.6                          ADDING PROLOG FEATURES                              339
-
+```
 
 Prolog will immediately establish that ?x = 1 from the ﬁrst rule. A human would
 stop here, but the program will waste time looking for more answers from the
@@ -16593,26 +16243,33 @@ second rule, because it has been given no indication that the two rules are mutu
 exclusive. On the average, this version of minimum will do 50% more work than
 it needs to. We can ﬁx the problem by adding a cut after the ﬁrst test:
 
+```
 (<- (minimum ?x ?y ?x) (lisp (<= ?x ?y)) (cut))
 (<- (minimum ?x ?y ?y))
+```
 
 Now when Prolog has ﬁnished with the ﬁrst rule, it will fail all the way out of the
 query instead of moving on to the next rule.
-    It is trivially easy to modify our program to handle cuts. On each call to
+
+It is trivially easy to modify our program to handle cuts. On each call to
 prove, the current state of *paths* is passed as a parameter. If the program
 encounters a cut, it just sets *paths* back to the old value passed in the parameter.
 Figures 24.11 and 24.12 show the code which has to be modiﬁed to handle cuts.
 (Changed lines are marked with semicolons. Not all the changes are due to cuts.)
-    Cuts which merely make a program more efﬁcient are called green cuts. The
+
+Cuts which merely make a program more efﬁcient are called green cuts. The
 cut in minimum was a green cut. Cuts which make a program behave differently
 are called red cuts. For example, if we deﬁne the predicate artist as follows:
 
+```
 (<- (artist ?x) (sculptor ?x) (cut))
 (<- (artist ?x) (painter ?x))
+```
 
 the result is that, if there are any sculptors, then the query can end there. If there
 are no sculptors then painters get to be considered as artists:
 
+```
 > (progn (<- (painter ’klee))
          (<- (painter ’soutine)))
 4
@@ -16621,25 +16278,20 @@ are no sculptors then painters get to be considered as artists:
 KLEE
 SOUTINE
 @
+```
 
 But if there are sculptors, the cut stops inference with the ﬁrst rule:
+
+```
 > (<- (sculptor ’hepworth))
 5
 > (with-inference (artist ?x)
     (print ?x))
 HEPWORTH
 @
+```
 
-
-
----
-
-
-340                            PROLOG
-
-
-
-
+```
  (defun rule-fn (ant con)
    (with-gensyms (val win fact binds paths)                  ;
      ‘(=lambda (,fact ,binds ,paths)                         ;
@@ -16681,19 +16333,10 @@ HEPWORTH
  (=defun prove (query binds paths)                           ;
     (choose-bind r *rules*
       (=funcall r query binds paths)))                       ;
+```
+> Figure 24.11: Adding support for new operators.
 
-           Figure 24.11: Adding support for new operators.
-
-
-
----
-
-
-24.6                   ADDING PROLOG FEATURES                341
-
-
-
-
+```
  (defun gen-and (clauses binds paths)                       ;
    (if (null clauses)
        ‘(=values ,binds)
@@ -16731,19 +16374,10 @@ HEPWORTH
    ‘(aif2 (match ,expr1 (with-binds ,binds ,expr2) ,binds)
           (=values it)
           (fail)))
+```
+> Figure 24.12: Adding support for new operators.
 
-           Figure 24.12: Adding support for new operators.
-
-
-
----
-
-
-342                                  PROLOG
-
-
-
-
+```
   rule     :   (<- sentence query )
   query    :   (not query )
            :   (and query *)
@@ -16756,25 +16390,27 @@ HEPWORTH
   argument :    variable
            :    lisp expression
   variable :   ? symbol
+```
+> Figure 24.13: New syntax of rules.
 
-                       Figure 24.13: New syntax of rules.
-
-
-    The cut is sometimes used in conjunction with the Prolog fail operator. Our
+The cut is sometimes used in conjunction with the Prolog fail operator. Our
 function fail does exactly the same thing. Putting a cut in a rule makes it like a
 one-way street: once you enter, you’re committed to using only that rule. Putting
 a cut-fail combination in a rule makes it like a one-way street in a dangerous
 neighborhood: once you enter, you’re committed to leaving with nothing. A
 typical example is in the implementation of not-equal:
 
+```
 (<- (not-equal ?x ?x) (cut) (fail))
 (<- (not-equal ?x ?y))
+```
 
 The ﬁrst rule here is a trap for impostors. If we’re trying to prove a fact of the
 form (not-equal 1 1), it will match with the head of the ﬁrst rule and thus be
 doomed. The query (not-equal 1 2), on the other hand, will not match the
 head of the ﬁrst rule, and will go on to the second, where it succeeds:
 
+```
 > (with-inference (not-equal ’a ’a)
     (print t))
 @
@@ -16782,35 +16418,34 @@ head of the ﬁrst rule, and will go on to the second, where it succeeds:
     (print t))
 T
 @
+```
 
-   The code shown in Figures 24.11 and 24.12 also gives our program arithmetic,
+The code shown in Figures 24.11 and 24.12 also gives our program arithmetic,
 I/O,and the Prolog is operator. Figure 24.13 shows the complete syntax of rules
 and queries.
 
-
-
----
-
-
-24.6                          ADDING PROLOG FEATURES                             343
-
-
-    We add arithmetic (and more) by including a trapdoor to Lisp. Now in addition
+We add arithmetic (and more) by including a trapdoor to Lisp. Now in addition
 to operators like and and or, we have the lisp operator. This may be followed
 by any Lisp expression, which will be evaluated with the variables within it bound
 to the bindings established for them by the query. If the expression evaluates to
 nil, then the lisp expression as a whole is equivalent to a (fail); otherwise it
 is equivalent to (and).
-    As an example of the use of the lisp operator, consider the Prolog deﬁnition
+
+As an example of the use of the lisp operator, consider the Prolog deﬁnition
 of ordered, which is true of lists whose elements are arranged in ascending order:
+
+```
 (<- (ordered (?x)))
 (<- (ordered (?x ?y . ?ys))
     (lisp (<= ?x ?y))
     (ordered (?y . ?ys)))
+```
 
 In English, a list of one element is ordered, and a list of two or more elements is
 ordered if the ﬁrst element of the list is less than or equal to the second, and the
 list from the second element on is ordered.
+
+```
 > (with-inference (ordered ’(1 2 3))
     (print t))
 T
@@ -16818,84 +16453,80 @@ T
 > (with-inference (ordered ’(1 3 2))
     (print t))
 @
+```
 
-    By means of the lisp operator we can provide other features offered by
+By means of the lisp operator we can provide other features offered by
 typical Prolog implementations. Prolog I/O predicates can be duplicated by putting
 Lisp I/O calls within lisp expressions. The Prolog assert, which as a side-
 effect deﬁnes new rules, can be duplicated by calling the <- macro within lisp
 expressions.
-    The is operator offers a form of assignment. It takes two arguments, a pattern
+
+The is operator offers a form of assignment. It takes two arguments, a pattern
 and a Lisp expression, and tries to match the pattern with the result returned by the
 expression. If the match fails, then the program calls fail; otherwise it proceeds
 with the new bindings. Thus, the expression (is ?x 1) has the effect of setting
 ?x to 1, or more precisely, insisting that ?x be 1. We need is to calculate—for
 example, to calculate factorials:
+
+```
 (<- (factorial 0 1))
 (<- (factorial ?n ?f)
     (lisp (> ?n 0))
     (is ?n1 (- ?n 1))
     (factorial ?n1 ?f1)
     (is ?f (* ?n ?f1)))
+```
 
 
+We use this deﬁnition by making a query with a number n as the ﬁrst argument
+and a variable as the second:
 
----
+```
+> (with-inference (factorial 8 ?x)
+    (print ?x))
+40320
+@
+```
 
+Note that the variables used in a lisp expression, or in the second
+argument to is, must have established bindings for the expression to
+return a value. This restriction holds in any Prolog. For example, the
+query:
 
-    344                                   PROLOG
+```
+(with-inference (factorial ?x 120)                                       ; wrong
+  (print ?x))
+```
 
+won’t work with this deﬁnition of factorial, because ?n will be unknown when
+the lisp expression is evaluated. So not all Prolog programs are like append:
+many insist, like factorial, that certain of their arguments be real values.
 
+## 24.7 Examples
 
-    We use this deﬁnition by making a query with a number n as the ﬁrst argument
-    and a variable as the second:
-    > (with-inference (factorial 8 ?x)
-        (print ?x))
-    40320
-    @
+This ﬁnal section shows how to write some example Prolog programs in our
+implementation. The rules in Figure 24.14 deﬁne quicksort. These rules imply
+facts of the form (quicksort x y), where x is a list and y is a list of the same
+elements sorted in ascending order. Variables may appear in the second argument
+position:
 
-    Note that the variables used in a lisp expression, or in the second argument to
-    is, must have established bindings for the expression to return a value. This
-    restriction holds in any Prolog. For example, the query:
+```
+> (with-inference (quicksort ’(3 2 1) ?x)
+    (print ?x))
+(1 2 3)
+@
+```
 
-    (with-inference (factorial ?x 120)                                       ; wrong
-      (print ?x))
+An I/O loop is a test for our Prolog, because it makes use of the cut, lisp, and
+is operators. The code is shown in Figure 24.15. These rules should be invoked
+by trying to prove (echo), with no arguments. That query will match the ﬁrst
+rule, which will bind ?x to the result returned by read, and then try to establish
+(echo ?x). The new query can match either of the second two rules. If ?x =
+done, then the query will terminate in the second rule. Otherwise the query will
+only match the third rule, which prints the value read, and starts the process over
+again.
 
-    won’t work with this deﬁnition of factorial, because ?n will be unknown when
-    the lisp expression is evaluated. So not all Prolog programs are like append:
-    many insist, like factorial, that certain of their arguments be real values.
-
-
-    24.7 Examples
-       This ﬁnal section shows how to write some example Prolog programs in our
-    implementation. The rules in Figure 24.14 deﬁne quicksort. These rules imply
-    facts of the form (quicksort x y), where x is a list and y is a list of the same
-    elements sorted in ascending order. Variables may appear in the second argument
-    position:
-
-    > (with-inference (quicksort ’(3 2 1) ?x)
-        (print ?x))
-    (1 2 3)
-    @
-
-        An I/O loop is a test for our Prolog, because it makes use of the cut, lisp, and
-    is operators. The code is shown in Figure 24.15. These rules should be invoked
-    by trying to prove (echo), with no arguments. That query will match the ﬁrst
-    rule, which will bind ?x to the result returned by read, and then try to establish
-    (echo ?x). The new query can match either of the second two rules. If ?x =
-    done, then the query will terminate in the second rule. Otherwise the query will
-    only match the third rule, which prints the value read, and starts the process over
-    again.
-
-
-
----
-
-
-24.7                          EXAMPLES                 345
-
-
-
-
+```
  (setq *rules* nil)
 
  (<- (append nil ?ys ?ys))
@@ -16916,12 +16547,10 @@ example, to calculate factorials:
      (lisp (> ?x ?y))
      (partition ?xs ?y ?ls   ?bs))
  (<- (partition nil ?y nil   nil))
+```
+> Figure 24.14: Quicksort.
 
-                      Figure 24.14: Quicksort.
-
-
-
-
+```
  (<- (echo)
      (is ?x (read))
      (echo ?x))
@@ -16932,20 +16561,13 @@ example, to calculate factorials:
      (is ?y (read))
      (cut)
      (echo ?y))
+```
+> Figure 24.15: An I/O loop in Prolog.
 
-                Figure 24.15: An I/O loop in Prolog.
-
-
-
----
-
-
-346                                    PROLOG
-
-
-
-    Collectively, the rules deﬁne a program that will continue to echo what you
+Collectively, the rules deﬁne a program that will continue to echo what you
 type, until you type done:
+
+```
 > (with-inference (echo))
 hi
 HI
@@ -16953,74 +16575,74 @@ ho
 HO
 done
 @
+```
+
 Programs like this are difﬁcult to read because they subvert the abstract model of
 Prolog. It might be easier to understand echo if we look at a literal Lisp translation
+
+```
 (defun echo (&rest args)
   (cond ((null args) (echo (read)))
         ((eq (car args) ’done) nil)
         (t (format t "~A~%" (car args))
            (echo (read)))))
+```
 
 which in idiomatic Common Lisp would be:
+
+```
 (defun echo (&optional (arg (read)))
   (unless (eq arg ’done)
     (format t "~A~%" arg)
     (echo)))
+```
 
+## 24.8 The Senses of Compile
 
-24.8 The Senses of Compile
 The word "compile" has several senses. In the most general sense, to compile is
 to transform some abstract description of a program into lower-level code. The
 program described in this chapter is certainly a compiler in this sense, because it
 translates rules into Lisp functions.
-    In a more speciﬁc sense, to compile is to transform a program into machine
+
+In a more speciﬁc sense, to compile is to transform a program into machine
 language. Good Common Lisps compile functions into native machine code. As
 mentioned on page 25, if code which generates closures is compiled, it will yield
 compiled closures. Thus the program described here is a compiler in the stricter
 sense as well. In a good Lisp, our Prolog programs will get translated into machine
 language.
-    However, the program described here is still not a Prolog compiler. For
+
+However, the program described here is still not a Prolog compiler. For
 programming languages there is a still more speciﬁc sense of "compile," and
 merely generating machine code is not enough to satisfy this deﬁnition. A compiler
 for a programming language must optimize as well as translate. For example, if a
 Lisp compiler is asked to compile an expression like
 
-
-
----
-
-
-24.8                          THE SENSES OF COMPILE                            347
-
-
+```
 (+ x (+ 2 5))
+```
 
 it should be smart enough to realize that there is no reason to wait until runtime
 to evaluate (+ 2 5). The program can be optimized by replacing it with 7, and
 instead compiling
 
+```
 (+ x 7)
+```
 
-     In our program, all the compiling is done by the Lisp compiler, and it is
+In our program, all the compiling is done by the Lisp compiler, and it is
 looking for Lisp optimizations, not Prolog optimizations. Its optimizations will
 be valid ones, but too low-level. The Lisp compiler doesn’t know that the code
 it’s compiling is meant to represent rules. While a real Prolog compiler would be
 looking for rules that could be transformed into loops, our program is looking for
 expressions that yield constants, or closures that could be allocated on the stack.
-     Embedded languages allow you to make the most of available abstractions,
+
+Embedded languages allow you to make the most of available abstractions,
 but they are not magic. If you want to travel all the way from a very abstract
 representation to fast machine code, someone still has to tell the computer how to
 do it. In this chapter we travelled a good part of that distance with surprisingly
 little code, but that is not the same as writing a true Prolog compiler.
 
-
-
----
-
-
-25
-
-Object-Oriented Lisp
+# 25 Object-Oriented Lisp
 
 This chapter discusses object-oriented programming in Lisp. Common Lisp
 includes a set of operators for writing object-oriented programs. Collectively they
@@ -17030,7 +16652,7 @@ Seeing CLOS in this light is the key to understanding the relation between Lisp 
 object-oriented programming.
 
 
-25.1 Plus ca Change
+## 25.1 Plus ca Change
           ¸
 Object-oriented programming means a change in the way programs are organized.
 This change is analogous to the one that has taken place in the distribution of
@@ -17039,56 +16661,55 @@ mainframes connected to a large number of dumb terminals. Now it is more likely
 to mean a large number of workstations connected to one another by a network.
 The processing power of the system is now distributed among individual users
 instead of centralized in one big computer.
-    Object-oriented programming breaks up traditional programs in much the
+
+Object-oriented programming breaks up traditional programs in much the
 same way: instead of having a single program which operates on an inert mass
 of data, the data itself is told how to behave, and the program is implicit in the
 interactions of these new data "objects."
-    For example, suppose we want to write a program to ﬁnd the areas of two-
+
+For example, suppose we want to write a program to ﬁnd the areas of two-
 dimensional shapes. One way to do this would be to write a single function which
 looked at the type of its argument and behaved accordingly:
 
-
-
-                                       348
-
-
-
----
-
-
-25.2                           OBJECTS IN PLAIN LISP                           349
-
-
+```
 (defun area (x)
   (cond ((rectangle-p x) (* (height x) (width x)))
         ((circle-p x) (* pi (expt (radius x) 2)))))
+```
 
 The object-oriented approach is to make each object able to calculate its own area.
 The area function is broken apart and each clause distributed to the appropriate
 class of object; the area method of the rectangle class might be
 
+```
 #’(lambda (x) (* (height x) (width x)))
+```
 
 and for the circle class,
 
+```
 #’(lambda (x) (* pi (expt (radius x) 2)))
+```
 
 In this model, we ask an object what its area is, and it responds according to the
 method provided for its class.
-     The arrival of CLOS might seem a sign that Lisp is changing to embrace the
+
+The arrival of CLOS might seem a sign that Lisp is changing to embrace the
 object-oriented paradigm. Actually, it would be more accurate to say that Lisp
 is staying the same to embrace the object-oriented paradigm. But the principles
 underlying Lisp don’t have a name, and object-oriented programming does, so
 there is a tendency now to describe Lisp as an object-oriented language. It would
 be closer to the truth to say that Lisp is an extensible language in which constructs
 for object-oriented programming can easily be written.
-     Since CLOS comes pre-written, it is not false advertising to describe Lisp as
+
+Since CLOS comes pre-written, it is not false advertising to describe Lisp as
 an object-oriented language. However, it would be limiting to see Lisp as merely
 that. Lisp is an object-oriented language, yes, but not because it has adopted
 the object-oriented model. Rather, that model turns out to be just one more
 permutation of the abstractions underlying Lisp. And to prove it we have CLOS, a
 program written in Lisp, which makes Lisp an object-oriented language.
-     The aim of this chapter is to bring out the connection between Lisp and
+
+The aim of this chapter is to bring out the connection between Lisp and
 object-oriented programming by studying CLOS as an example of an embedded
 language. This is also a good way to understand CLOS itself: in the end, nothing
 explains a language feature more effectively than a sketch of its implementation.
@@ -17096,75 +16717,66 @@ In Section 7.6, macros were explained this way. The next section gives a similar
 sketch of how to build object-oriented abstractions on top of Lisp. This program
 provides a reference point from which to describe CLOS in Sections 25.3–25.6.
 
+## 25.2 Objects in Plain Lisp
 
-25.2 Objects in Plain Lisp
 We can mold Lisp into many different kinds of languages. There is a particularly
 direct mapping between the concepts of object-oriented programming and the
 fundamental abstractions of Lisp. The size of CLOS tends to obscure this fact. So
-
-
-
----
-
-
-350                            OBJECT-ORIENTED LISP
-
-
-
 before looking at what we can do with CLOS, let’s see what we can do with plain
 Lisp.
-    Much of what we want from object-oriented programming, we have already
+
+Much of what we want from object-oriented programming, we have already
 in Lisp. We can get the rest with surprisingly little code. In this section, we will
 deﬁne an object system sufﬁcient for many real applications in two pages of code.
 Object-oriented programming, at a minimum, implies
 
-   1. objects which have properties
+1. objects which have properties
 
-   2. and respond to messages,
+2. and respond to messages,
 
-   3. and which inherit properties and methods from their parents.
+3. and which inherit properties and methods from their parents.
 
-    In Lisp, there are already several ways to store collections of properties.
+In Lisp, there are already several ways to store collections of properties.
 One way would be to represent objects as hash-tables, and store their properties
 as entries within them. We then have access to individual properties through
 gethash:
 
+```
 (gethash ’color obj)
+```
 
 Since functions are data objects, we can store them as properties too. This means
 that we can also have methods; to invoke a given method of an object is to funcall
 the property of that name:
 
+```
 (funcall (gethash ’move obj) obj 10)
+```
 
 We can deﬁne a Smalltalk style message-passing syntax upon this idea:
 
+```
 (defun tell (obj message &rest args)
   (apply (gethash message obj) obj args))
+```
 
 so that to tell obj to move 10 we can say
 
+```
 (tell obj ’move 10)
+```
 
-    In fact, the only ingredient plain Lisp lacks is inheritance, and we can provide
+In fact, the only ingredient plain Lisp lacks is inheritance, and we can provide
 a rudimentary version of that in six lines of code, by deﬁning a recursive version
 of gethash:
 
+```
 (defun rget (obj prop)
   (multiple-value-bind (val win) (gethash prop obj)
     (if win
         (values val win)
         (let ((par (gethash ’parent obj)))
           (and par (rget par prop))))))
-
-
-
----
-
-
-25.2                           OBJECTS IN PLAIN LISP                           351
-
-
 
  (defun rget (obj prop)
    (some2 #’(lambda (a) (gethash prop a))
@@ -17186,19 +16798,22 @@ of gethash:
          (if (or val win)
              (values val win)
              (some2 fn (cdr lst))))))
-
-                       Figure 25.1: Multiple inheritance.
+```
+> Figure 25.1: Multiple inheritance.
 
 
 If we just use rget in place of gethash, we will get inherited properties and
 methods. We specify an object’s parent thus:
 
+```
 (setf (gethash ’parent obj) obj2)
+```
 
 So far we have only single inheritance—an object can only have one parent.
 But we can have multiple inheritance by making the parent property a list, and
 deﬁning rget as in Figure 25.1.
-    With single inheritance, when we wanted to retrieve some property of an
+
+With single inheritance, when we wanted to retrieve some property of an
 object, we just searched recursively up its ancestors. If the object itself had no
 information about the property we wanted, we looked at its parent, and so on.
 With multiple inheritance we want to perform the same kind of search, but our job
@@ -17209,58 +16824,50 @@ are both descended from d. A depth-ﬁrst (or rather, height-ﬁrst) traversal w
 go a, b, d, c, d. If the desired property were present in both d and c, we would
 
 
+```
+[ MISSING ]
+```
+> Figure 25.2: Multiple paths to a superclass.
 
----
+get the value stored in d, not the one stored in c. This would violate
+the principle that subclasses override the default values provided by
+their parents.
 
+If we want to implement the usual idea of inheritance, we should
+examine an object before one of its descendants. In this case, the
+proper search order would be a, b, c, d. How can we ensure that the
+search always tries descendants ﬁrst?  The simplest way is to assemble
+a list of all the ancestors of the original object, sort the list so
+that no object appears before one of its descendants, and then look at
+each element in turn.  This strategy is used by get-ancestors, which
+returns a properly ordered list of an object and its ancestors. To
+sort the list, get-ancestors calls stable-sort instead of sort, to
+avoid the possibility of reordering parallel ancestors. Once the list
+is sorted, rget merely searches for the ﬁrst object with the desired
+property.  (The utility some2 is a version of some for use with
+functions like gethash that indicate success or failure in the second
+return value.)  The list of an object’s ancestors goes from most
+speciﬁc to least speciﬁc: if orange is a child of citrus, which is a
+child of fruit, then the list will go (orange citrus fruit).  When an
+object has multiple parents, their precedence goes left-to-right. That
+is, if we say
 
-   352                            OBJECT-ORIENTED LISP
+```
+(setf (gethash ’parents x) (list y z))
+```
 
+then y will be considered before z when we look for an inherited
+property. For example, we can say that a patriotic scoundrel is a
+scoundrel ﬁrst and a patriot second:
 
+```
+> (setq scoundrel (make-hash-table)
+        patriot (make-hash-table)
+        patriotic-scoundrel (make-hash-table))
+#<Hash-Table C4219E>
+```
 
-
-                      Figure 25.2: Multiple paths to a superclass.
-
-
-  get the value stored in d, not the one stored in c. This would violate the principle
-  that subclasses override the default values provided by their parents.
-       If we want to implement the usual idea of inheritance, we should never examine
-  an object before one of its descendants. In this case, the proper search order would
-  be a, b, c, d. How can we ensure that the search always tries descendants ﬁrst?
-  The simplest way is to assemble a list of all the ancestors of the original object,
-  sort the list so that no object appears before one of its descendants, and then look
-  at each element in turn.
-       This strategy is used by get-ancestors, which returns a properly ordered list
- of an object and its ancestors. To sort the list, get-ancestors calls stable-sort
-  instead of sort, to avoid the possibility of reordering parallel ancestors. Once the
-  list is sorted, rget merely searches for the ﬁrst object with the desired property.
-  (The utility some2 is a version of some for use with functions like gethash that
-  indicate success or failure in the second return value.)
-       The list of an object’s ancestors goes from most speciﬁc to least speciﬁc: if
-  orange is a child of citrus, which is a child of fruit, then the list will go
-  (orange citrus fruit).
-       When an object has multiple parents, their precedence goes left-to-right. That
-  is, if we say
-
-   (setf (gethash ’parents x) (list y z))
-
-   then y will be considered before z when we look for an inherited property. For
-   example, we can say that a patriotic scoundrel is a scoundrel ﬁrst and a patriot
-   second:
-
-   > (setq scoundrel (make-hash-table)
-           patriot (make-hash-table)
-           patriotic-scoundrel (make-hash-table))
-   #<Hash-Table C4219E>
-
-
-
----
-
-
-25.2                            OBJECTS IN PLAIN LISP                             353
-
-
-
+```
  (defun obj (&rest parents)
    (let ((obj (make-hash-table)))
      (setf (gethash ’parents obj) parents)
@@ -17274,10 +16881,10 @@ go a, b, d, c, d. If the desired property were present in both d and c, we would
  (defun rget (obj prop)
    (some2 #’(lambda (a) (gethash prop a))
           (ancestors obj)))
+```
+> Figure 25.3: A function to create objects.
 
-                    Figure 25.3: A function to create objects.
-
-
+```
 > (setf (gethash ’serves scoundrel) ’self
         (gethash ’serves patriot)   ’country
         (gethash ’parents patriotic-scoundrel)
@@ -17286,32 +16893,27 @@ go a, b, d, c, d. If the desired property were present in both d and c, we would
 > (rget patriotic-scoundrel ’serves)
 SELF
 T
-     Let’s make some improvements to this skeletal system. We could begin with a
+```
+
+Let’s make some improvements to this skeletal system. We could begin with a
 function to create objects. This function should build a list of an object’s ancestors
 at the time the object is created. The current code builds these lists when queries
 are made, but there is no reason not to do it earlier. Figure 25.3 deﬁnes a function
 called obj which creates a new object, storing within it a list of its ancestors. To
 take advantage of stored ancestors, we also redeﬁne rget.
-     Another place for improvement is the syntax of message calls. The tell itself
+
+Another place for improvement is the syntax of message calls. The tell itself
 is unnecessary clutter, and because it makes verbs come second, it means that our
 programs can no longer be read like normal Lisp preﬁx expressions:
 (tell (tell obj ’find-owner) ’find-owner)
-    We can get rid of the tell syntax by deﬁning each property name as a function,
+
+We can get rid of the tell syntax by deﬁning each property name as a function,
 as in Figure 25.4. The optional argument meth?, if true, signals that this property
 should be treated as a method. Otherwise it will be treated as a slot, and the value
 retrieved by rget will simply be returned. Once we have deﬁned the name of
 either kind of property,
 
-
-
----
-
-
-354                            OBJECT-ORIENTED LISP
-
-
-
-
+```
  (defmacro defprop (name &optional meth?)
    ‘(progn
       (defun ,name (obj &rest args)
@@ -17326,18 +16928,22 @@ either kind of property,
      (if meth
          (apply meth obj args)
          (error "No ~A method for ~A." name obj))))
+```
+> Figure 25.4: Functional syntax.
 
-                         Figure 25.4: Functional syntax.
-
-
+```
 (defprop find-owner t)
+```
 
 we can refer to it with a function call, and our code will read like Lisp again:
 
+```
 (find-owner (find-owner obj))
+```
 
 Our previous example now becomes somewhat more readable:
 
+```
 > (progn
     (setq scoundrel (obj))
     (setq patriot (obj))
@@ -17348,75 +16954,66 @@ Our previous example now becomes somewhat more readable:
     (serves patriotic-scoundrel))
 SELF
 T
+```
 
-    In the current implementation, an object can have at most one method of a
+In the current implementation, an object can have at most one method of a
 given name. An object either has its own method, or inherits one. It would be
 convenient to have more ﬂexibility on this point, so that we could combine local
 and inherited methods. For example, we might want the move method of some
 object to be the move method of its parent, but with some extra code run before
 or afterwards.
 
-
-
----
-
-
-25.2                             OBJECTS IN PLAIN LISP                         355
-
-
-    To allow for such possibilities, we will modify our program to include before-,
+To allow for such possibilities, we will modify our program to include before-,
 after-, and around-methods. Before-methods allow us to say "But ﬁrst, do this."
 They are called, most speciﬁc ﬁrst, as a prelude to the rest of the method call.
 After-methods allow us to say "P.S. Do this too." They are called, most speciﬁc
 last, as an epilogue to the method call. Between them, we run what used to be the
 whole method, and is now called the primary method. The value of this call is the
 one returned, even if after-methods are called later.
-    Before- and after-methods allow us to wrap new behavior around the call to
+
+Before- and after-methods allow us to wrap new behavior around the call to
 the primary method. Around-methods provide a more drastic way of doing the
 same thing. If an around-method exists, it will be called instead of the primary
 method. Then, at its own discretion, the around-method may itself invoke the
 primary method (via call-next, which will be provided in Figure 25.7).
-    To allow auxiliary methods, we modify run-methods and rget as in Fig-
-ures 25.5 and 25.6. In the previous version, when we ran some method of an
-object, we ran just one function: the most speciﬁc primary method. We ran the
-ﬁrst method we encountered when searching the list of ancestors. With auxiliary
-methods, the calling sequence now goes as follows:
 
-   1. The most speciﬁc around-method, if there is one.
+To allow auxiliary methods, we modify run-methods and rget as in
+Figures 25.5 and 25.6. In the previous version, when we ran some
+method of an object, we ran just one function: the most speciﬁc
+primary method. We ran the ﬁrst method we encountered when searching
+the list of ancestors. With auxiliary methods, the calling sequence
+now goes as follows:
 
-   2. Otherwise, in order:
+1. The most speciﬁc around-method, if there is one.
 
-          (a) All before-methods, from most speciﬁc to least speciﬁc.
-          (b) The most speciﬁc primary method (what we used to call).
-          (c) All after-methods, from least speciﬁc to most speciﬁc.
+2. Otherwise, in order:
+  1. All before-methods, from most speciﬁc to least speciﬁc.
+  2. The most speciﬁc primary method (what we used to call).
+  3. All after-methods, from least speciﬁc to most speciﬁc.
 
-    Notice also that instead of being a single function, a method becomes a four-
+Notice also that instead of being a single function, a method becomes a four-
 part structure. To deﬁne a (primary) method, instead of saying:
 
+```
 (setf (gethash ’move obj) #’(lambda ...))
+```
 
 we say:
 
+```
 (setf (meth-primary (gethash ’move obj)) #’(lambda ...))
+```
 
 For this and other reasons, our next step should be to deﬁne a macro for deﬁning
 methods.
-    Figure 25.7 shows the deﬁnition of such a macro. The bulk of this code is
+
+Figure 25.7 shows the deﬁnition of such a macro. The bulk of this code is
 taken up with implementing two functions that methods can use to refer to other
 methods. Around- and primary methods can use call-next to invoke the next
 method, which is the code that would have run if the current method didn’t exist.
 For example, if the currently running method is the only around-method, the next
 
-
-
----
-
-
-356                          OBJECT-ORIENTED LISP
-
-
-
-
+```
  (defstruct meth       around before primary after)
 
  (defmacro meth- (field obj)
@@ -17449,9 +17046,8 @@ For example, if the currently running method is the only around-method, the next
                                (:primary (meth- primary val))
                                (t (values val win))))))
           (nthcdr skip (ancestors obj))))
-
-                       Figure 25.5: Auxiliary methods.
-
+```
+> Figure 25.5: Auxiliary methods.
 
 method would be the usual sandwich of before-, most speciﬁc primary, and after-
 methods. Within the most speciﬁc primary method, the next method would be the
@@ -17459,15 +17055,7 @@ second most speciﬁc primary method. Since the behavior of call-next depends
 on where it is called, it is never deﬁned globally with a defun, but is deﬁned
 locally within each method deﬁned by defmeth.
 
-
-
----
-
-
-25.2                           OBJECTS IN PLAIN LISP                          357
-
-
-
+```
  (defun run-befores (obj prop args)
    (dolist (a (ancestors obj))
      (let ((bm (meth- before (gethash prop a))))
@@ -17481,43 +17069,38 @@ locally within each method deﬁned by defmeth.
                                  (gethash prop (car lst)))))
                   (if am (apply am (car lst) args))))))
      (rec (ancestors obj))))
+```
+> Figure 25.6: Auxiliary methods (continued).
 
-                  Figure 25.6: Auxiliary methods (continued).
-
-
-    An around- or primary method can use next-p to check whether there is a
+An around- or primary method can use next-p to check whether there is a
 next method. If the current method is the primary method of an object with no
 parents, for example, there would be no next method. Since call-next yields
 an error when there is no next method, next-p should usually be called to test
 the waters ﬁrst. Like call-next, next-p is deﬁned locally within individual
 methods.
-    The new macro defmeth is used as follows. If we just want to deﬁne the area
+
+The new macro defmeth is used as follows. If we just want to deﬁne the area
 method of the rectangle object, we say
 
+```
 (setq rectangle (obj))
 (defprop height)
 (defprop width)
 (defmeth (area) rectangle (r)
   (* (height r) (width r)))
+```
 
 Now the area of an instance is calculated according to the method of the class:
 
+```
 > (let ((myrec (obj rectangle)))
     (setf (height myrec) 2
           (width myrec) 3)
     (area myrec))
 6
+```
 
-
-
----
-
-
-358                    OBJECT-ORIENTED LISP
-
-
-
-
+```
  (defmacro defmeth ((name &optional (type :primary))
                     obj parms &body body)
    (let ((gobj (gensym)))
@@ -17558,27 +17141,20 @@ Now the area of an instance is calculated according to the method of the class:
                      (apply pri obj args)
                      (error "No next method."))))))
 
-                  Figure 25.7: Deﬁning methods.
+```
+> Figure 25.7: Deﬁning methods.
 
-
-
----
-
-
-25.2                           OBJECTS IN PLAIN LISP                           359
-
-
-
- (defmacro undefmeth ((name &optional (type :primary)) obj)
-   ‘(setf (,(symb ’meth- type) (gethash ’,name ,obj))
-          nil))
-
-                        Figure 25.8: Removing methods.
-
+```
+(defmacro undefmeth ((name &optional (type :primary)) obj)
+  ‘(setf (,(symb ’meth- type) (gethash ’,name ,obj))
+         nil))
+```
+> Figure 25.8: Removing methods.
 
 In a more complicated example, suppose we have deﬁned a backup method for
 the filesystem object:
 
+```
 (setq filesystem (obj))
 (defmeth (backup :before) filesystem (fs)
   (format t "Remember to mount the tape.~%"))
@@ -17587,75 +17163,83 @@ the filesystem object:
   ’done)
 (defmeth (backup :after) filesystem (fs)
   (format t "Well, that was easy.~%"))
+```
 
 The normal sequence of calls will be as follows:
 
+```
 > (backup (obj filesystem))
 Remember to mount the tape.
 Oops, deleted all your files.
 Well, that was easy.
 DONE
+```
 
 Later we want to know how long backups take, so we deﬁne the following around-
 method:
 
+```
 (defmeth (backup :around) filesystem (fs)
   (time (call-next)))
+```
 
 Now whenever backup is called on a child of filesystem (unless more speciﬁc
 around-methods intervene) our around-method will be called. It calls the code
 that would ordinarily run in a call to backup, but within a call to time. The value
 returned by time will be returned as the value of the call to backup:
 
+```
 > (backup (obj filesystem))
 Remember to mount the tape.
 Oops, deleted all your files.
 Well, that was easy.
 Elapsed Time = .01 seconds
 DONE
-
-
-
----
-
-
-360                            OBJECT-ORIENTED LISP
-
-
+```
 
 Once we are ﬁnished timing the backups, we will want to remove the around-
 method. That can be done by calling undefmeth (Figure 25.8), which takes the
 same ﬁrst two arguments as defmeth:
-(undefmeth (backup :around) filesystem)
 
-     Another thing we might want to alter is an object’s list of parents. But after
+```
+(undefmeth (backup :around) filesystem)
+```
+
+Another thing we might want to alter is an object’s list of parents. But after
 any such change, we should also update the list of ancestors of the object and all
 its children. So far, we have no way of getting from an object to its children, so
 we must also add a children property.
-     Figure 25.9 contains code for operating on objects’ parents and children.
+
+Figure 25.9 contains code for operating on objects’ parents and children.
 Instead of getting at parents and children via gethash, we use the operators
 parents and children. The latter is a macro, and therefore transparent to
 setf. The former is a function whose inversion is deﬁned by defsetf to be
 set-parents, which does everything needed to maintain consistency in the new
 doubly-linked world.
-     To update the ancestors of all the objects in a subtree, set-parents calls
+
+To update the ancestors of all the objects in a subtree, set-parents calls
 maphier, which is like a mapc for inheritance hierarchies. As mapc calls a
 function on every element of a list, maphier calls a function on an object and
 all its descendants. Unless they form a proper tree, the function could get called
 more than once on some objects. Here this is harmless, because get-ancestors
 does the same thing when called multiple times.
-     Now we can alter the inheritance hierarchy just by using setf on an object’s
+
+Now we can alter the inheritance hierarchy just by using setf on an object’s
 parents:
+
+```
 > (progn (pop (parents patriotic-scoundrel))
          (serves patriotic-scoundrel))
 COUNTRY
 T
+```
 
 When the hierarchy is modiﬁed, affected lists of children and ancestors will be
 updated automatically. (The children are not meant to be manipulated directly,
 but they could be if we deﬁned a set-children analogous to set-parents.)
 The last function in Figure 25.9 is obj redeﬁned to use the new code.
-    As a ﬁnal improvement to our system, we will make it possible to specify
+
+As a ﬁnal improvement to our system, we will make it possible to specify
 new ways of combining methods. Currently, the only primary method that gets
 called is the most speciﬁc (though it can call others via call-next). Instead we
 might like to be able to combine the results of the primary methods of each of an
@@ -17665,15 +17249,7 @@ citrus, (orange sweet) for orange, and (dented) for my-orange, it would
 be convenient to be able to make (props my-orange) return the union of all
 these values: (dented orange sweet round acidic).
 
-
-
----
-
-
-25.2                            OBJECTS IN PLAIN LISP                           361
-
-
-
+```
  (defmacro children (obj)
    ‘(gethash ’children ,obj))
 
@@ -17704,28 +17280,19 @@ these values: (dented orange sweet round acidic).
    (let ((obj (make-hash-table)))
      (setf (parents obj) parents)
      obj))
+```
+> Figure 25.9: Maintaining parent and child links.
 
-                Figure 25.9: Maintaining parent and child links.
-
-
-    We could have this if we allowed methods to apply some function to the values
+We could have this if we allowed methods to apply some function to the values
 of all the primary methods, instead of just returning the value of the most speciﬁc.
 Figure 25.10 contains a macro which allows us to deﬁne the way methods are
 combined, and a new version of run-core-methods which can perform method
 combination.
-    We deﬁne the form of combination for a method via defcomb, which takes
-a method name and a second argument describing the desired combination. Or-
 
+We deﬁne the form of combination for a method via defcomb, which takes
+a method name and a second argument describing the desired combination.
 
-
----
-
-
-362                          OBJECT-ORIENTED LISP
-
-
-
-
+```
  (defmacro defcomb (name op)
    ‘(progn
       (defprop ,name t)
@@ -17759,24 +17326,15 @@ a method name and a second argument describing the desired combination. Or-
                                       (apply pm obj args))))
                          (if val (list val))))
                   (ancestors obj))))
+```
+> Figure 25.10: Method combination.
 
-                     Figure 25.10: Method combination.
-
-
-dinarily this second argument should be a function. However, it can also be one
+Ordinarily this second argument should be a function. However, it can also be one
 of :progn, :and, :or, or :standard. With the former three, primary meth-
 ods will be combined as though according to the corresponding operator, while
 :standard indicates that we want the traditional way of running methods.
 
-
-
----
-
-
-25.2                                 OBJECTS IN PLAIN LISP                               363
-
-
-
+```
  (defun comb-and (obj name args ancs &optional (last t))
    (if (null ancs)
        last
@@ -17792,42 +17350,35 @@ ods will be combined as though according to the corresponding operator, while
         (let ((pm (meth- primary (gethash name (car ancs)))))
           (or (and pm (apply pm obj args))
               (comb-or obj name args (cdr ancs))))))
+```
+> Figure 25.11: Method combination (continued).
 
-                    Figure 25.11: Method combination (continued).
-
-
-    The central function in Figure 25.10 is the new run-core-methods. If the
+The central function in Figure 25.10 is the new run-core-methods. If the
 method being called has no mcombine property, then the method call proceeds as
 before. Otherwise the mcombine of the method is either a function (like +) or a
 keyword (like :or). In the former case, the function is just applied to a list of
 the values returned by all the primary methods. 1 In the latter, we use the function
 associated with the keyword to iterate over the primary methods.
-    The operators and and or have to be treated specially, as in Figure 25.11.
+
+The operators and and or have to be treated specially, as in Figure 25.11.
 They get special treatment not just because they are special forms, but because
 they short-circuit evaluation:
 
+```
 > (or 1 (princ "wahoo"))
 1
+```
 
 Here nothing is printed because the or returns as soon as it sees a non-nil argument.
 Similarly, a primary method subject to or combination should never get called if
 a more speciﬁc method returns true. To provide such short-circuiting for and and
 or, we use the distinct functions comb-and and comb-or.
-    To implement our previous example, we would write:
 
+To implement our previous example, we would write:
+
+```
 (setq citrus (obj))
 (setq orange (obj citrus))
-  1A   more sophisticated version of this code could use reduce to avoid consing here.
-
-
-
----
-
-
-364                                  OBJECT-ORIENTED LISP
-
-
-
 (setq my-orange (obj orange))
 
 (defmeth (props) citrus (c) ’(round acidic))
@@ -17835,25 +17386,32 @@ or, we use the distinct functions comb-and and comb-or.
 (defmeth (props) my-orange (m) ’(dented))
 
 (defcomb props #’(lambda (&rest args) (reduce #’union args)))
+```
 
 after which props would return the union of all the primary method values: 2
 
+```
 > (props my-orange)
 (DENTED ORANGE SWEET ROUND ACIDIC)
+```
 
 Incidentally, this example suggests a choice that you only have when doing object-
 oriented programming in Lisp: whether to store information in slots or methods.
-    Afterward, if we wanted the props method to return to the default behavior,
+
+Afterward, if we wanted the props method to return to the default behavior,
 we just set the method combination back to standard:
 
+```
 > (defcomb props :standard)
 NIL
 > (props my-orange)
 (DENTED)
+```
 
 Note that before- and after-methods only run in standard method combination.
 However, around-methods work the same as before.
-    The program presented in this section is intended as a model, not as a real
+
+The program presented in this section is intended as a model, not as a real
 foundation for object-oriented programming. It was written for brevity rather
 than efﬁciency. However, it is at least a working model, and so could be used for
 experiments and prototypes. If you do want to use the program for such purposes,
@@ -17861,136 +17419,157 @@ one minor change would make it much more efﬁcient: don’t calculate or store
 ancestor lists for objects with only one parent.
 
 
-25.3 Classes and Instances
+## 25.3 Classes and Instances
+
 The program in the previous section was written to resemble CLOS as closely as
 such a small program could. By understanding it we are already a fair way towards
 understanding CLOS. In the next few sections we will examine CLOS itself.
-    In our sketch, we made no syntactic distinction between classes and instances,
+
+In our sketch, we made no syntactic distinction between classes and instances,
 or between slots and methods. In CLOS, we use the defclass macro to deﬁne a
 class, and we declare the slots in a list at the same time:
-    2 Since the combination function for props calls union, the list elements will not necessarily be
 
-in this order.
-
-
-
----
-
-
-25.3                         CLASSES AND INSTANCES                          365
-
-
+```
 (defclass circle ()
   (radius center))
+```
 
 This expression says that the circle class has no superclasses, and two slots,
 radius and center. We can make an instance of the circle class by saying:
+
+```
 (make-instance ’circle)
+```
+
 Unfortunately, we have deﬁned no way of referring to the slots of a circle, so
 any instance we make is going to be rather inert. To get at a slot we deﬁne an
 accessor function for it:
+
+```
 (defclass circle ()
   ((radius :accessor circle-radius)
    (center :accessor circle-center)))
+```
 
 Now if we make an instance of a circle, we can set its radius and center slots
 by using setf with the corresponding accessor functions:
 
+```
 > (setf (circle-radius (make-instance ’circle)) 2)
 2
+```
 
 We can do this kind of initialization right in the call to make-instance if we
 deﬁne the slots to allow it:
 
+```
 (defclass circle ()
   ((radius :accessor circle-radius :initarg :radius)
    (center :accessor circle-center :initarg :center)))
+```
 
 The :initarg keyword in a slot deﬁnition says that the following argument should
 become a keyword parameter in make-instance. The value of the keyword
 parameter will become the initial value of the slot:
 
+```
 > (circle-radius (make-instance ’circle
                    :radius 2
                    :center ’(0 . 0)))
 2
+```
 
-    By declaring an :initform, we can also deﬁne slots which initialize them-
+By declaring an :initform, we can also deﬁne slots which initialize them-
 selves. The visible slot of the shape class
 
+```
 (defclass shape ()
   ((color   :accessor shape-color   :initarg :color)
    (visible :accessor shape-visible :initarg :visible
             :initform t)))
-
-
-
----
-
-
-366                            OBJECT-ORIENTED LISP
-
-
+```
 
 will be set to t by default:
+
+```
 > (shape-visible (make-instance ’shape))
 T
+```
+
 If a slot has both an initarg and an initform, the initarg takes precedence when it
 is speciﬁed:
+
+```
 > (shape-visible (make-instance ’shape :visible nil))
 NIL
-   Slots are inherited by instances and subclasses. If a class has more than
+```
+
+Slots are inherited by instances and subclasses. If a class has more than
 one superclass, it inherits the union of their slots. So if we deﬁne the class
 screen-circle to be a subclass of both circle and shape,
+
+```
 (defclass screen-circle (circle shape)
   nil)
+```
+
 then instances of screen-circle will have four slots, two inherited from each
 grandparent. Note that a class does not have to create any new slots of its own; this
 class exists just to provide something instantiable that inherits from both circle
 and shape.
-    The accessors and initargs work for instances of screen-circle just as they
+
+The accessors and initargs work for instances of screen-circle just as they
 would for instances of circle or shape:
+
+```
 > (shape-color (make-instance ’screen-circle
                               :color ’red :radius 3))
 RED
+```
+
 We can cause every screen-circle to have some default initial color by
 specifying an initform for this slot in the defclass:
+
+```
 (defclass screen-circle (circle shape)
   ((color :initform ’purple)))
+```
+
 Now instances of screen-circle will be purple by default,
+
+```
 > (shape-color (make-instance ’screen-circle))
 PURPLE
+```
+
 though it is still possible to initialize the slot otherwise by giving an explicit
 :color initarg.
-    In our sketch of object-oriented programming, instances inherited values di-
+
+In our sketch of object-oriented programming, instances inherited values di-
 rectly from the slots in their parent classes. In CLOS, instances do not have slots
 in the same way that classes do. We deﬁne an inherited default for instances by
 deﬁning an initform in the parent class. In a way, this is more ﬂexible, because as
 well as being a constant, an initform can be an expression that returns a different
 value each time it is evaluated:
 
-
-
----
-
-
-25.3                           CLASSES AND INSTANCES                            367
-
-
+```
 (defclass random-dot ()
   ((x :accessor dot-x :initform (random 100))
    (y :accessor dot-y :initform (random 100))))
+```
 
 Each time we make an instance of a random-dot its x- and y-position will be a
 random integer between 0 and 99:
 
+```
 > (mapcar #’(lambda (name)
               (let ((rd (make-instance ’random-dot)))
                 (list name (dot-x rd) (dot-y rd))))
           ’(first second third))
 ((FIRST 25 8) (SECOND 26 15) (THIRD 75 59))
+```
 
-    In our sketch, we also made no distinction between slots whose values were
+In our sketch, we also made no distinction between slots whose values were
 to vary from instance to instance, and those which were to be constant across the
 whole class. In CLOS we can specify that some slots are to be shared—that is,
 their value is the same for every instance. We do this by declaring the slot to
@@ -17999,139 +17578,156 @@ have :allocation :class. (The alternative is for a slot to have :allocation
 example, if all owls are nocturnal, then we can make the nocturnal slot of the
 owl class a shared slot, and give it the initial value t:
 
+```
 (defclass owl ()
   ((nocturnal :accessor owl-nocturnal
               :initform t
               :allocation :class)))
+```
 
 Now every instance of the owl class will inherit this slot:
 
+```
 > (owl-nocturnal (make-instance ’owl))
 T
+```
 
 If we change the "local" value of this slot in an instance, we are actually altering
 the value stored in the class:
 
+```
 > (setf (owl-nocturnal (make-instance ’owl)) ’maybe)
 MAYBE
 > (owl-nocturnal (make-instance ’owl))
 MAYBE
+```
 
-    This could cause some confusion, so we might like to make such a slot read-
+This could cause some confusion, so we might like to make such a slot read-
 only. When we deﬁne an accessor function for a slot, we create a way of both
 reading and writing the slot’s value. If we want the value to be readable but
 not writable, we can do it by giving the slot just a reader function, instead of a
 full-ﬂedged accessor function:
 
-
-
----
-
-
-368                            OBJECT-ORIENTED LISP
-
-
-
+```
 (defclass owl ()
   ((nocturnal :reader owl-nocturnal
               :initform t
               :allocation :class)))
+```
 
 Now attempts to alter the nocturnal slot of an instance will generate an error:
+
+```
 > (setf (owl-nocturnal (make-instance ’owl)) nil)
 >>Error: The function (SETF OWL-NOCTURNAL) is undefined.
+```
 
-25.4 Methods
+## 25.4 Methods
+
 Our sketch emphasized the similarity between slots and methods in a language
 which provides lexical closures. In our program, a primary method was stored
 and inherited in the same way as a slot value. The only difference between a slot
 and a method was that deﬁning a name as a slot by
+
+```
 (defprop area)
+```
 
 made area a function which would simply retrieve and return a value, while
 deﬁning it as a method by
+
+```
 (defprop area t)
+```
 
 made area a function which would, after retrieving a value, funcall it on its
 arguments.
-   In CLOS the functional units are still called methods, and it is possible to deﬁne
+
+In CLOS the functional units are still called methods, and it is possible to deﬁne
 them so that they each seem to be a property of some class. Here we deﬁne an
 area method for the circle class:
+
+```
 (defmethod area ((c circle))
   (* pi (expt (circle-radius c) 2)))
+```
 
 The parameter list for this method says that it is a function of one argument which
 applies to instances of the circle class.
-   We invoke this method like a function, just as in our sketch:
+
+We invoke this method like a function, just as in our sketch:
+
+```
 > (area (make-instance ’circle :radius 1))
 3.14...
+```
 
 We can also deﬁne methods that take additional arguments:
+
+```
 (defmethod move ((c circle) dx dy)
   (incf (car (circle-center c)) dx)
   (incf (cdr (circle-center c)) dy)
   (circle-center c))
-
-
-
----
-
-
-25.4                                 METHODS                                   369
-
-
+```
 If we call this method on an instance of circle, its center will be shifted by
  dx,dy :
 
+```
 > (move (make-instance ’circle :center ’(1 . 1)) 2 3)
 (3 . 4)
+```
 
 The value returned by the method reﬂects the circle’s new position.
-   As in our sketch, if there is a method for the class of an instance, and for
+
+As in our sketch, if there is a method for the class of an instance, and for
 superclasses of that class, the most speciﬁc one runs. So if unit-circle is a
 subclass of circle, with the following area method
 
+```
 (defmethod area ((c unit-circle)) pi)
+```
 
 then this method, rather than the more general one, will run when we call area
 on an instance of unit-circle.
-    When a class has multiple superclasses, their precedence runs left to right. By
+
+When a class has multiple superclasses, their precedence runs left to right. By
 deﬁning the class patriotic-scoundrel as follows
 
+```
 (defclass scoundrel nil nil)
 (defclass patriot nil nil)
 (defclass patriotic-scoundrel (scoundrel patriot) nil)
+```
 
 we specify that patriotic scoundrels are scoundrels ﬁrst and patriots second. When
 there is an applicable method for both superclasses,
 
+```
 (defmethod self-or-country? ((s scoundrel))
   ’self)
+```
 
+```
 (defmethod self-or-country? ((p patriot))
   ’country)
+```
 
 the method of the scoundrel class will run:
 
+```
 > (self-or-country? (make-instance ’patriotic-scoundrel))
 SELF
+```
 
-    The examples so far maintain the illusion that CLOS methods are methods of
+The examples so far maintain the illusion that CLOS methods are methods of
 some object. In fact, they are something more general. In the parameter list of
 the move method, the element (c circle) is called a specialized parameter; it
 says that this method applies when the ﬁrst argument to move is an instance of the
 circle class. In a CLOS method, more than one parameter can be specialized. The
 following method has two specialized and one optional unspecialized parameter:
 
-
-
----
-
-
-370                                 OBJECT-ORIENTED LISP
-
-
-
+```
 (defmethod combine ((ic ice-cream) (top topping)
                     &optional (where :here))
   (append (list (name ic) ’ice-cream)
@@ -18141,68 +17737,85 @@ following method has two specialized and one optional unspecialized parameter:
                   (:here ’glass)
                   (:to-go ’styrofoam))
                 ’dish)))
+```
+
 It is invoked when the ﬁrst two arguments to combine are instances of ice-cream
 and topping, respectively. If we deﬁne some minimal classes to instantiate
+
+```
 (defclass stuff () ((name :accessor name :initarg :name)))
 (defclass ice-cream (stuff) nil)
 (defclass topping (stuff) nil)
+```
+
 then we can deﬁne and run this method:
+
+```
 > (combine (make-instance ’ice-cream :name ’fig)
            (make-instance ’topping :name ’olive)
            :here)
 (FIG ICE-CREAM WITH OLIVE TOPPING IN A GLASS DISH)
-    When methods specialize more than one of their parameters, it is difﬁcult
+```
+
+When methods specialize more than one of their parameters, it is difﬁcult
 to continue to regard them as properties of classes. Does our combine method
 belong to the ice-cream class or the topping class? In CLOS, the model of
 objects responding to messages simply evaporates. This model seems natural so
 long as we invoke methods by saying something like:
+
+```
 (tell obj ’move 2 3)
+```
+
 Then we are clearly invoking the move method of obj. But once we drop this
 syntax in favor of a functional equivalent:
+
+```
 (move obj 2 3)
+```
+
 then we have to deﬁne move so that it dispatches on its ﬁrst argument—that is,
 looks at the type of the ﬁrst argument and calls the appropriate method.
-    Once we have taken this step, the question arises: why only allow dispatching
+
+Once we have taken this step, the question arises: why only allow dispatching
 on the ﬁrst argument? CLOS answers: why indeed? In CLOS, methods can
 specialize any number of their parameters—and not just on user-deﬁned classes,
 but on Common Lisp types, 3 and even on individual objects. Here is a combine
 method that applies to strings:
-   3 Or more precisely, on the type-like classes that CLOS deﬁnes in parallel with the Common Lisp
-type hierarchy.
 
-
-
----
-
-
-25.4                                      METHODS                                        371
-
-
+```
 (defmethod combine ((s1 string) (s2 string) &optional int?)
   (let ((str (concatenate ’string s1 s2)))
     (if int? (intern str) str)))
+```
 
 Which means not only that methods are no longer properties of classes, but that
 we can use methods without deﬁning classes at all.
 
+```
 > (combine "I am not a " "cook.")
 "I am not a cook."
+```
 
 Here the second parameter is specialized on the symbol palindrome:
 
+```
 (defmethod combine ((s1 sequence) (x (eql ’palindrome))
                     &optional (length :odd))
   (concatenate (type-of s1)
                s1
                (subseq (reverse s1)
                        (case length (:odd 1) (:even 0)))))
+```
 
 This particular method makes palindromes of any kind of sequence elements: 4
 
+```
 > (combine ’(able was i ere) ’palindrome)
 (ABLE WAS I ERE I WAS ABLE)
+```
 
-    At this point we no longer have object-oriented programming, but something
+At this point we no longer have object-oriented programming, but something
 more general. CLOS is designed with the understanding that beneath methods
 there is this concept of dispatch, which can be done on more than one argument,
 and can be based on more than an argument’s class. When methods are built upon
@@ -18210,82 +17823,76 @@ this more general notion, they become independent of individual classes. Instead
 of adhering conceptually to classes, methods now adhere to other methods with
 the same name. In CLOS such a clump of methods is called a generic function. All
 our combine methods implicitly deﬁne the generic function combine.
-    We can deﬁne generic functions explicitly with the defgeneric macro. It
+
+We can deﬁne generic functions explicitly with the defgeneric macro. It
 is not necessary to call defgeneric to deﬁne a generic function, but it can be a
 convenient place to put documentation, or some sort of safety-net for errors. Here
 we do both:
 
+```
 (defgeneric combine (x y &optional z)
   (:method (x y &optional z)
      "I can’t combine these arguments.")
   (:documentation "Combines things."))
-    4 In one (otherwise excellent) Common Lisp implementation, concatenate will not accept cons
-
-as its ﬁrst argument, so this call will not work.
-
-
-
----
-
-
-372                            OBJECT-ORIENTED LISP
-
-
+```
 
 Since the method given here for combine doesn’t specialize any of its arguments,
 it will be the one called in the event no other method is applicable.
 
+```
 > (combine #’expt "chocolate")
 "I can’t combine these arguments."
+```
 
 Before, this call would have generated an error.
-    Generic functions impose one restriction that we don’t have when methods
+
+Generic functions impose one restriction that we don’t have when methods
 are properties of objects: when all methods of the same name get joined into one
 generic function, their parameter lists must agree. That’s why all our combine
 methods had an additional optional parameter. After deﬁning the ﬁrst combine
 method to take up to three arguments, it would have caused an error if we attempted
 to deﬁne another which only took two.
-    CLOS requires that the parameter lists of all methods with the same name be
+
+CLOS requires that the parameter lists of all methods with the same name be
 congruent. Two parameter lists are congruent if they have the same number of
 required parameters, the same number of optional parameters, and compatible use
 of &rest and &key. The actual keyword parameters accepted by different methods
 need not be the same, but defgeneric can insist that all its methods accept a
 certain minimal set. The following pairs of parameter lists are all congruent:
 
+```
 (x)                  (a)
 (x &optional y)      (a &optional b)
 (x y &rest z)        (a b &rest c)
 (x y &rest z)        (a b &key c d)
+```
 
 and the following pairs are not:
 
+```
 (x)             (a b)
 (x &optional y) (a &optional b c)
 (x &optional y) (a &rest b)
 (x &key x y)    (a)
+```
 
-    Redeﬁning methods is just like redeﬁning functions. Since only required
+Redeﬁning methods is just like redeﬁning functions. Since only required
 parameters can be specialized, each method is uniquely identiﬁed by its generic
 function and the types of its required parameters. If we deﬁne another method
 with the same specializations, it overwrites the original one. So by saying:
 
+```
 (defmethod combine ((x string) (y string)
                     &optional ignore)
   (concatenate ’string x " + " y))
+```
 
 we redeﬁne what combine does when its ﬁrst two arguments are strings.
-    Unfortunately, if instead of redeﬁning a method we want to remove it, there
+
+Unfortunately, if instead of redeﬁning a method we want to remove it, there
 is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
 
-
-
----
-
-
-25.5                               METHODS                                 373
-
-
-
+```
  (defmacro undefmethod (name &rest args)
    (if (consp (car args))
        (udm name nil (car args))
@@ -18299,9 +17906,8 @@ is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
                      (find-method (symbol-function ’,name)
                                   ’,qual
                                   (list ,@classes)))))
-
-                  Figure 25.12: Macro for removing methods.
-
+```
+> Figure 25.12: Macro for removing methods.
 
 one. The details of how to remove a method by hand are summarized in the
 implementation of undefmethod in Figure 25.12. We use this macro by giving
@@ -18310,54 +17916,59 @@ giving a whole parameter list as the second or third argument, we give just the
 class-names of the required parameters. So to remove the combine method for
 two strings, we say:
 
+```
 (undefmethod combine (string string))
+```
 
 Unspecialized arguments are implicitly of class t, so if we had deﬁned a method
 with required but unspecialized parameters:
 
+```
 (defmethod combine ((fn function) x &optional y)
   (funcall fn x y))
+```
 
 we could get rid of it by saying
 
+```
 (undefmethod combine (function t))
+```
 
 If we want to remove a whole generic function, we can do it the same way we
 would remove the deﬁnition of any function, by calling fmakunbound:
 
+```
 (fmakunbound ’combine)
+```
 
+## 25.5 Auxiliary Methods and Combination
 
-
----
-
-
-374                          OBJECT-ORIENTED LISP
-
-
-
-25.5 Auxiliary Methods and Combination
 Auxiliary methods worked in our sketch basically as they do in CLOS. So far we
 have seen only primary methods, but we can also have before-, after- and around-
 methods. Such auxiliary methods are deﬁned by putting a qualifying keyword
 after the method name in the call to defmethod. If we deﬁne a primary speak
 method for the speaker class as follows:
 
+```
 (defclass speaker nil nil)
 
 (defmethod speak ((s speaker) string)
   (format t "~A" string))
+```
 
 Then calling speak with an instance of speaker just prints the second argument:
 
+```
 > (speak (make-instance ’speaker)
          "life is not what it used to be")
 life is not what it used to be
 NIL
+```
 
 By deﬁning a subclass intellectual which wraps before- and after-methods
 around the primary speak method,
 
+```
 (defclass intellectual (speaker) nil)
 
 (defmethod speak :before ((i intellectual) string)
@@ -18365,42 +17976,42 @@ around the primary speak method,
 
 (defmethod speak :after ((i intellectual) string)
   (princ " in some sense"))
+```
 
 we can create a subclass of speakers which always have the last (and the ﬁrst)
 word:
 
+```
 > (speak (make-instance ’intellectual)
          "life is not what it used to be")
 Perhaps life is not what it used to be in some sense
 NIL
+```
 
 In standard method combination, the methods are called as described in our
 sketch: all the before-methods, most speciﬁc ﬁrst, then the most speciﬁc primary
 method, then all the after-methods, most speciﬁc last. So if we deﬁne before- or
 after-methods for the speaker superclass,
 
-
-
----
-
-
-25.5                   AUXILIARY METHODS AND COMBINATION                        375
-
-
+```
 (defmethod speak :before ((s speaker) string)
   (princ "I think "))
+```
 
 they will get called in the middle of the sandwich:
 
+```
 > (speak (make-instance ’intellectual)
          "life is not what it used to be")
 Perhaps I think life is not what it used to be in some sense
 NIL
+```
 
 Regardless of what before- or after-methods get called, the value returned by the
 generic function is the value of the most speciﬁc primary method—in this case,
 the nil returned by format.
-    This changes if there are around-methods. If one of the classes in an object’s
+
+This changes if there are around-methods. If one of the classes in an object’s
 family tree has an around-method—or more precisely, if there is an around-method
 specialized for the arguments passed to the generic function—the around-method
 will get called ﬁrst, and the rest of the methods will only run if the around-method
@@ -18410,6 +18021,7 @@ in CLOS called call-next-method. There is also a next-method-p, analogous
 to our next-p. With around-methods we can deﬁne another subclass of speaker
 which is more circumspect:
 
+```
 (defclass courtier (speaker) nil)
 
 (defmethod speak :around ((c courtier) string)
@@ -18418,10 +18030,12 @@ which is more circumspect:
       (if (next-method-p) (call-next-method))
       (format t "Indeed, it is a preposterous idea.~%"))
   ’bow)
+```
 
 When the ﬁrst argument to speak is an instance of the courtier class, the
 courtier’s tongue is now guarded by the around-method:
 
+```
 > (speak (make-instance ’courtier) "kings will last")
 Does the King believe that kings will last? yes
 I think kings will last
@@ -18430,54 +18044,52 @@ BOW
 Does the King believe that the world is round? no
 Indeed, it is a preposterous idea.
 BOW
-
-
-
----
-
-
-376                            OBJECT-ORIENTED LISP
-
-
+```
 
 Note that, unlike before- and after-methods, the value returned by the around-
 method is returned as the value of the generic function.
-    Generally, methods are run as in this outline, which is reprinted from Sec-
+
+Generally, methods are run as in this outline, which is reprinted from Sec-
 tion 25.2:
 
-   1. The most speciﬁc around-method, if there is one.
+1. The most speciﬁc around-method, if there is one.
 
-   2. Otherwise, in order:
-
-       (a) All before-methods, from most speciﬁc to least speciﬁc.
-       (b) The most speciﬁc primary method.
-       (c) All after-methods, from least speciﬁc to most speciﬁc.
+2. Otherwise, in order:
+ 1. All before-methods, from most speciﬁc to least speciﬁc.
+ 2. The most speciﬁc primary method.
+ 3. All after-methods, from least speciﬁc to most speciﬁc.
 
 This way of combining methods is called standard method combination. As in
 our sketch, it is possible to deﬁne methods which are combined in other ways:
 for example, for a generic function to return the sum of all the applicable primary
 methods.
-    In our program, we speciﬁed how to combine methods by calling defcomb.
+
+In our program, we speciﬁed how to combine methods by calling defcomb.
 By default, methods were combined as in the outline above, but by saying, for
 example,
 
+```
 (defcomb price #’+)
+```
 
 we could cause the function price to return the sum of all the applicable primary
 methods.
-    In CLOS this is called operator method combination. As in our program, such
+
+In CLOS this is called operator method combination. As in our program, such
 method combination can be understood as if it resulted in the evaluation of a Lisp
 expression whose ﬁrst element was some operator, and whose arguments were
 calls to the applicable primary methods, in order of speciﬁcity. If we deﬁned the
 price generic function to combine values with +, and there were no applicable
 around-methods, it would behave as though it were deﬁned:
 
+```
 (defun price (&rest args)
   (+ (apply most speciﬁc primary method args)
      .
      .
      .
      (apply least speciﬁc primary method args)))
+```
 
 If there are applicable around-methods, they take precedence, just as in standard
 method combination. Under operator method combination, an around-method can
@@ -18485,91 +18097,87 @@ still call the next method via call-next-method. However, primary methods
 can no longer use call-next-method. (This is a difference from our sketch,
 where we left call-next available to such methods.)
 
-
-
----
-
-
-25.6                               CLOS AND LISP                            377
-
-
-   In CLOS, we can specify the type of method combination to be used by a
+In CLOS, we can specify the type of method combination to be used by a
 generic function by giving the optional :method-combination argument to
 defgeneric:
 
+```
 (defgeneric price (x)
   (:method-combination +))
+```
 
 Now the price method will use + method combination. If we deﬁne some classes
 with prices,
 
+```
 (defclass jacket nil nil)
 (defclass trousers nil nil)
 (defclass suit (jacket trousers) nil)
-
 (defmethod price + ((jk jacket)) 350)
 (defmethod price + ((tr trousers)) 200)
+```
 
 then when we ask for the price of an instance of suit, we get the sum of the
 applicable price methods:
 
+```
 > (price (make-instance ’suit))
 550
+```
 
 The following symbols can be used as the second argument to defmethod or in
 the :method-combination option to defgeneric:
 
+```
    +     and    append      list      max     min    nconc     or     progn
+```
 
 By calling define-method-combination you can deﬁne other kinds of method
 combination; see CLTL2, p. 830.
-    Once you specify the method combination a generic function should use, all
+
+Once you specify the method combination a generic function should use, all
 methods for that function must use the same kind. Now it would cause an error if
 we tried to use another operator (or :before or :after) as the second argument
 in a defmethod for price. If we do want to change the method combination of
 price we must remove the whole generic function by calling fmakunbound.
 
 
-25.6 CLOS and Lisp
+## 25.6 CLOS and Lisp
+
 CLOS makes a good example of an embedded language. This kind of program
 usually brings two rewards:
 
-   1. Embedded languages can be conceptually well-integrated with their envi-
-      ronment, so that within the embedded language we can continue to think of
-      programs in much the same terms.
+1. Embedded languages can be conceptually well-integrated with their
+   environment, so that within the embedded language we can continue
+   to think of programs in much the same terms.
 
-
-
----
-
-
-378                            OBJECT-ORIENTED LISP
-
-
-
-   2. Embedded languages can be powerful, because they take advantage of all
-      the things that the base language already knows how to do.
+2. Embedded languages can be powerful, because they take advantage of all
+   the things that the base language already knows how to do.
 
 CLOS wins on both counts. It is very well-integrated with Lisp, and it makes
 good use of the abstractions that Lisp has already. Indeed, we can often see Lisp
 through CLOS, the way we can see the shapes of objects through a sheet draped
 over them.
-    It is no accident that we usually speak to CLOS through a layer of macros.
+
+It is no accident that we usually speak to CLOS through a layer of macros.
 Macros do transformation, and CLOS is essentially a program which takes programs
 built out of object-oriented abstractions, and translates them into programs built
 out of Lisp abstractions.
-    As the ﬁrst two sections suggested, the abstractions of object-oriented pro-
+
+As the ﬁrst two sections suggested, the abstractions of object-oriented pro-
 gramming map so neatly onto those of Lisp that one could almost call the former
 a special case of the latter. The objects of object-oriented programming can easily
 be implemented as Lisp objects, and their methods as lexical closures. By taking
 advantage of such isomorphisms, we were able to provide a rudimentary form of
 object-oriented programming in just a few lines of code, and a sketch of CLOS in
 a few pages.
-    CLOS is a great deal larger and more powerful than our sketch, but not so large
+
+CLOS is a great deal larger and more powerful than our sketch, but not so large
 as to disguise its roots as an embedded language. Take defmethod as an example.
 Though CLTL2 does not mention it explicitly, CLOS methods have all the power of
 lexical closures. If we deﬁne several methods within the scope of some variable,
 
+```
 (let ((transactions 0))
   (defmethod withdraw ((a account) amt)
     (incf transactions)
@@ -18579,30 +18187,26 @@ lexical closures. If we deﬁne several methods within the scope of some variabl
     (incf (balance a) amt))
   (defun transactions ()
     transactions))
+```
 
 then at runtime they will share access to the variable, just like closures. Methods
 can do this because, underneath the syntax, they are closures. In the expansion
 of a defmethod, its body appears intact in the body of a sharp-quoted lambda-
 expression.
-    Section 7.6 suggested that it was easier to conceive of how macros work than
+
+Section 7.6 suggested that it was easier to conceive of how macros work than
 what they mean. Likewise, the secret to understanding CLOS is to understand how
 it maps onto the fundamental abstractions of Lisp.
 
+## 25.7 When to Object
 
-
----
-
-
-25.7                              WHEN TO OBJECT                                379
-
-
-25.7 When to Object
 The object-oriented style provides several distinct beneﬁts. Different programs
 need these beneﬁts to varying degrees. At one end of the continuum there are
 programs—simulations, for example—which are most naturally expressed in the
 abstractions of object-oriented programming. At the other end are programs
 written in the object-oriented style mainly to make them extensible.
-    Extensibility is indeed one of the great beneﬁts of the object-oriented style.
+
+Extensibility is indeed one of the great beneﬁts of the object-oriented style.
 Instead of being a single monolithic blob of code, a program is written in small
 pieces, each labelled with its purpose. So later when someone else wants to
 modify the program, it will be easy to ﬁnd the part that needs to be changed. If
@@ -18617,14 +18221,16 @@ can make all these types of modiﬁcations without even looking at the rest of t
 code. From this point of view, an object-oriented program is a program organized
 like a table: we can change it quickly and safely by looking up the appropriate
 entry.
-    Extensibility demands the least from the object-oriented style. In fact, it
+
+Extensibility demands the least from the object-oriented style. In fact, it
 demands so little that an extensible program might not need to be object-oriented
 at all. If the preceding chapters have shown anything, they have shown that Lisp
 programs do not have to be monolithic blobs of code. Lisp offers a whole range
 of options for extensibility. For example, you could quite literally have a program
 organized like a table: a program which consisted of a set of closures stored in an
 array.
-    If it’s extensibility you need, you don’t have to choose between an "object-
+
+If it’s extensibility you need, you don’t have to choose between an "object-
 oriented" and a "traditional" program. You can give a Lisp program exactly
 the degree of extensibility it needs, often without resorting to object-oriented
 techniques. A slot in a class is a global variable. And just as it is inelegant to
@@ -18634,197 +18240,195 @@ effort in plain Lisp. With the addition of CLOS, Common Lisp has become the
 most powerful object-oriented language in widespread use. Ironically, it is also
 the language in which object-oriented programming is least necessary.
 
-
-
----
-
-
-380   OBJECT-ORIENTED LISP
-
-
-
----
-
-
-Appendix: Packages
+# Appendix: Packages
 
 Packages are Common Lisp’s way of grouping code into modules. Early dialects
 of Lisp contained a symbol-table, called the oblist, which listed all the symbols
 read so far by the system. Through a symbol’s entry on the oblist, the system had
 access to things like its value and its property list. A symbol listed in the oblist
 was said to be interned.
-    Recent dialects of Lisp have split the concept of the oblist into multiple
+
+Recent dialects of Lisp have split the concept of the oblist into multiple
 packages. Now a symbol is not merely interned, but interned in a particular
 package. Packages support modularity because symbols interned in one package
 are only accessible in other packages (except by cheating) if they are explicitly
 declared to be so.
-    A package is a kind of Lisp object. The current package is always stored
+
+A package is a kind of Lisp object. The current package is always stored
 in the global variable *package*. When Common Lisp starts up, the current
 package will be the user package: either user (in CLTL1 implementations), or
 common-lisp-user (in CLTL2 implementations).
-    Packages are usually identiﬁed by their names, which are strings. To ﬁnd the
+
+Packages are usually identiﬁed by their names, which are strings. To ﬁnd the
 name of the current package, try:
+
+```
 > (package-name *package*)
 "COMMON-LISP-USER"
-    Usually a symbol is interned in the package that was current at the time
+```
+
+Usually a symbol is interned in the package that was current at the time
 it was read. To ﬁnd the package in which a symbol is interned, we can use
 symbol-package:
+
+```
 > (symbol-package ’foo)
 #<Package "COMMON-LISP-USER" 4CD15E>
 
-                                        381
-
-
-
----
-
-
-382                                    APPENDIX
-
-
+```
 
 The return value here is the actual package object. For future use, let’s give foo
 a value:
 
+```
 > (setq foo 99)
 99
+```
 
-   By calling in-package we can switch to a new package, creating it if
+By calling in-package we can switch to a new package, creating it if
 necessary:1
 
+```
 > (in-package ’mine :use ’common-lisp)
 #<Package "MINE" 63390E>
+```
 
 At this point there should be eerie music, because we are in a different world: foo
 here is not what it used to be.
 
+```
 MINE> foo
 >>Error: FOO has no global value.
+```
 
 Why did this happen? Because the foo we set to 99 above is a distinct symbol
 from foo here in mine. 2 To refer to the original foo from outside the user package,
 we must preﬁx the package name and two colons:
 
+```
 MINE> common-lisp-user::foo
 99
+```
 
-    So different symbols with the same print-name can coexist in different pack-
+So different symbols with the same print-name can coexist in different pack-
 ages. There can be one foo in package common-lisp-user and another foo in
 package mine, and they will be distinct symbols. In fact, that’s partly the point of
 packages: if you’re writing your program in a separate package, you can choose
 names for your functions and variables without worrying that someone will use
 the same name for something else. Even if they use the same name, it won’t be
 the same symbol.
-    Packages also provide a means of information-hiding. Programs must refer to
+
+Packages also provide a means of information-hiding. Programs must refer to
 functions and variables by their names. If you don’t make a given name available
 outside your package, it becomes unlikely that code in another package will be
 able to use or modify what it refers to.
-    In programs it’s usually bad style to use package preﬁxes with double colons.
+
+In programs it’s usually bad style to use package preﬁxes with double colons.
 By doing so you are violating the modularity that packages are supposed to
 provide. If you have to use a double colon to refer to a symbol, it’s because
 someone didn’t want you to.
-  1 Inolder implementations of Common Lisp, omit the :use argument.
-  2 Some  implementations of Common Lisp print the package name before the toplevel prompt
-whenever we are not in the user package. This is not required, but it is a nice touch.
 
-
-
----
-
-
-                                    PACKAGES                                 383
-
-
-    Usually one should only refer to symbols which have been exported. By
+Usually one should only refer to symbols which have been exported. By
 exporting a symbol from the package in which it is interned, we cause it to be
 visible to other packages. To export a symbol we call (you guessed it) export:
 
+```
 MINE> (in-package ’common-lisp-user)
 #<Package "COMMON-LISP-USER" 4CD15E>
 > (export ’bar)
 T
 > (setq bar 5)
 5
+```
 
 Now when we return to mine, we can refer to bar with only a single colon,
 because it is a publicly available name:
 
+```
 > (in-package ’mine)
 #<Package "MINE" 63390E>
 MINE> common-lisp-user:bar
 5
+```
 
 By importing bar into mine we can go one step further, and make mine actually
 share the symbol bar with the user package:
 
+```
 MINE> (import ’common-lisp-user:bar)
 T
 MINE> bar
 5
+```
 
 After importing bar we can refer to it without any package qualiﬁer at all. The
 two packages now share the same symbol; there can’t be a distinct mine:bar.
-   What if there already was one? In that case, the call to import would have
+
+What if there already was one? In that case, the call to import would have
 caused an error, as we see if we try to import foo:
 
+```
 MINE> (import ’common-lisp-user::foo)
 >>Error: FOO is already present in MINE.
+```
 
 Before, when we tried unsuccessfully to evaluate foo in mine, we thereby caused
 a symbol foo to be interned there. It had no global value and therefore generated
 an error, but the interning happened simply as a consequence of typing its name.
 So now when we try to import foo into mine, there is already a symbol there with
 the same name.
-    We can also import symbols en masse by deﬁning one package to use another:
 
+We can also import symbols en masse by deﬁning one package to use another:
+
+```
 MINE> (use-package ’common-lisp-user)
 T
-
-
-
----
-
-
-384                                 APPENDIX
-
-
+```
 
 Now all symbols exported by the user package will automatically be imported by
 mine. (If foo had been exported by the user package, this call would also have
 generated an error.)
-    As of CLTL2, the package containing the names of built-in operators and
+
+As of CLTL2, the package containing the names of built-in operators and
 variables is called common-lisp instead of lisp, and new packages no longer
 use it by default. Since we used this package in the call to in-package which
 created mine, all of Common Lisp’s names will be visible here:
 
+```
 MINE> #’cons
 #<Compiled-Function CONS 462A3E>
+```
 
 You’re practically compelled to make any new package use common-lisp (or
 some other package containing Lisp operators). Otherwise you wouldn’t even be
 able to get out of the new package.
-    As with compilation, operations on packages are not usually done at the
+
+As with compilation, operations on packages are not usually done at the
 toplevel like this. More often the calls are contained in source ﬁles. Generally
 it will sufﬁce to begin a ﬁle with an in-package and a defpackage. (The
 defpackage macro is new in CLTL2, but some older implementations provide it.)
 Here is what you might put at the top of a ﬁle containing a distinct package of
 code:
 
+```
 (in-package ’my-application :use ’common-lisp)
 
 (defpackage my-application
             (:use common-lisp my-utilities)
             (:nicknames app)
             (:export win lose draw))
+```
 
 This will cause the code in the ﬁle—or more precisely, the names in the ﬁle—to
 be in the package my-application. As well as common-lisp, this package uses
 my-utilities, so any symbols exported thence can appear without any package
 preﬁx in the ﬁle.
-    The my-application package itself exports just three symbols: win, lose,
+
+The my-application package itself exports just three symbols: win, lose,
 and draw. Since the call to in-package gave my-application the nickname
 app, code in other packages will be able to refer to them as e.g. app:win.
-    The kind of modularity provided by packages is actually a bit odd. We have
+
+The kind of modularity provided by packages is actually a bit odd. We have
 modules not of objects, but of names. Every package that uses common-lisp
 imports the name cons, because common-lisp includes a function with that
 name. But in consequence a variable called cons would also be visible every
@@ -18832,41 +18436,42 @@ package that used common-lisp. And the same thing goes for Common Lisp’s
 other name-spaces. If packages are confusing, this is the main reason why; they’re
 not based on objects, but on names.
 
-
-
----
-
-
-                                    PACKAGES                                   385
-
-
-   Things having to do with packages tend to happen at read-time, not runtime,
+Things having to do with packages tend to happen at read-time, not runtime,
 which can lead to some confusion. The second expression we typed:
 
+```
 (symbol-package ’foo)
+```
 
 returned the value it did because reading the query created the answer. To evaluate
 this expression, Lisp had to read it, which meant interning foo.
-    As another example, consider this exchange, which appeared above:
 
+As another example, consider this exchange, which appeared above:
+
+```
 MINE> (in-package ’common-lisp-user)
 #<Package "COMMON-LISP-USER" 4CD15E>
 > (export ’bar)
+```
 
 Usually two expressions typed into the toplevel are equivalent to the same two
 expressions enclosed within a single progn. Not in this case. If we try saying
 
+```
 MINE> (progn (in-package ’common-lisp-user)
              (export ’bar))
 >>Error: MINE::BAR is not accessible in COMMON-LISP-USER.
+```
 
 we get an error instead. This happens because the whole progn expression is
 processed by read before being evaluated. When read is called, the current
 package is mine, so bar is taken to be mine:bar. It is as if we had asked to
 export this symbol, instead of common-lisp-user:bar, from the user package.
-    The way packages are deﬁned makes it a nuisance to write programs which
+
+The way packages are deﬁned makes it a nuisance to write programs which
 use symbols as data. For example, if we deﬁne noise as follows:
 
+```
 (in-package ’other :use ’common-lisp)
 (defpackage other
             (:use common-lisp)
@@ -18877,23 +18482,17 @@ use symbols as data. For example, if we deﬁne noise as follows:
     (dog ’woof)
     (cat ’meow)
     (pig ’oink)))
+```
 
 then if we call noise from another package with an unqualiﬁed symbol as an
 argument, it will usually fall off the end of the case clauses and return nil:
 
+```
 OTHER> (in-package ’common-lisp-user)
 #<Package "COMMON-LISP-USER" 4CD15E>
 > (other:noise ’pig)
 NIL
-
-
-
----
-
-
-386                                 APPENDIX
-
-
+```
 
 That’s because what we passed as an argument was common-lisp-user:pig (no
 offense intended), while the case key is other:pig. To make noise work as
@@ -18902,195 +18501,206 @@ import them into any package from which we intended to call noise.
     In this case, we could evade the problem by using keywords instead of ordinary
 symbols. If noise had been deﬁned
 
+```
 (defun noise (animal)
   (case animal
     (:dog :woof)
     (:cat :meow)
     (:pig :oink)))
+```
 
 then we could safely call it from any package:
 
+```
 OTHER> (in-package ’common-lisp-user)
 #<Package "COMMON-LISP-USER" 4CD15E>
 > (other:noise :pig)
 :OINK
+```
 
 Keywords are like gold: universal and self-evaluating. They are visible every-
 where, and they never have to be quoted. A symbol-driven function like defanaph
 (page 223) should nearly always be written to use keywords.
-    Packages are a rich source of confusion. This introduction to the subject has
+
+Packages are a rich source of confusion. This introduction to the subject has
 barely scratched the surface. For all the details, see CLTL2, Chapter 11.
 
-
-
----
-
-
-Notes
+# Notes
 
 This section is also intended as a bibliography. All the books and papers listed here should
 be considered recommended reading.
 
-    v Foderaro, John K. Introduction to the Special Lisp Section. CACM 34, 9 (September
-      1991), p. 27.
-  viii The ﬁnal Prolog implementation is 94 lines of code. It uses 90 lines of utilities from
-       previous chapters. The ATN compiler adds 33 lines, for a total of 217. Since Lisp
-       has no formal notion of a line, there is a large margin for error when measuring the
-       length of a Lisp program in lines.
-   ix Steele, Guy L., Jr. Common Lisp: the Language, 2nd Edition. Digital Press, Bedford
-      (MA), 1990.
-    5 Brooks, Frederick P. The Mythical Man-Month. Addison-Wesley, Reading (MA),
-      1975, p. 16.
-   18 Abelson, Harold, and Gerald Jay Sussman, with Julie Sussman. Structure and
-      Interpretation of Computer Programs. MIT Press, Cambridge, 1985.
-   21 More precisely, we cannot deﬁne a recursive function with a single lambda-expression.
-      We can, however, generate a recursive function by writing a function to take itself
-      as an additional argument,
-       (setq fact
-             #’(lambda (f n)
-                  (if (= n 0)
-                      1
-                      (* n (funcall f f (- n 1))))))
-       and then passing it to a function that will return a closure in which original function
-       is called on itself:
+v Foderaro, John K. Introduction to the Special Lisp Section. CACM 34,
+9 (September 1991), p. 27.
 
+viii The ﬁnal Prolog implementation is 94 lines of code. It uses 90
+lines of utilities from previous chapters. The ATN compiler adds 33
+lines, for a total of 217. Since Lisp has no formal notion of a line,
+there is a large margin for error when measuring the length of a Lisp
+program in lines.
 
-                                            387
+ix Steele, Guy L., Jr. Common Lisp: the Language, 2nd Edition. Digital Press, Bedford
+(MA), 1990.
 
+5 Brooks, Frederick P. The Mythical Man-Month. Addison-Wesley, Reading (MA),
+1975, p. 16.
 
+18 Abelson, Harold, and Gerald Jay Sussman, with Julie Sussman. Structure and
+Interpretation of Computer Programs. MIT Press, Cambridge, 1985.
 
----
+21 More precisely, we cannot deﬁne a recursive function with a single lambda-expression.
+We can, however, generate a recursive function by writing a function to take itself
+as an additional argument,
 
-
-388                                      NOTES
-
-
-
-      (defun recurser (fn)
-        #’(lambda (&rest args)
-            (apply fn fn args)))
-
-      Passing fact to this function yields a regular factorial function,
-
-      > (funcall (recurser fact) 8)
-      40320
-
-      which could have been expressed directly as:
-
-      ((lambda (f) #’(lambda (n) (funcall f f n)))
-       #’(lambda (f n)
+```
+(setq fact
+      #’(lambda (f n)
            (if (= n 0)
                1
                (* n (funcall f f (- n 1))))))
+```
 
-      Many Common Lisp users will ﬁnd labels or alambda more convenient.
-  23 Gabriel, Richard P. Performance and Standardization. Proceedings of the First
-     International Workshop on Lisp Evolution and Standardization, 1988, p. 60.
-     Testing triangle in one implementation, Gabriel found that "even when the C
-     compiler is provided with hand-generated register allocation information, the Lisp
-     code is 17% faster than an iterative C version of this function." His paper mentions
-     several other programs which ran faster in Lisp than in C, including one that was
-     42% faster.
-  24 If you wanted to compile all the named functions currently loaded, you could do it
-     by calling compall:
-      (defun compall ()
-        (do-symbols (s)
-          (when (fboundp s)
-            (unless (compiled-function-p (symbol-function s))
-              (print s)
-              (compile s)))))
-      This function also prints the name of each function as it is compiled.
-  26 You may be able to see whether inline declarations are being obeyed by calling
-     (disassemble ’foo), which displays some representation of the object code of
-     function foo. This is also one way to check whether tail-recursion optimization is
-     being done.
-  31 One could imagine nreverse deﬁned as:
+and then passing it to a function that will return a closure in which original function
+is called on itself:
 
-      (defun our-nreverse (lst)
-        (if (null (cdr lst))
-            lst
-            (prog1 (nr2 lst)
-                   (setf (cdr lst) nil))))
+```
+(defun recurser (fn)
+  #’(lambda (&rest args)
+      (apply fn fn args)))
+```
 
+Passing fact to this function yields a regular factorial function,
 
+```
+> (funcall (recurser fact) 8)
+40320
 
----
+```
 
+which could have been expressed directly as:
 
-                                       NOTES                                       389
+```
+((lambda (f) #’(lambda (n) (funcall f f n)))
+ #’(lambda (f n)
+     (if (= n 0)
+         1
+         (* n (funcall f f (- n 1))))))
 
+```
+
+Many Common Lisp users will ﬁnd labels or alambda more convenient.
+
+23 Gabriel, Richard P. Performance and Standardization. Proceedings of the First
+International Workshop on Lisp Evolution and Standardization, 1988, p. 60.
+Testing triangle in one implementation, Gabriel found that "even when the C
+compiler is provided with hand-generated register allocation information, the Lisp
+code is 17% faster than an iterative C version of this function." His paper mentions
+several other programs which ran faster in Lisp than in C, including one that was
+42% faster.
+
+24 If you wanted to compile all the named functions currently loaded, you could do it
+by calling compall:
+
+```
+(defun compall ()
+  (do-symbols (s)
+    (when (fboundp s)
+      (unless (compiled-function-p (symbol-function s))
+        (print s)
+        (compile s)))))
+```
+
+This function also prints the name of each function as it is compiled.
+
+26 You may be able to see whether inline declarations are being obeyed by calling
+(disassemble ’foo), which displays some representation of the object code of
+function foo. This is also one way to check whether tail-recursion optimization is
+being done.
+
+31 One could imagine nreverse deﬁned as:
+
+```
+(defun our-nreverse (lst)
+  (if (null (cdr lst))
+      lst
+      (prog1 (nr2 lst)
+             (setf (cdr lst) nil))))
 
    (defun nr2 (lst)
      (let ((c (cdr lst)))
        (prog1 (if (null (cdr c))
                   c
                   (nr2 c))
-              (setf (cdr c) lst))))
+                  (setf (cdr c) lst))))
+```
+
 43 Good design always puts a premium on economy, but there is an additional reason
-   that programs should be dense. When a program is dense, you can see more of it at
-   once.
-   People know intuitively that design is easier when one has a broad view of one’s
-   work. This is why easel painters use long-handled brushes, and often step back
-   from their work. This is why generals position themselves on high ground, even if
-   they are thereby exposed to enemy ﬁre. And it is why programmers spend a lot of
-   money to look at their programs on large displays instead of small ones.
-   Dense programs make the most of one’s ﬁeld of vision. A general cannot shrink a
-   battle to ﬁt on a table-top, but Lisp allows you to perform corresponding feats of
-   abstraction in programs. And the more you can see of your program at once, the
-   more likely it is to turn out as a uniﬁed whole.
-   This is not to say that one should make one’s programs shorter at any cost. If you
-   take all the newlines out of a function, you can ﬁt it on one line, but this does not
-   make it easier to read. Dense code means code which has been made smaller by
-   abstraction, not text-editing.
-   Imagine how hard it would be to program if you had to look at your code on a
-   display half the size of the one you’re used to. Making your code twice as dense
-   will make programming that much easier.
-44 Steele, Guy L., Jr. Debunking the "Expensive Procedure Call" Myth or, Procedu-
-   ral Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO.
-   Proceedings of the National Conference of the ACM, 1977, p. 157.
+that programs should be dense. When a program is dense, you can see more of it at
+once.
+
+People know intuitively that design is easier when one has a broad
+view of one’s work. This is why easel painters use long-handled
+brushes, and often step back from their work. This is why generals
+position themselves on high ground, even if they are thereby exposed
+to enemy ﬁre. And it is why programmers spend a lot of money to look
+at their programs on large displays instead of small ones.  Dense
+programs make the most of one’s ﬁeld of vision. A general cannot
+shrink a battle to ﬁt on a table-top, but Lisp allows you to perform
+corresponding feats of abstraction in programs. And the more you can
+see of your program at once, the more likely it is to turn out as a
+uniﬁed whole.
+
+This is not to say that one should make one’s programs shorter at any
+cost. If you take all the newlines out of a function, you can ﬁt it on
+one line, but this does not make it easier to read. Dense code means
+code which has been made smaller by abstraction, not text-editing.
+
+Imagine how hard it would be to program if you had to look at your
+code on a display half the size of the one you’re used to. Making your
+code twice as dense will make programming that much easier.
+
+44 Steele, Guy L., Jr. Debunking the "Expensive Procedure Call" Myth
+or, Procedural Call Implementations Considered Harmful or, LAMBDA: The
+Ultimate GOTO.  Proceedings of the National Conference of the ACM,
+1977, p. 157.
+
 48 For reference, here are simpler deﬁnitions of some of the functions in Figures 4.2
-   and 4.3. All are substantially (at least 10%) slower:
-   (defun filter (fn lst)
-     (delete nil (mapcar fn lst)))
+and 4.3. All are substantially (at least 10%) slower:
 
-   (defun filter (fn lst)
-     (mapcan #’(lambda (x)
-                 (let ((val (funcall fn x)))
-                   (if val (list val))))
-             lst))
+```
+(defun filter (fn lst)
+  (delete nil (mapcar fn lst)))
 
-   (defun group (source n)
-     (if (endp source)
-         nil
-         (let ((rest (nthcdr n source)))
-           (cons (if (consp rest) (subseq source 0 n) source)
-                 (group rest n)))))
+(defun filter (fn lst)
+  (mapcan #’(lambda (x)
+              (let ((val (funcall fn x)))
+                (if val (list val))))
+          lst))
 
+(defun group (source n)
+  (if (endp source)
+      nil
+      (let ((rest (nthcdr n source)))
+        (cons (if (consp rest) (subseq source 0 n) source)
+              (group rest n)))))
 
+(defun flatten (x)
+  (mapcan #’(lambda (x)
+              (if (atom x) (mklist x) (flatten x)))
+          x))
 
----
+(defun prune (test tree)
+  (if (atom tree)
+      tree
+      (mapcar #’(lambda (x)
+                  (prune test x))
+              (remove-if #’(lambda (y)
+                             (and (atom y)
+                                  (funcall test y)))
+                         tree))))
+```
 
-
-390                                        NOTES
-
-
-
-      (defun flatten (x)
-        (mapcan #’(lambda (x)
-                    (if (atom x) (mklist x) (flatten x)))
-                x))
-
-      (defun prune (test tree)
-        (if (atom tree)
-            tree
-            (mapcar #’(lambda (x)
-                        (prune test x))
-                    (remove-if #’(lambda (y)
-                                   (and (atom y)
-                                        (funcall test y)))
-                               tree))))
-
-  49 Written as it is, find2 will generate an error if it runs off the end of a dotted list:
+49 Written as it is, find2 will generate an error if it runs off the end of a dotted list:
 
       > (find2 #’oddp ’(2 . 3))
       >>Error: 3 is not a list.
