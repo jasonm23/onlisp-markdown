@@ -1369,6 +1369,8 @@ over their own shared copy of an assoc-list.
  #<Interpreted-Function 802347>)
 ```
 
+<div style="padding: 10px; border: 1px solid #999999; background-color: #E0E0E0;">
+
 ```
 (defun make-dbms (db)
   (list
@@ -1384,6 +1386,8 @@ over their own shared copy of an assoc-list.
 ```
 
 > Figure 2.1: Three closures share a list.
+
+</div>
 
 The actual assoc-list within the database is invisible from the outside world—we
 can’t even tell that it’s an assoc-list—but it can be reached through the functions
