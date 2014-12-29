@@ -274,188 +274,188 @@ Paul Graham
 
 # Contents
 
-1. The Extensible Language
- 1. Design by Evolution
- 2. Programming Bottom-Up
- 3. Extensible Software
- 4. Extending Lisp
- 5. Why Lisp (or When)
+1. [The Extensible Language](#1-the-extensible-language)
+ 1. [Design by Evolution](#11-design-by-evolution)
+ 2. [Programming Bottom-Up](#12-programming-bottom-up)
+ 3. [Extensible Software](#13-extensible-software)
+ 4. [Extending Lisp](#14-extending-lisp)
+ 5. [Why Lisp (or When)](#15-why-lisp-or-when)
 
-2. Functions
- 1. Functions as Data
- 2. Deﬁning Functions
- 3. Functional Arguments
- 4. Functions as Properties
- 5. Scope
- 6. Closures
- 7. Local Functions
- 8. Tail-Recursion
- 9. Compilation
- 10. Functions from Lists
+2. [Functions](#2-functions)
+ 1. [Functions as Data](#21-functions-as-data)
+ 2. [Deﬁning Functions](#22-deﬁning-functions)
+ 3. [Functional Arguments](#23-functional-arguments)
+ 4. [Functions as Properties](#24-functions-as-properties)
+ 5. [Scope](#25-scope)
+ 6. [Closures](#26-closures)
+ 7. [Local Functions](#27-local-functions)
+ 8. [Tail-Recursion](#28-tail-recursion)
+ 9. [Compilation](#29-compilation)
+ 10. [Functions from Lists](#20-functions-from-lists)
 
-3. Functional Programming
- 1. Functional Design
- 2. Imperative Outside-In
- 3. Functional Interfaces
- 4. Interactive Programming
+3. [Functional Programming](#3-functional-programming)
+ 1. [Functional Design](#31-functional-design)
+ 2. [Imperative Outside-In](#32-imperative-outside-in)
+ 3. [Functional Interfaces](#33-functional-interfaces)
+ 4. [Interactive Programming](#34-interactive-programming)
 
-4. Utility Functions
- 1. Birth of a Utility
- 2. Invest in Abstraction
- 3. Operations on Lists
- 4. Search
- 5. Mapping
- 6. I/O
- 7. Symbols and Strings
- 8. Density
+4. [Utility Functions](#4-utility-functions)
+ 1. [Birth of a Utility](#41-birth-of-a-utility)
+ 2. [Invest in Abstraction](#42-invest-in-abstraction)
+ 3. [Operations on Lists](#43-operations-on-lists)
+ 4. [Search](#44-search)
+ 5. [Mapping](#45-mapping)
+ 6. [I/O](#46-io)
+ 7. [Symbols and Strings](#47-symbols-and-strings)
+ 8. [Density](#48-Density)
 
-5. Returning Functions
- 1. Common Lisp Evolves
- 2. Orthogonality
- 3. Memoizing
- 4. Composing Functions
- 5. Recursion on Cdrs
- 6. Recursion on Subtrees
- 7. When to Build Functions
+5. [Returning Functions](#5-returning-functions)
+ 1. [Common Lisp Evolves](#51-common-lisp-evolves)
+ 2. [Orthogonality](#52-orthogonality)
+ 3. [Memoizing](#53-memoizing)
+ 4. [Composing Functions](#54-composing-functions)
+ 5. [Recursion on Cdrs](#55-recursion-on-cdrs)
+ 6. [Recursion on Subtrees](#56-recursion-on-subtrees)
+ 7. [When to Build Functions](#57-when-to-build-functions)
 
-6. Functions as Representation
- 1. Networks
- 2. Compiling Networks
- 3. Looking Forward
+6. [Functions as Representation](#6-functions-as-representation)
+ 1. [Networks](#61-networks)
+ 2. [Compiling Networks](#62-compiling-networks)
+ 3. [Looking Forward](#63-looking-forward)
 
-7. Macros
- 1. How Macros Work
- 2. Backquote
- 3. Deﬁning Simple Macros
- 4. Testing Macroexpansion
- 5. Destructuring in Parameter Lists
- 6. A Model of Macros
- 7. Macros as Programs
- 8. Macro Style
- 9. Dependence on Macros
- 10. Macros from Functions
- 11. Symbol Macros
+7. [Macros](#7-macros)
+ 1. [How Macros Work](#71-how-macros-work)
+ 2. [Backquote](#72-backquote)
+ 3. [Deﬁning Simple Macros](#73-deﬁning-simple-macros)
+ 4. [Testing Macroexpansion](#74-testing-macroexpansion)
+ 5. [Destructuring in Parameter Lists](#75-destructuring-in-parameter-lists)
+ 6. [A Model of Macros](#76-a-model-of-macros)
+ 7. [Macros as Programs](#77-macros-as-programs)
+ 8. [Macro Style](#78-macro-style)
+ 9. [Dependence on Macros](#79-dependence-on-macros)
+ 10. [Macros from Functions](#710-macros-from-functions)
+ 11. [Symbol Macros](#711-symbol-macros)
 
-8. When to Use Macros
- 1. When Nothing Else Will Do
- 2. Macro or Function?
- 3. Applications for Macros
+8. [When to Use Macros](#8-when-to-use-macros)
+ 1. [When Nothing Else Will Do](#81-when-nothing-else-will-do)
+ 2. [Macro or Function?](#82-macro-or-function)
+ 3. [Applications for Macros](#83-applications-for-macros)
 
-9. Variable Capture
- 1. Macro Argument Capture
- 2. Free Symbol Capture
- 3. When Capture Occurs
- 4. Avoiding Capture with Better Names
- 5. Avoiding Capture by Prior Evaluation
- 6. Avoiding Capture with Gensyms
- 7. Avoiding Capture with Packages
- 8. Capture in Other Name-Spaces
- 9. Why Bother?
+9. [Variable Capture](#9-variable-capture)
+ 1. [Macro Argument Capture](#91-macro-argument-capture)
+ 2. [Free Symbol Capture](#92-free-symbol-capture)
+ 3. [When Capture Occurs](#93-when-capture-occurs)
+ 4. [Avoiding Capture with Better Names](#94-avoiding-capture-with-better-names)
+ 5. [Avoiding Capture by Prior Evaluation](#95-avoiding-capture-by-prior-evaluation)
+ 6. [Avoiding Capture with Gensyms](#96-avoiding-capture-with-gensyms)
+ 7. [Avoiding Capture with Packages](#97-avoiding-capture-with-packages)
+ 8. [Capture in Other Name-Spaces](#98-capture-in-other-name-spaces)
+ 9. [Why Bother?](#99-why-bother)
 
-10. Other Macro Pitfalls
- 1. Number of Evaluations
- 2. Order of Evaluation
- 3. Non-functional Expanders
- 4. Recursion
+10. [Other Macro Pitfalls](#10-other-macro-pitfalls)
+ 1. [Number of Evaluations](#101-number-of-evaluations)
+ 2. [Order of Evaluation](#102-order-of-evaluation)
+ 3. [Non-functional Expanders](#103-non-functional-expanders)
+ 4. [Recursion](#104-recursion)
 
-11. Classic Macros
- 1. Creating Context
- 2. The with- Macro
- 3. Conditional Evaluation
- 4. Iteration
- 5. Iteration with Multiple Values
- 6. Need for Macros
+11. [Classic Macros](#11-classic-macros)
+ 1. [Creating Context](#111-creating-context)
+ 2. [The with- Macro](#112-the-with-macro)
+ 3. [Conditional Evaluation](#113-conditional-evaluation)
+ 4. [Iteration](#114-iteration)
+ 5. [Iteration with Multiple Values](#115-iteration-with-multiple-values)
+ 6. [Need for Macros](#116-need-for-macros)
 
-12. Generalized Variables
- 1. The Concept
- 2. The Multiple Evaluation Problem
- 3. New Utilities
- 4. More Complex Utilities
- 5. Deﬁning Inversions
+12. [Generalized Variables](#12-generalized-variables)
+ 1. [The Concept](#121-the-concept)
+ 2. [The Multiple Evaluation Problem](#122-the-multiple-evaluation-problem)
+ 3. [New Utilities](#123-new-utilities)
+ 4. [More Complex Utilities](#124-more-complex-utilities)
+ 5. [Deﬁning Inversions](#125-deﬁning-inversions)
 
-13. Computation at Compile-Time
- 1. New Utilities
- 2. Example: Bezier Curves
- 3. Applications
+13. [Computation at Compile-Time](#13-Computation at Compile-time)
+ 1. [New Utilities](#131-new-utilities)
+ 2. [Example: Bezier Curves](#132-example-bezier-curves)
+ 3. [Applications](#133-applications)
 
-14. Anaphoric Macros
- 1. Anaphoric Variants
- 2. Failure
- 3. Referential Transparency
+14. [Anaphoric Macros](#14-anaphoric-macros)
+ 1. [Anaphoric Variants](#141-anaphoric-variants)
+ 2. [Failure](#142-failure)
+ 3. [Referential Transparency](#143-referential-transparency)
 
-15. Macros Returning Functions
- 1. Building Functions
- 2. Recursion on Cdrs
- 3. Recursion on Subtrees
- 4. Lazy Evaluation
+15. [Macros Returning Functions](#15-macros-returning-functions)
+ 1. [Building Functions](#151-building-functions)
+ 2. [Recursion on Cdrs](#152-recursion-on-cdrs)
+ 3. [Recursion on Subtrees](#153-recursion-on-subtrees)
+ 4. [Lazy Evaluation](#154-lazy-evaluation)
 
-16. Macro-Deﬁning Macros
- 1. Abbreviations
- 2. Properties
- 3. Anaphoric Macros
+16. [Macro-Deﬁning Macros](#16-Macro-deﬁning-macros)
+ 1. [Abbreviations](#161-abbreviations)
+ 2. [Properties](#162-properties)
+ 3. [Anaphoric Macros](#163-anaphoric-macros)
 
-17. Read-Macros
- 1. Macro Characters
- 2. Dispatching Macro Characters
- 3. Delimiters
- 4. When What Happens
+17. [Read-Macros](#17-Read-macros)
+ 1. [Macro Characters](#171-macro-characters)
+ 2. [Dispatching Macro Characters](#172-dispatching-macro-characters)
+ 3. [Delimiters](#173-delimiters)
+ 4. [When What Happens](#174-when-what-happens)
 
-18. Destructuring
- 1. Destructuring on Lists
- 2. Other Structures
- 3. Reference
- 4. Matching
+18. [Destructuring](#18-destructuring)
+ 1. [Destructuring on Lists](#181-destructuring-on-lists)
+ 2. [Other Structures](#182-other-structures)
+ 3. [Reference](#183-reference)
+ 4. [Matching](#184-matching)
 
-19. A Query Compiler
- 1. The Database
- 2. Pattern-Matching Queries
- 3. A Query Interpreter
- 4. Restrictions on Binding
- 5. A Query Compiler
+19. [A Query Compiler](#19-a-query-compiler)
+ 1. [The Database](#191-the-database)
+ 2. [Pattern-Matching Queries](#192-pattern-matching-queries)
+ 3. [A Query Interpreter](#193-a-query-interpreter)
+ 4. [Restrictions on Binding](#194-restrictions-on-binding)
+ 5. [A Query Compiler](#195-a-query-compiler)
 
-20. Continuations
- 1. Scheme Continuations
- 2. Continuation-Passing Macros
- 3. Code-Walkers and CPS Conversion
+20. [Continuations](#20-continuations)
+ 1. [Scheme Continuations](#201-scheme-continuations)
+ 2. [Continuation-Passing Macros](#202-continuation-passing-macros)
+ 3. [Code-Walkers and CPS Conversion](#203-code-walkers-and-cps-conversion)
 
-21. Multiple Processes
- 1. The Process Abstraction
- 2. Implementation
- 3. The Less-than-Rapid Prototype
+21. [Multiple Processes](#21-multiple-processes)
+ 1. [The Process Abstraction](#211-the-process-abstraction)
+ 2. [Implementation](#212-implementation)
+ 3. [The Less-than-Rapid Prototype](#213-the-less-than-rapid-prototype)
 
-22. Nondeterminism
- 1. The Concept
- 2. Search
- 3. Scheme Implementation
- 4. Common Lisp Implementation
- 5. Cuts
- 6. True Nondeterminism
+22. [Nondeterminism](#22-nondeterminism)
+ 1. [The Concept](#221-the-concept)
+ 2. [Search](#222-search)
+ 3. [Scheme Implementation](#223-scheme-implementation)
+ 4. [Common Lisp Implementation](#224-common-lisp-implementation)
+ 5. [Cuts](#225-cuts)
+ 6. [True Nondeterminism](#226-true-nondeterminism)
 
-23. Parsing with ATNs
- 1. Background
- 2. The Formalism
- 3. Nondeterminism
- 4. An ATN Compiler
- 5. A Sample ATN
+23. [Parsing with ATNs](#23-parsing-with-at-ns)
+ 1. [Background](#231-background)
+ 2. [The Formalism](#232-the-formalism)
+ 3. [Nondeterminism](#233-nondeterminism)
+ 4. [An ATN Compiler](#234-an-atn-compiler)
+ 5. [A Sample ATN](#235-a-sample-atn)
 
-24. Prolog
- 1. Concepts
- 2. An Interpreter
- 3. Rules
- 4. The Need for Nondeterminism
- 5. New Implementation
- 6. Adding Prolog Features
- 7. Examples
- 8. The Senses of Compile
+24. [Prolog](#24-prolog)
+ 1. [Concepts](#241-concepts)
+ 2. [An Interpreter](#242-an-interpreter)
+ 3. [Rules](#243-rules)
+ 4. [The Need for Nondeterminism](#244-the-need-for-nondeterminism)
+ 5. [New Implementation](#245-new-implementation)
+ 6. [Adding Prolog Features](#246-adding-prolog-features)
+ 7. [Examples](#247-examples)
+ 8. [The Senses of Compile](#248-the-senses-of-compile)
 
-25. Object-Oriented Lisp
- 1. Plus ca Change
- 2. Objects in Plain Lisp
- 3. Classes and Instances 364
- 4. Methods 368
- 5. Auxiliary Methods and Combination 374
- 6. CLOS and Lisp 377
- 7. When to Object 379
+25. [Object-Oriented Lisp](#25-Object-oriented-lisp)
+ 1. [Plus ca Change](#251-plus-ca-change)
+ 2. [Objects in Plain Lisp](#252-objects-in-plain-lisp)
+ 3. [Classes and Instances](#253-classes-and-instances)
+ 4. [Methods](#254-methods)
+ 5. [Auxiliary Methods and Combination](#255-auxiliary-methods-and-combination)
+ 6. [CLOS and Lisp](#256-clos-and-lisp)
+ 7. [When to Object](#257-when-to-object)
 
 ---
 
@@ -18386,7 +18386,7 @@ T
 ```
 
 Now all symbols exported by the user package will automatically be imported by
-mine. (If foo had been exported by the user package, this call would also have
+mine. (If `foo` had been exported by the user package, this call would also have
 generated an error.)
 
 As of CLTL2, the package containing the names of built-in operators and
@@ -18419,21 +18419,21 @@ code:
             (:export win lose draw))
 ```
 
-This will cause the code in the ﬁle—or more precisely, the names in the ﬁle—to
-be in the package my-application. As well as common-lisp, this package uses
-my-utilities, so any symbols exported thence can appear without any package
+This will cause the code in the ﬁle, or more precisely, the names in the ﬁle, to
+be in the package `my-application`. As well as common-lisp, this package uses
+`my-utilities`, so any symbols exported thence can appear without any package
 preﬁx in the ﬁle.
 
-The my-application package itself exports just three symbols: win, lose,
-and draw. Since the call to in-package gave my-application the nickname
-app, code in other packages will be able to refer to them as e.g. app:win.
+The `my-application` package itself exports just three symbols: `win`, `lose`,
+and `draw`. Since the call to in-package gave `my-application` the nickname
+`app`, code in other packages will be able to refer to them as e.g. `app:win`.
 
 The kind of modularity provided by packages is actually a bit odd. We have
 modules not of objects, but of names. Every package that uses common-lisp
 imports the name cons, because common-lisp includes a function with that
 name. But in consequence a variable called cons would also be visible every
 package that used common-lisp. And the same thing goes for Common Lisp’s
-other name-spaces. If packages are confusing, this is the main reason why; they’re
+other namespaces. If packages are confusing, this is the main reason why; they’re
 not based on objects, but on names.
 
 Things having to do with packages tend to happen at read-time, not runtime,
@@ -18465,11 +18465,11 @@ MINE> (progn (in-package ’common-lisp-user)
 
 we get an error instead. This happens because the whole progn expression is
 processed by read before being evaluated. When read is called, the current
-package is mine, so bar is taken to be mine:bar. It is as if we had asked to
-export this symbol, instead of common-lisp-user:bar, from the user package.
+package is mine, so `bar` is taken to be `mine:bar`. It is as if we had asked to
+export this symbol, instead of `common-lisp-user:bar`, from the user package.
 
 The way packages are deﬁned makes it a nuisance to write programs which
-use symbols as data. For example, if we deﬁne noise as follows:
+use symbols as data. For example, if we deﬁne `noise` as follows:
 
 ```
 (in-package ’other :use ’common-lisp)
@@ -18485,7 +18485,7 @@ use symbols as data. For example, if we deﬁne noise as follows:
 ```
 
 then if we call noise from another package with an unqualiﬁed symbol as an
-argument, it will usually fall off the end of the case clauses and return nil:
+argument, it will usually fall off the end of the case clauses and return `nil`:
 
 ```
 OTHER> (in-package ’common-lisp-user)
@@ -18498,7 +18498,8 @@ That’s because what we passed as an argument was common-lisp-user:pig (no
 offense intended), while the case key is other:pig. To make noise work as
 one would expect, we would have to export all six symbols used within it, and
 import them into any package from which we intended to call noise.
-    In this case, we could evade the problem by using keywords instead of ordinary
+
+In this case, we could evade the problem by using keywords instead of ordinary
 symbols. If noise had been deﬁned
 
 ```
@@ -18518,9 +18519,10 @@ OTHER> (in-package ’common-lisp-user)
 :OINK
 ```
 
-Keywords are like gold: universal and self-evaluating. They are visible every-
-where, and they never have to be quoted. A symbol-driven function like defanaph
-(page 223) should nearly always be written to use keywords.
+Keywords are like gold: universal and self-evaluating. They are
+visible everywhere, and they never have to be quoted. A symbol-driven
+function like `defanaph` should nearly always be written to use
+keywords.
 
 Packages are a rich source of confusion. This introduction to the subject has
 barely scratched the surface. For all the details, see CLTL2, Chapter 11.
