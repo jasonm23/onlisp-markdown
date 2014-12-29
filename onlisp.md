@@ -895,10 +895,10 @@ function is a ﬁrst-class object, with all the same rights as more familiar obj
 like numbers and strings. So we can pass this function as an argument, return it,
 store it in a data structure, and so on:
 
-'''
+```
 > (eq #’double (car (list #’double)))
 T
-'''
+```
 
 We don’t even need defun to make functions. Like most Lisp objects, we
 can refer to them literally. When we want to refer to an integer, we just use the
@@ -1369,7 +1369,7 @@ over their own shared copy of an assoc-list.
  #<Interpreted-Function 802347>)
 ```
 
-<div style="padding: 10px; border: 1px solid #999999; background-color: #E0E0E0;">
+<div class="onlisp-figure" style="padding: 10px; border: 1px solid #999999; background-color: #E0E0E0;">
 
 ```
 (defun make-dbms (db)
@@ -1384,7 +1384,6 @@ over their own shared copy of an assoc-list.
         key)))
 
 ```
-
 > Figure 2.1: Three closures share a list.
 
 </div>
