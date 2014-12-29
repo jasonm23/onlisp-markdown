@@ -1787,6 +1787,8 @@ Lisp and functional programming have gradually become inseparable.
 An example will show how functional programming differs from what you
 might do in another language. Suppose for some reason we want the elements of
 
+---
+
 ```
 (defun bad-reverse (lst)
   (let* ((len (length lst))
@@ -1797,6 +1799,8 @@ might do in another language. Suppose for some reason we want the elements of
       (rotatef (nth i lst) (nth j lst)))))
 ```
 > Figure 3.1: A function to reverse lists.
+
+---
 
 a list in the reverse order. Instead of writing a function to reverse lists, we write a
 function which takes a list, and returns a list with the same elements in the reverse
@@ -1837,6 +1841,8 @@ touched.
 (A B C)
 ```
 
+---
+
 ```
 (defun good-reverse (lst)
   (labels ((rev (lst acc)
@@ -1846,6 +1852,8 @@ touched.
     (rev lst nil)))
 ```
 > Figure 3.2: A function to return reversed lists.
+
+---
 
 It used to be thought that you could judge someone’s character by looking at
 the shape of his head. Whether or not this is true of people, it is generally true
@@ -2546,6 +2554,8 @@ are for Polo. A highly optimized Common Lisp program might never see a list.
 It would still be a list, though, at least at compile-time. The most sophisticated
 programs, which use lists less at runtime, use them proportionately more at
 
+---
+
 ```
 (proclaim ’(inline last1 single append1 conc1 mklist))
 
@@ -2565,6 +2575,8 @@ programs, which use lists less at runtime, use them proportionately more at
   (if (listp obj) obj (list obj)))
 ```
 > Figure 4.1: Small functions which operate on lists.
+
+---
 
 compile-time, when generating macro expansions. So although the role of lists is
 decreased in modern dialects, operations on lists can still make up the greater part
@@ -2649,6 +2661,8 @@ if you called find-if with the same function on successive cdrs of a list. Analo
 gously, filter returns what some would have returned for successive cdrs of the
 list:
 
+---
+
 ```
 (defun longer (x y)
   (labels ((compare (x y)
@@ -2677,6 +2691,8 @@ list:
 ```
 
 > Figure 4.2: Larger functions that operate on lists.
+
+---
 
 ```
 > (filter #’(lambda (x) (if (numberp x) (1+ x)))
@@ -2754,6 +2770,8 @@ Every leaf for which the function returns true is removed.
 This section gives some examples of functions for searching lists. Common
 Lisp provides a rich set of built-in operators for this purpose, but some tasks
 
+---
+
 ```
 (defun flatten (x)
   (labels ((rec (x acc)
@@ -2776,6 +2794,8 @@ Lisp provides a rich set of built-in operators for this purpose, but some tasks
 ```
 
 > Figure 4.3: Doubly-recursive list utilities.
+
+---
 
 
 
@@ -2804,6 +2824,8 @@ before ﬁxes both problems.
 Since before is similar in spirit to a test for membership, it is written to
 resemble the built-in member function. Like member it takes an optional test
 argument, which defaults to eql. Also, instead of simply returning t, it tries to
+
+---
 
 ```
 (defun find2 (fn lst)
@@ -2837,6 +2859,8 @@ argument, which defaults to eql. Also, instead of simply returning t, it tries t
       (push (car src) acc))))
 ```
 > Figure 4.4: Functions which search lists.
+
+---
 
 return potentially useful information: the cdr beginning with the object given as
 the ﬁrst argument.
@@ -2905,6 +2929,8 @@ A more general kind of search is provided by best. This utility also takes a
 function and a list, but here the function must be a predicate of two arguments. It
 returns the element which, according to the predicate, beats all the others.
 
+---
+
 ```
 (defun most (fn lst)
   (if (null lst)
@@ -2942,6 +2968,8 @@ returns the element which, according to the predicate, beats all the others.
         (values (nreverse result) max))))
 ```
 > Figure 4.5: Search functions which compare elements.
+
+---
 
 ```
 > (best #’> ’(1 2 3 4 5))
@@ -2992,6 +3020,8 @@ ment. With map-> it is possible to navigate arbitrary data structures, as well a
 operate on sequences of numbers. We could deﬁne mapa-b in terms of map-> as
 follows:
 
+---
+
 ```
 (defun mapa-b (fn a b &optional (step 1))
   (map-> fn
@@ -3037,6 +3067,8 @@ follows:
 ```
 
 > Figure 4.6: Mapping functions.
+
+---
 
 For efﬁciency, the built-in mapcan is destructive. It could be duplicated by:
 
@@ -3099,6 +3131,8 @@ by the new series macros introduced in CLTL2. For example,
 
 could be rendered
 
+---
+
 ```
 (defun readlist (&rest args)
   (values (read-from-string
@@ -3119,6 +3153,8 @@ could be rendered
           (format *query-io* "~A~%" (funcall fn in))))))
 ```
 > Figure 4.7: I/O functions.
+
+---
 
 ```
 (collect (#Mfn (scan-range :from a :upto b :by c)))
@@ -3197,6 +3233,8 @@ printable representation: symbols, strings, numbers, even lists.
 |ARMadiLL0|
 ```
 
+---
+
 ```
 (defun mkstr (&rest args)
   (with-output-to-string (s)
@@ -3215,6 +3253,8 @@ printable representation: symbols, strings, numbers, even lists.
              (symbol-name sym)))
 ```
 > Figure 4.8: Functions which operate on symbols and strings.
+
+---
 
 After calling mkstr to concatenate all its arguments into a single string, symb
 sends the string to intern. This function is Lisp’s traditional symbol-builder: it
@@ -3436,6 +3476,8 @@ would often have pairs of functions for reading and writing data. With property-
 lists, for example, there would be one function to establish properties and another
 function to ask about them. In Common Lisp, we have only the latter, get. To
 
+---
+
 ```
 (defvar *!equivs* (make-hash-table))
 
@@ -3447,6 +3489,8 @@ function to ask about them. In Common Lisp, we have only the latter, get. To
 ```
 
 > Figure 5.1: Returning destructive equivalents.
+
+---
 
 
 establish a property, we use get in combination with setf:
@@ -3492,6 +3536,8 @@ which would be more visible in Scheme:
 ((! remove-if) oddp lst)
 ```
 
+---
+
 ```
 (defun memoize (fn)
   (let ((cache (make-hash-table :test #’equal)))
@@ -3503,6 +3549,8 @@ which would be more visible in Scheme:
                     (apply fn args)))))))
 ```
 > Figure 5.2: Memoizing utility.
+
+---
 
 As well as greater orthogonality, the ! operator brings a couple of other bene-
 ﬁts. It makes programs clearer, because we can see immediately that (! #’foo)
@@ -3539,6 +3587,8 @@ Elapsed Time = 0.00 seconds
 With a memoized function, repeated calls are just hash-table lookups. There is
 of course the additional expense of a lookup on each initial call, but since we
 
+---
+
 ```
 (defun compose (&rest fns)
   (if fns
@@ -3552,6 +3602,8 @@ of course the additional expense of a lookup on each initial call, but since we
 ```
 
 > Figure 5.3: An operator for functional composition.
+
+---
 
 
 
@@ -3593,6 +3645,8 @@ arguments it takes, so will the function returned by compose:
 4
 ```
 
+---
+
 ```
 (defun fif (if then &optional else)
   #’(lambda (x)
@@ -3616,6 +3670,8 @@ arguments it takes, so will the function returned by compose:
 ```
 
 > Figure 5.4: More function builders.
+
+---
 
 Since not is a Lisp function, complement is a special case of compose. It could
 be deﬁned as:
@@ -3697,6 +3753,8 @@ or this:
 Structurally these two functions have a lot in common. They both operate recur-
 sively on successive cdrs of a list, evaluating the same expression on each step,
 
+---
+
 ```
 (defun lrec (rec &optional base)
   (labels ((self (lst)
@@ -3711,6 +3769,8 @@ sively on successive cdrs of a list, evaluating the same expression on each step
 ```
 
 > Figure 5.5: Function to deﬁne ﬂat list recursers.
+
+---
 
 except in the base case, where they return a distinct value. This pattern appears
 so frequently in Lisp programs that experienced programmers can read and reproduce
@@ -3745,6 +3805,8 @@ car of the list, and a function embodying the recursive call. In functions like
 our-every, where the recursive case is an and, if the ﬁrst argument returns false
 we want to stop right there. Which means that the argument passed in the recursive
 
+---
+
 ```
 ; copy-list
 (lrec #’(lambda (x f) (cons x (funcall f))))
@@ -3759,6 +3821,8 @@ we want to stop right there. Which means that the argument passed in the recursi
 (lrec #’(lambda (x f) (or (fn x) (funcall f))))
 ```
 > Figure 5.6: Functions expressed with lrec.
+
+---
 
 case must not be a value but a function, which we can call (if we want) in order to
 get a value.
@@ -3784,11 +3848,15 @@ usually the internal representation of lists.) Figure 5.7 shows three examples o
 lists and the trees they represent. Each internal node in such a tree corresponds
 to a dot in the dotted-pair representation of the list, so the tree structure may be
 
+---
+
 ```
 (a . b)                  (a b c)                          (a b (c d))
 ```
 
 > Figure 5.7: Lists as trees.
+
+---
 
 easier to interpret if the lists are considered in that form:
 
@@ -3929,6 +3997,8 @@ the recursive calls. For the general case, we want to use instead a function whi
 takes two closures representing the calls themselves. Then we can write recursers
 which only traverse as much of the tree as they want to.
 
+---
+
 ```
 (defun ttrav (rec &optional (base #’identity))
   (labels ((self (tree)
@@ -3944,6 +4014,10 @@ which only traverse as much of the tree as they want to.
 
 > Figure 5.8: Function for recursion on trees.
 
+---
+
+---
+
 ```
 ; our-copy-tree
 (ttrav #’cons)
@@ -3956,6 +4030,8 @@ which only traverse as much of the tree as they want to.
 ```
 
 > Figure 5.9: Functions expressed with ttrav.
+
+---
 
 Functions built by ttrav always traverse a whole tree. That’s ﬁne for functions
 like count-leaves or flatten, which have to traverse the whole tree anyway.
@@ -3978,6 +4054,8 @@ Now we can also express rfind-if for e.g. oddp as:
 
 ```
 
+---
+
 ```
 (defun trec (rec &optional (base #’identity))
   (labels
@@ -3996,6 +4074,8 @@ Now we can also express rfind-if for e.g. oddp as:
 ```
 
 > Figure 5.10: Function for recursion on trees.
+
+---
 
 ## 5.7 When to Build Functions
 
@@ -4049,6 +4129,8 @@ representing a node in a network can know of several other nodes (closures) to
 which it must send its output. This means that we may be able to translate some
 networks straight into code.
 
+---
+
 ```
 > (run-node ’people)
 Is the person a man?
@@ -4065,6 +4147,8 @@ LINCOLN
 ```
 
 > Figure 6.1: Session of twenty questions.
+
+---
 
 In this section and the next we will look at two ways to traverse a network.
 First we will follow the traditional approach, with nodes deﬁned as structures, and
@@ -4096,6 +4180,8 @@ our tree:
          ’male ’female)
 ```
 
+---
+
 ```
 (defstruct node        contents yes no)
 
@@ -4108,6 +4194,10 @@ our tree:
                    :no       no)))
 ```
 > Figure 6.2: Representation and deﬁnition of nodes.
+
+---
+
+---
 
 ```
 (defnode ’people "Is the person a man?" ’male ’female)
@@ -4124,6 +4214,8 @@ our tree:
 ```
 > Figure 6.3: Sample network.
 
+---
+
 Figure 6.3 shows as much of the network as we need to produce the transcript in
 Figure 6.1.
 
@@ -4134,6 +4226,8 @@ not a leaf, the contents are asked as a question, and depending on the answer,
 we continue traversing at one of two possible destinations. If the node is a leaf,
 run-node just returns its contents. With the network deﬁned in Figure 6.3, this
 function produces the output shown in Figure 6.1.
+
+---
 
 ```
 (defun run-node (name)
@@ -4146,6 +4240,10 @@ function produces the output shown in Figure 6.1.
           (t (node-contents n)))))
 ```
 > Figure 6.4: Function for traversing networks.
+
+---
+
+---
 
 ```
 (defvar *nodes* (make-hash-table))
@@ -4162,6 +4260,8 @@ function produces the output shown in Figure 6.1.
 ```
 > Figure 6.5: A network compiled into closures.
 
+---
+
 ## 6.2 Compiling Networks
 
 In the preceding section we wrote a network program as it might have been written
@@ -4174,6 +4274,8 @@ network. Instead of having nodes as data structures and a separate function to
 traverse them, we represent the nodes as closures. The data formerly contained in
 the structures gets stored in variable bindings within the closures. Now there is no
 need for run-node; it is implicit in the nodes themselves. To start the traversal,
+
+---
 
 ```
 (defvar *nodes* nil)
@@ -4200,6 +4302,8 @@ need for run-node; it is implicit in the nodes themselves. To start the traversa
               #’(lambda () conts))))))
 ```
 > Figure 6.6: Compilation with static references.
+
+---
 
 we just funcall the node at which we want to begin:
 
@@ -4458,6 +4562,8 @@ With backquote:
 
 Without backquote:
 
+---
+
 ```
 (defmacro nif             (expr pos zero neg)
    (list ’case
@@ -4469,6 +4575,8 @@ Without backquote:
 ```
 
 > Figure 7.1: A macro deﬁned with and without backquote.
+
+---
 
 
 The two deﬁnitions in Figure 7.1 deﬁne the same macro, but the ﬁrst uses
@@ -4595,6 +4703,8 @@ want to test for membership using eq, you have to say so explicitly:
 If we did this a lot, we might want to write a variant of member which always used
 eq. Some earlier dialects of Lisp had such a function, called memq:
 
+---
+
 ```
 (memq x choices)
 ```
@@ -4607,6 +4717,8 @@ we will reincarnate it as a macro.
 > expansion: `(member x choices :test #’eq)`
 >
 > Figure 7.2: Diagram used in writing memq.
+
+---
 
 The method: Begin with a typical call to the macro you want to deﬁne. Write
 it down on a piece of paper, and below it write down the expression into which it
@@ -4652,6 +4764,8 @@ use in the macro body the ﬁrst parameter, with a comma:
 
 Continuing in this way, the completed macro deﬁnition is:
 
+---
+
 ```
 (while hungry
   (stare-intently)
@@ -4665,6 +4779,8 @@ Continuing in this way, the completed macro deﬁnition is:
   (rub-against-legs))
 ```
 > Figure 7.3: Diagram used in writing while.
+
+---
 
 ```
 (defmacro memq (obj lst)
@@ -4755,6 +4871,8 @@ Figure 7.5 deﬁnes a new macro which allows us to say instead:
 Typically you debug functions by calling them, and macros by expanding
 them. But since a macro call involves two layers of computation, there are two
 
+---
+
 ```
 > (defmacro while (test &body body)
     ‘(do ()
@@ -4781,11 +4899,17 @@ T
 ```
 > Figure 7.4: A macro and two depths of expansion.
 
+---
+
+---
+
 ```
  (defmacro mac (expr)
    ‘(pprint (macroexpand-1 ’,expr)))
 ```
 > Figure 7.5: A macro for testing macroexpansion.
+
+---
 
 points where things can go wrong. If a macro is misbehaving, most of the time
 you will be able to tell what’s wrong just by looking at the expansion. Sometimes,
@@ -4900,6 +5024,8 @@ Used sparingly, parameter list destructuring can result in clearer code. At a
 minimum, it can be used in macros like when-bind and dolist, which take two
 or more arguments followed by a body of expressions.
 
+---
+
 ```
 (defmacro our-expander (name) ‘(get ,name ’expander))
 
@@ -4919,6 +5045,8 @@ or more arguments followed by a body of expressions.
       expr))
 ```
 > Figure 7.6: A sketch of defmacro.
+
+---
 
 ## 7.6 A Model of Macros
 
@@ -5000,6 +5128,8 @@ the new value of the ﬁrst argument is visible during the evaluation of the fou
 ```
 should expand into something like
 
+---
+
 ```
 (prog ((w 3) (x 1) (y 2) (z nil))
    foo
@@ -5012,6 +5142,8 @@ should expand into something like
 ```
 
 > Figure 7.7: Desired expansion of do.
+
+---
 
 ```
 > (let ((a 1))
@@ -5038,6 +5170,8 @@ the loop label. What if foo is also used as a loop label within the body of the
 do? Chapter 9 will deal with this problem in detail; for now, sufﬁce it to say that
 instead of using foo, the macroexpansion must use a special anonymous symbol
 returned by the function gensym.
+
+---
 
 ```
 (defmacro our-do (bindforms (test &rest result) &body body)
@@ -5066,6 +5200,8 @@ returned by the function gensym.
 ```
 
 > Figure 7.8: Implementing do.
+
+---
 
 
 In order to write do, we consider what it would take to transform the ﬁrst
@@ -5128,6 +5264,8 @@ effort. However, as a macro deﬁnition our-and is just as good, if not better. 
 may be inefﬁcient in calling length on each recursion, but its organization shows
 more clearly the way in which the expansion depends on the number of conjuncts.
 
+---
+
 ```
 (defmacro our-and (&rest args)
   (case (length args)
@@ -5147,6 +5285,8 @@ more clearly the way in which the expansion depends on the number of conjuncts.
         (expander args))))
 ```
 > Figure 7.9: Two macros equivalent to and.
+
+---
 
 As always, there are exceptions. In Lisp, the distinction between compile-
 time and runtime is an artiﬁcial one, so any rule which depends upon it is likewise
@@ -5748,6 +5888,8 @@ We could imagine it written as follows:
 Macros like while and nil! could be described as general-purpose utilities.
 Any Lisp program might use them. But particular domains can have their utilities
 
+---
+
 ```
 (defun move-objs (objs dx dy)
   (multiple-value-bind (x0 y0 x1 y1) (bounds objs)
@@ -5768,6 +5910,8 @@ Any Lisp program might use them. But particular domains can have their utilities
               (max x1 xb) (max y1 yb)))))
 ```
 > Figure 8.1: Original move and scale.
+
+---
 
 as well. There is no reason to suppose that base Lisp is the only level at which
 you have a programming language to extend. If you’re writing a CAD program,
@@ -5791,6 +5935,8 @@ represented as an origin x,y and a vector dx,dy . One of the things such a
 program will have to do is slide groups of objects. This is the purpose of the
 function move-objs in Figure 8.1. For efﬁciency, we don’t want to redraw the
 whole screen after each operation—only the parts which have changed. Hence
+
+---
 
 ```
 (defmacro with-redraw ((var objs) &body body)
@@ -5816,6 +5962,8 @@ whole screen after each operation—only the parts which have changed. Hence
 ```
 
 > Figure 8.2: Move and scale ﬁlleted.
+
+---
 
 
 the two calls to the function bounds, which returns four coordinates (min x, min
@@ -6258,6 +6406,8 @@ Vulnerable to capture:
 
 A correct version:
 
+---
+
 ```
  (defmacro before (x y seq)
    ‘(let ((xval ,x) (yval ,y) (seq ,seq))
@@ -6266,6 +6416,8 @@ A correct version:
 ```
 
 > Figure 9.1: Avoiding capture with let.
+
+---
 
 
 ## 9.4 Avoiding Capture with Better Names
@@ -6357,6 +6509,8 @@ Vulnerable to capture:
 
 A correct version:
 
+---
+
 ```
 (defmacro for ((var start stop) &body body)
   ‘(do ((b #’(lambda (,var) ,@body))
@@ -6367,6 +6521,8 @@ A correct version:
 ```
 
 > Figure 9.2: Avoiding capture with a closure.
+
+---
 
 
 is the ﬁrst thing made by the expansion of a for, free symbols occurring in the
@@ -6456,6 +6612,8 @@ Vulnerable to capture:
 
 A correct version:
 
+---
+
 ```
 (defmacro for ((var start stop) &body body)
   (let ((gstop (gensym)))
@@ -6466,6 +6624,8 @@ A correct version:
 ```
 
 > Figure 9.3: Avoiding capture with gensym.
+
+---
 
 In CLTL2 Common Lisp, the number in a gensym’s printed representation
 comes from *gensym-counter*, a global variable always bound to an integer.
@@ -6673,6 +6833,8 @@ Subject to multiple evaluations:
 
 Incorrect order of evaluation:
 
+---
+
 ```
 (defmacro for ((var start stop) &body body)
   (let ((gstop (gensym)))
@@ -6683,6 +6845,8 @@ Incorrect order of evaluation:
 ```
 
 > Figure 10.1: Controlling argument evaluation.
+
+---
 
 
 could be evaluated more than once. In this case, the solution is to bind a variable
@@ -6984,6 +7148,8 @@ This will work:
 
 This won’t compile:
 
+---
+
 ```
  (defmacro nthb (n lst)
    ‘(if (= ,n 0)
@@ -6992,6 +7158,8 @@ This won’t compile:
 ```
 
 > Figure 10.2: Mistaken analogy to a recursive function.
+
+---
 
 which will in turn expand into:
 
@@ -7027,6 +7195,8 @@ so it is not impossible in principle to duplicate a recursive function with a ma
 However, transforming more complicated recursive functions could be difﬁcult,
 or even impossible.
 
+---
+
 ```
 (defmacro nthd (n lst)
   ‘(nth-fn ,n ,lst))
@@ -7044,6 +7214,8 @@ or even impossible.
      (nth-fn ,n ,lst)))
 ```
 > Figure 10.3: Two ways to ﬁx the problem.
+
+---
 
 Depending on what you need a macro for, you may ﬁnd it sufﬁcient to use
 instead a combination of macro and function. Figure 10.3 shows two ways to
@@ -7072,6 +7244,8 @@ recurses on the arguments to the macro (which are available at macroexpansion
 time), not upon their values (which aren’t). It might seem as if the expansion
 would contain a reference to orb itself, but the call to orb generated by one
 
+---
+
 ```
 (defmacro ora (&rest args)
   (or-expand args))
@@ -7096,6 +7270,8 @@ would contain a reference to orb itself, but the call to orb generated by one
 ```
 
 > Figure 10.4: Recursive expansion functions.
+
+---
 
 
 macroexpansion step will be replaced by a let in the next one, yielding in the
@@ -7144,6 +7320,8 @@ If x is set to a at the toplevel, then
 will nonetheless return (b), because the call to list will be made in an environ-
 ment containing a new x, whose value is b.
 
+---
+
 ```
 (defmacro our-let (binds &body body)
    ‘((lambda ,(mapcar #’(lambda (x)
@@ -7155,6 +7333,8 @@ ment containing a new x, whose value is b.
                binds)))
 ```
 > Figure 11.1: Macro implementation of let.
+
+---
 
 An operator which is to have a body of expressions must usually be deﬁned as
 a macro. Except for cases like prog1 and progn, the purpose of such an operator
@@ -7196,6 +7376,8 @@ Finally, the macro with-gensyms is itself for use in writing macros. Many
 macro deﬁnitions begin with the creation of gensyms, sometimes quite a number
 of them. The macro with-redraw (page 115) had to create ﬁve:
 
+---
+
 ```
 (defmacro when-bind ((var expr) &body body)
   ‘(let ((,var ,expr))
@@ -7216,6 +7398,8 @@ of them. The macro with-redraw (page 115) had to create ﬁve:
      ,@body))
 ```
 > Figure 11.2: Macros which bind variables.
+
+---
 
 ```
 (defmacro with-redraw ((var objs) &body body)
@@ -7246,6 +7430,8 @@ evaluate one of a set of expressions, we just use a conditional within a let:
       (visit rain-place)))
 ```
 
+---
+
 ```
 (defmacro condlet (clauses &body body)
   (let ((bodfn (gensym))
@@ -7273,6 +7459,8 @@ evaluate one of a set of expressions, we just use a conditional within a let:
           (cdr cl)))
 ```
 > Figure 11.3: Combination of cond and let.
+
+---
 
 Unfortunately, there is no convenient idiom for the opposite situation, where
 we always want to evaluate the same code, but where the bindings must vary
@@ -7389,6 +7577,8 @@ With a macro we can hide all this bookkeeping. Figure 11.4 deﬁnes a macro
 which will allow us to deal with databases at a higher level of abstraction. Using
 with-db, we would say just:
 
+---
+
 ```
 ;; Pure macro:
 
@@ -7425,6 +7615,8 @@ with-db, we would say just:
 
 > Figure 11.4: A typical with- macro.
 
+---
+
 ```
 (with-db db
   (eval-query q))
@@ -7436,6 +7628,8 @@ instead of a simple prog1.
 The two deﬁnitions of with-db in Figure 11.4 illustrate two possible ways
 to write this kind of macro. The ﬁrst is a pure macro, the second a combination
 of a function and a macro. The second approach becomes more practical as the
+
+---
 
 ```
 (defmacro if3 (test t-case nil-case ?-case)
@@ -7453,6 +7647,8 @@ of a function and a macro. The second approach becomes more practical as the
 ```
 
 > Figure 11.5: Macros for conditional evaluation.
+
+---
 
 desired with- macro grows in complexity.
 
@@ -7539,6 +7735,8 @@ use member. We can get the same abstraction more efﬁciently with a macro: in
 combines the abstraction of member with the efﬁciency of or. The equivalent in
 expression
 
+---
+
 ```
 (defmacro in (obj &rest choices)
   (let ((insym (gensym)))
@@ -7572,6 +7770,8 @@ expression
 ```
 
 > Figure 11.6: Macros for conditional evaluation.
+
+---
 
 ```
 (in (foo) (bar) (baz))
@@ -7647,6 +7847,8 @@ that the rest of the clause will never be evaluated.
 For clarity, the code that generates the expansion of each >case clause is
 deﬁned as a separate function, >casex. Notice that >casex itself uses inq.
 
+---
+
 ```
 (defmacro while (test &body body)
   ‘(do ()
@@ -7667,6 +7869,8 @@ deﬁned as a separate function, >casex. Notice that >casex itself uses inq.
 ```
 
 > Figure 11.7: Simple iteration macros.
+
+---
 
 ## 11.4 Iteration
 
@@ -7749,6 +7953,8 @@ write
 The list of parameters given as the ﬁrst argument can be any length, and
 iteration will proceed by tuples of that length. If just one parameter is given, both
 
+---
+
 ```
 (defmacro do-tuples/o (parms source &body body)
   (if parms
@@ -7790,6 +7996,10 @@ iteration will proceed by tuples of that length. If just one parameter is given,
 
 > Figure 11.8: Macros for iteration by subsequences.
 
+---
+
+---
+
 ```
 (do-tuples/c (x y z) ’(a b c d)
   (princ (list x y z)))
@@ -7815,6 +8025,8 @@ iteration will proceed by tuples of that length. If just one parameter is given,
 
 ```
 > Figure 11.9: Expansion of a call to do-tuples/c.
+
+---
 
 degenerate to dolist:
 
@@ -7890,6 +8102,8 @@ we need a multiple-value version of psetq. Since Common Lisp doesn’t have
 one, we have to write it ourselves, as in Figure 11.12. The new macro works as
 follows:
 
+---
+
 ```
 (defmacro mvdo* (parm-cl test-cl &body body)
   (mvdo-gen parm-cl parm-cl test-cl body))
@@ -7925,6 +8139,8 @@ follows:
 
 > Figure 11.10: Multiple value binding version of do*.
 
+---
+
 ```
 > (let ((w 0) (x 1) (y 2) (z 3))
     (mvpsetq (w x) (values ’a ’b) (y z) (values w x))
@@ -7934,6 +8150,8 @@ follows:
 
 The deﬁnition of mvpsetq relies on three utility functions: mklist,
 group, and shuffle, deﬁned here, which interleaves two lists:
+
+---
 
 ```
 (mvdo* (((px py) (pos player)      (move player mx my))
@@ -7969,6 +8187,8 @@ of the mouse.
 
 > Figure 11.11: A game of squash.
 
+---
+
 ```
 > (shuffle ’(a b c) ’(1 2 3 4))
 (A 1 B 2 C 3 4)
@@ -7982,6 +8202,8 @@ call. The mappend-mklist idiom ﬂattens a tree by one level:
 > (mappend #’mklist ’((a b c) d (e (f g) h) ((i)) j))
 (A B C D E (F G) H (I) J)
 ```
+
+---
 
 ```
 (defmacro mvpsetq (&rest args)
@@ -8017,6 +8239,8 @@ call. The mappend-mklist idiom ﬂattens a tree by one level:
 
 > Figure 11.12: Multiple value version of psetq.
 
+---
+
 
 To help in understanding this rather large macro, Figure 11.14 contains a sample
 expansion.
@@ -8026,6 +8250,8 @@ expansion.
 Macros aren’t the only way to protect arguments against evaluation. Another is to
 wrap them in closures. Conditional and repeated evaluation are similar because
 neither problem inherently requires macros. For example, we could write a version
+
+---
 
 ```
 (defmacro mvdo (binds (test &rest result) &body body)
@@ -8059,6 +8285,8 @@ neither problem inherently requires macros. For example, we could write a versio
 
 > Figure 11.13: Multiple value binding version of do.
 
+---
+
 of if as a function:
 
 ```
@@ -8074,6 +8302,8 @@ so instead of
 ```
 (if (rich) (go-sailing) (rob-bank))
 ```
+
+---
 
 ```
 (mvdo ((x 1 (1+ x))
@@ -8097,6 +8327,8 @@ so instead of
 ```
 
 > Figure 11.14: Expansion of a call to mvdo.
+
+---
 
 we would say
 
@@ -8348,6 +8580,8 @@ setf and setq can take an arbitrary number of arguments, so should toggle.
 We can add this capability by deﬁning another macro on top of the modify-macro,
 as in Figure 12.1.
 
+---
+
 ```
 (defmacro allf (val &rest args)
   (with-gensyms (gval)
@@ -8367,6 +8601,8 @@ as in Figure 12.1.
 (define-modify-macro toggle2 () not)
 ```
 > Figure 12.1: Macros which operate on generalized variables.
+
+---
 
 ## 12.3 New Utilities
 
@@ -8398,6 +8634,8 @@ you can say just
 (nilf x y z)
 ```
 
+---
+
 ```
 (define-modify-macro concf (obj) nconc)
 
@@ -8411,6 +8649,8 @@ you can say just
       (nconc place (list obj)))))
 ```
 > Figure 12.2: List operations on generalized variables.
+
+---
 
 
 The last macro, toggle, was described in the previous section: it is like nilf,
@@ -8562,6 +8802,8 @@ when expanding incf by hand. The only difference is that, instead of wrapping
 the last form in the let* in a call to 1+, we wrap it in an expression made from
 the arguments to f. The deﬁnition of f is shown in Figure 12.3.
 
+---
+
 ```
 (defmacro _f (op place &rest args)
   (multiple-value-bind (vars forms var set access)
@@ -8600,6 +8842,8 @@ the arguments to f. The deﬁnition of f is shown in Figure 12.3.
                 ,set)))))
 ```
 > Figure 12.3: More complex macros on setf.
+
+---
 
 This utility is quite a useful one. Now that we have it, for example, we can
 easily replace any named function with a memoized (Section 5.3) equivalent. 4 To
@@ -8705,6 +8949,8 @@ simplest case, the arguments could be ordinary variables:
 (3 2 1)
 ```
 
+---
+
 ```
 (defmacro sortf (op &rest places)
   (let* ((meths (mapcar #’(lambda (p)
@@ -8733,6 +8979,8 @@ simplest case, the arguments could be ordinary variables:
 
 > Figure 12.4: A macro which sorts its arguments.
 
+---
+
 In general, they could be any invertible expressions. Suppose cake is an invertible
 function which returns someone’s piece of cake, and bigger is a comparison
 function deﬁned on pieces of cake. If we want to enforce the rule that the cake
@@ -8749,6 +8997,8 @@ to the initial values of the generalized variables. The core of sortf is the cen
 mapcon expression, which generates code to sort these temporary variables. The
 code generated by this portion of the macro grows exponentially with the number
 of arguments. After sorting, the generalized variables are reassigned using the
+
+---
 
 ```
 (sortf > x (aref ar (incf i)) (car lst))
@@ -8772,6 +9022,8 @@ of arguments. After sorting, the generalized variables are reassigned using the
   (system:set-car #:g6 #:g5))
 ```
 > Figure 12.5: Expansion of a call to sortf.
+
+---
 
 forms returned by get-setf-method. The algorithm used is the O(n ) bubble-
 sort, but this macro is not intended to be called with huge numbers of arguments.
@@ -8843,6 +9095,8 @@ There is one important difference between defmacro and defsetf: the latter
 automatically creates gensyms for its arguments. With the deﬁnition given above,
 `(setf (car x) y)` would expand into:
 
+---
+
 ```
 (let* ((#:g2 x)
        (#:g1 y))
@@ -8861,6 +9115,8 @@ automatically creates gensyms for its arguments. With the deﬁnition given abov
   ‘(setf (gethash ,key *cache*) ,val))
 ```
 > Figure 12.6: An asymmetric inversion.
+
+---
 
 Thus we can write defsetf expanders without having to worry about variable
 capture, or number or order of evaluations.
@@ -8959,6 +9215,8 @@ expansion-time can be combined with the kind we get from in (page 152), where
 it was possible to avoid even evaluating some of the arguments. Figure 13.2
 contains two versions of most-of, which returns true if most of its arguments do:
 
+---
+
 ```
 (defun avg (&rest args)
   (/ (apply #’+ args) (length args)))
@@ -8967,6 +9225,10 @@ contains two versions of most-of, which returns true if most of its arguments do
   ‘(/ (+ ,@args) ,(length args)))
 ```
 > Figure 13.1: Shifting computation when ﬁnding averages.
+
+---
+
+---
 
 ```
 (defun most-of (&rest args)
@@ -8987,6 +9249,8 @@ contains two versions of most-of, which returns true if most of its arguments do
 ```
 > Figure 13.2: Shifting and avoiding computation.
 
+---
+
 ```
 > (most-of t t t nil)
 T
@@ -9004,6 +9268,8 @@ into the equivalent of:
 ```
 
 In the best case, just over half the arguments will be evaluated.
+
+---
 
 ```
 (defun nthmost (n lst)
@@ -9043,6 +9309,8 @@ In the best case, just over half the arguments will be evaluated.
                  ,else)))))
 ```
 > Figure 13.3: Use of arguments known at compile-time.
+
+---
 
 A macro may also be able to shift computation to compile-time if the values
 of particular arguments are known. Figure 13.3 contains an example of such a
@@ -9088,6 +9356,8 @@ the macro version of nthmost is long and complicated, it would only be worth
 writing in extreme cases. However, information known at compile-time is always
 a factor worth considering, even if you choose not to take advantage of it.
 
+---
+
 ```
 (nthmost 2 nums)
 
@@ -9119,6 +9389,8 @@ a factor worth considering, even if you choose not to take advantage of it.
 ```
 
 > Figure 13.4: Expansion of nthmost.
+
+---
 
 ## 13.2 Example: Bezier Curves
 
@@ -9181,6 +9453,8 @@ compile-time. A good example is if-match (page 242). Pattern-matchers com-
 pare two sequences, possibly containing variables, to see if there is some way of
 assigning values to the variables which will make the two sequences equal. The
 
+---
+
 ```
 (defconstant *segs* 20)
 (defconstant *du*   (/ 1.0 *segs*))
@@ -9220,6 +9494,8 @@ assigning values to the variables which will make the two sequences equal. The
                    (aref *pts* *segs* 1) ,gy3))))))
 ```
 > Figure 13.5: Macro for generating Bezier curves.
+
+---
 
 design of if-match shows that if one of the sequences is known at compile-time,
 and only that one contains variables, then matching can be done more efﬁciently.
@@ -9324,6 +9600,8 @@ in situations where a program needs to poll some outside source. And when you
 are polling a source, unless you are simply waiting for it to change state, you will
 usually want to do something with the object you ﬁnd there:
 
+---
+
 ```
 (defmacro aif (test-form then-form &optional else-form)
   ‘(let ((it ,test-form))
@@ -9354,6 +9632,8 @@ usually want to do something with the object you ﬁnd there:
                (acond ,@(cdr clauses)))))))
 ```
 > Figure 14.1: Anaphoric variants of Common Lisp operators.
+
+---
 
 ```
 (awhile (poll *fridge*)
@@ -9421,6 +9701,8 @@ initially be kept in a gensymed variable, in order that the symbol it may be bou
 only within the remainder of the clause. When macros create bindings, they should
 always do so over the narrowest possible scope. Here, if we dispensed with the
 
+---
+
 ```
 (defmacro alambda (parms &body body)
   ‘(labels ((self ,parms ,@body))
@@ -9437,6 +9719,8 @@ always do so over the narrowest possible scope. Here, if we dispensed with the
                args)))
 ```
 > Figure 14.2: More anaphoric variants.
+
+---
 
 gensym and instead bound it immediately to the result of the test expression, as
 in:
@@ -9687,6 +9971,8 @@ write a version of load as:
   (do-file filename (eval it)))
 ```
 
+---
+
 ```
 (defmacro aif2 (test &optional then else)
   (let ((win (gensym)))
@@ -9718,6 +10004,8 @@ write a version of load as:
 ```
 > Figure 14.3: Multiple-value anaphoric macros.
 
+---
+
 ## 14.3 Referential Transparency
 
 Anaphoric macros are sometimes said to violate referential transparency, which
@@ -9730,6 +10018,8 @@ Gelernter and Jagannathan deﬁne as follows:
 
 Note that this standard applies to languages,not to programs. No language with
 assignment is referentially transparent. The ﬁrst and the last x in this expression
+
+---
 
 ```
 (let ((g (gensym)))
@@ -9744,6 +10034,8 @@ assignment is referentially transparent. The ﬁrst and the last x in this expre
          ,@body))))
 ```
 > Figure 14.4: File utilities.
+
+---
 
 ```
 (list x
@@ -9833,6 +10125,8 @@ yields a function equivalent to
 #’(lambda (x) (and (integerp x) (oddp x)))
 ```
 
+---
+
 ```
 (defmacro fn (expr) ‘#’,(rbuild expr))
 
@@ -9861,6 +10155,8 @@ yields a function equivalent to
           (rec fns)))))
 ```
 > Figure 15.1: General function-building macro.
+
+---
 
 If we use compose as the operator, we get a function representing the compo-
 sition of the arguments, but without the explicit funcalls that were needed when
@@ -10000,6 +10296,8 @@ Figure 15.2 contains the deﬁnition of the macro which will allow us to say thi
 T
 ```
 
+---
+
 ```
 (defmacro alrec (rec &optional base)
   "cltl2 version"
@@ -10022,6 +10320,8 @@ T
 ```
 
 > Figure 15.2: Macros for list recursion.
+
+---
 
 The new macro works by transforming the expression given as the second
 argument into a function to be passed to lrec. Since the second argument may
@@ -10050,6 +10350,8 @@ to use these recursion builders to deﬁne named functions:
       (alrec (1+ rec) 0))
 ```
 
+---
+
 ```
 (defun our-copy-list (lst)
   (on-cdrs (cons it rec) nil lst))
@@ -10064,6 +10366,8 @@ to use these recursion builders to deﬁne named functions:
   (on-cdrs (or (funcall fn it) rec) nil lst))
 ```
 > Figure 15.3: Common Lisp functions deﬁned with on-cdrs.
+
+---
 
 The ﬁnal macro in Figure 15.2 is intended to make this more abstract. Using
 on-cdrs we could say instead:
@@ -10100,6 +10404,8 @@ so that we could say:
 (D C A B)
 ```
 
+---
+
 ```
 (defun unions (&rest sets)
   (on-cdrs (union it rec) (car sets) (cdr sets)))
@@ -10119,6 +10425,8 @@ so that we could say:
              (cdr args))))
 ```
 > Figure 15.4: New utilities deﬁned with on-cdrs.
+
+---
 
 Like union, unions does not preserve the order of the elements in the initial lists.
 
@@ -10265,6 +10573,8 @@ idea of this chapter and Chapter 5 is that one can write function generators and
 put a clean macro interface on them. This same technique could equally well be
 used to build function generators which yielded particularly efﬁcient code.
 
+---
+
 ```
 (defmacro atrec (rec &optional (base ’it))
   "cltl2 version"
@@ -10289,6 +10599,10 @@ used to build function generators which yielded particularly efﬁcient code.
 ```
 > Figure 15.5: Macros for recursion on trees.
 
+---
+
+---
+
 ```
 (defun our-copy-tree (tree)
   (on-trees (cons left right) it tree))
@@ -10305,6 +10619,10 @@ used to build function generators which yielded particularly efﬁcient code.
             tree))
 ```
 > Figure 15.6: Functions deﬁned using on-trees.
+
+---
+
+---
 
 ```
 (defconstant unforced (gensym))
@@ -10327,6 +10645,8 @@ used to build function generators which yielded particularly efﬁcient code.
       x))
 ```
 > Figure 15.7: Implementation of force and delay.
+
+---
 
 ## 15.4 Lazy Evaluation
 
@@ -10401,6 +10721,8 @@ A program, like printed text, is easiest to read when it contains no more than a
 70 characters per line. We begin at a disadvantage when the lengths of individual
 names are a quarter of that.
 
+---
+
 ```
 (defmacro abbrev (short long)
   ‘(defmacro ,short (&rest args)
@@ -10413,6 +10735,8 @@ names are a quarter of that.
                (group names 2))))
 ```
 > Figure 16.1: Automatic deﬁnition of abbreviations.
+
+---
 
 Fortunately, in a language like Lisp you don’t have to live with all the decisions
 of the designers. Having deﬁned
@@ -10504,6 +10828,8 @@ abbrevs calls group (page 47) to group its arguments by twos. It’s gener-
 ally a good thing for macros to save users from typing logically unnecessary
 parentheses, and group will be useful to most such macros.
 
+---
+
 ```
 (defmacro propmacro (propname)
   ‘(defmacro ,propname (obj)
@@ -10515,6 +10841,8 @@ parentheses, and group will be useful to most such macros.
                props)))
 ```
 > Figure 16.2: Automatic deﬁnition of access macros.
+
+---
 
 ## 16.2 Properties
 
@@ -10669,6 +10997,8 @@ For example, we can deﬁne a+ so that, as with aand, it is always bound to
 the value returned by the previous argument. The following function calculates
 the cost of dining out in Massachusetts:
 
+---
+
 ```
 (defmacro a+ (&rest args)
   (a+expand args nil))
@@ -10696,6 +11026,8 @@ the cost of dining out in Massachusetts:
 ```
 > Figure 16.3: Deﬁnitions of a+ and alist.
 
+---
+
 ```
 (defun mass-cost (menu-price)
   (a+ menu-price (* it .05) (* it 3)))
@@ -10717,6 +11049,8 @@ to generate its expansion. The general strategy of a+expand is to cdr down the
 list of arguments in the macro call, generating a series of nested let expressions;
 each let leaves it bound to a different argument, but also binds a distinct gensym
 
+---
+
 ```
 (defmacro defanaph (name &optional calls)
    (let ((calls (or calls (pop-symbol name))))
@@ -10737,6 +11071,8 @@ each let leaves it bound to a different argument, but also binds a distinct gens
 ```
 > Figure 16.4: Automatic deﬁnition of anaphoric macros.
 
+---
+
 to each argument. The expansion function accumulates a list of these gensyms,
 and when it reaches the end of the list of arguments it returns a + expression with
 the gensyms as the arguments. So the expression
@@ -10747,6 +11083,8 @@ the gensyms as the arguments. So the expression
 
 yields the macroexpansion:
 
+---
+
 ```
 (let* ((#:g2 menu-price) (it #:g2))
   (let* ((#:g3 (* it 0.05)) (it #:g3))
@@ -10754,6 +11092,8 @@ yields the macroexpansion:
       (+ #:g2 #:g3 #:g4))))
 ```
 > Figure 16.3 also contains the deﬁnition of the analogous alist:
+
+---
 
 ```
 > (alist 1 (+ 2 it) (+ 2 it))
@@ -10872,6 +11212,8 @@ value.
 Using the new defanaph, some of the previous examples would be deﬁned as
 follows:
 
+---
+
 ```
 (defmacro defanaph (name &optional &key calls (rule :all))
   (let* ((opname (or calls (pop-symbol name)))
@@ -10898,6 +11240,8 @@ follows:
   ‘(_f (lambda (it) (,op it ,@(cdr args))) ,(car args)))
 ```
 > Figure 16.5: More general defanaph.
+
+---
 
 ```
 (defanaph alist)
@@ -10951,6 +11295,8 @@ One of the oldest read-macros in Lisp is ’, the quote. You could do without
 would make your code harder to read. The quote read-macro makes it possible to
 use ’a as an abbreviation for (quote a). We could deﬁne it as in Figure 17.1.
 
+---
+
 ```
 (set-macro-character #\’
   #’(lambda (stream char)
@@ -10958,6 +11304,8 @@ use ’a as an abbreviation for (quote a). We could deﬁne it as in Figure 17.1
 
 ```
 > Figure 17.1: Possible deﬁnition of ’.
+
+---
 
 When read encounters an instance of ’ in a normal context (e.g. not in "a’b" or
 |a’b|), it will return the result of calling this function on the current stream and
@@ -11002,6 +11350,8 @@ whereas if we had tried to deﬁne an abbreviation for quote using a normal macr
 ‘(quote ,obj))
 ```
 
+---
+
 ```
  (set-dispatch-macro-character #\# #\?
    #’(lambda (stream char1 char2)
@@ -11010,6 +11360,8 @@ whereas if we had tried to deﬁne an abbreviation for quote using a normal macr
 
 ```
 > Figure 17.2: A read-macro for constant functions.
+
+---
 
 it would work in isolation,
 
@@ -11056,6 +11408,8 @@ takes any number of arguments and returns 2. For example:
 (2 2 2)
 ```
 
+---
+
 ```
 (set-macro-character #\] (get-macro-character #\)))
 
@@ -11070,6 +11424,8 @@ takes any number of arguments and returns 2. For example:
 ```
 
 > Figure 17.3: A read-macro deﬁning delimiters.
+
+---
 
 
 This example makes the new operator look rather pointless, but in programs that
@@ -11106,6 +11462,8 @@ a built-in function provided just for such cases. Its ﬁrst argument is the cha
 to treat as the end of the list. For ] to be recognized as a delimiter, it must ﬁrst be
 given this role, hence the preliminary call to set-macro-character.
 
+---
+
 ```
 (defmacro defdelim (left right parms &body body)
   ‘(ddfn ,left ,right #’(lambda ,parms ,@body)))
@@ -11120,6 +11478,8 @@ given this role, hence the preliminary call to set-macro-character.
 ```
 
 > Figure 17.4: A macro for deﬁning delimiter read-macros.
+
+---
 
 Most potential delimiter read-macro deﬁnitions will duplicate a lot of the
 code in Figure 17.3. A macro could put a more abstract interface on all this
@@ -11157,12 +11517,16 @@ alternative; by preﬁxing the sharp-dot read-macro to a compose expression,
 #.(compose #’list #’1+)
 ```
 
+---
+
 ```
  (defdelim #\{ #\} (&rest args)
    ‘(fn (compose ,@args)))
 ```
 
 > Figure 17.5: A read-macro for functional composition.
+
+---
 
 
 we could cause it to be evaluated at read-time.
@@ -11284,6 +11648,8 @@ thereof:
 (1 #\f "ribble" (2 3 4))
 ```
 
+---
+
 ```
  (defmacro dbind (pat seq &body body)
    (let ((gseq (gensym)))
@@ -11325,6 +11691,8 @@ thereof:
 
 ```
 > Figure 18.1: General sequence destructuring operator.
+
+---
 
 The `#(` read-macro is for representing vectors, and `#\` for representing characters.
 Since `"abc" = #(#\a #\b #\c)`, the ﬁrst element of "fribble" is the character #\f.
@@ -11379,6 +11747,8 @@ of lets:
     (PROGN BODY)))
 ```
 
+---
+
 ```
 (defmacro with-matrix (pats ar &body body)
    (let ((gar (gensym)))
@@ -11406,6 +11776,8 @@ of lets:
 ```
 > Figure 18.2: Destructuring on arrays.
 
+---
+
 Note that `dbind`, like `destructuring-bind`, assumes that it will ﬁnd all the
 list structure it is looking for. Left-over variables are not simply bound to nil, as
 with multiple-value-bind. If the sequence given at runtime does not have all
@@ -11422,6 +11794,8 @@ macro for arrays, how do we represent the pattern? For two-dimensional arrays,
 it is still practical to use a list. Figure 18.2 contains a macro, with-matrix, for
 destructuring on two-dimensional arrays.
 
+---
+
 ```
  (defmacro with-struct ((name . fields) struct &body body)
    (let ((gs (gensym)))
@@ -11432,6 +11806,8 @@ destructuring on two-dimensional arrays.
           ,@body))))
 ```
 > Figure 18.3: Destructuring on structures.
+
+---
 
 ```
 > (setq ar (make-array ’(3 3)))
@@ -11521,6 +11897,8 @@ do `dbind`:
 (1 2 3)
 ```
 
+---
+
 ```
  (defmacro with-places (pat seq &body body)
    (let ((gseq (gensym)))
@@ -11542,6 +11920,8 @@ do `dbind`:
                     body))))
 ```
 > Figure 18.4: Reference destructuring on sequences.
+
+---
 
 But the new macro also gives us the option to setf positions in sequences, as we
 do slots in with-slots:
@@ -11619,6 +11999,8 @@ to match, we will get back a list showing how:
 T
 ```
 
+---
+
 ```
 (defun match (x y &optional binds)
   (acond2
@@ -11644,6 +12026,8 @@ T
 ```
 > Figure 18.5: Matching function.
 
+---
+
 ```
 > (match ’(p ?x b ?y a) ’(p ?y b c a))
 ((?Y . C) (?X . ?Y))
@@ -11665,6 +12049,8 @@ NIL
 T
 ```
 
+---
+
 ```
 (defmacro if-match (pat seq then &optional else)
   ‘(aif2 (match ’,pat ,seq)
@@ -11684,6 +12070,8 @@ T
   (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
 ```
 > Figure 18.6: Slow matching operator.
+
+---
 
 When match returns nil and t as above, it indicates a successful match which
 yielded no bindings.
@@ -11765,6 +12153,8 @@ to use quoted literals in patterns, the destructuring code (and vars-in) have to
 told not to go inside lists whose ﬁrst element is quote. With the new matching
 operator, we will be able to use lists as pattern elements, simply by quoting them.
 
+---
+
 ```
 (defmacro if-match (pat seq then &optional else)
   ‘(let ,(mapcar #’(lambda (v) ‘(,v ’,(gensym)))
@@ -11793,6 +12183,8 @@ operator, we will be able to use lists as pattern elements, simply by quoting th
 ```
 > Figure 18.7: Fast matching operator.
 
+---
+
 
 
 Like `dbind`, `pat-match` calls `destruc` to get a list of the calls that will
@@ -11809,6 +12201,8 @@ If the pattern element is a variable, match1 generates code to match it against,
 or set it to, the corresponding part of the sequence given at runtime. Otherwise,
 the pattern element is taken to be a literal value, and match1 generates code to
 compare it with the corresponding part of the sequence.
+
+---
 
 ```
 (defun match1 (refs then else)
@@ -11838,6 +12232,8 @@ compare it with the corresponding part of the sequence.
         ‘(> (length ,pat) ,(- (length rest) 2)))))
 ```
 > Figure 18.8: Fast matching operator (continued).
+
+---
 
 Let’s look at examples of how some parts of the expansion are generated.
 Suppose we begin with
@@ -11915,6 +12311,8 @@ generic sequence operators elt and subseq, the new if-match will work
 for any kind of sequence. If abab is deﬁned with the new version, it
 can be used also on vectors and strings:
 
+---
+
 ```
 (if-match (?x ’a) seq
     (print ?x))
@@ -11937,6 +12335,8 @@ can be used also on vectors and strings:
 
 ```
 > Figure 18.9: Expansion of an if-match.
+
+---
 
 
 ```
@@ -12048,6 +12448,8 @@ macro which expands into an invertible reference will itself be invertible. Sinc
 db-query is deﬁned this way, we can simply push new facts onto the db-query
 of their predicates. In Common Lisp, hash-table entries are initialized to nil
 
+---
+
 ```
 (defun make-db (&optional (size 100))
   (make-hash-table :size size))
@@ -12068,6 +12470,8 @@ of their predicates. In Common Lisp, hash-table entries are initialized to nil
           ’,args))
 ```
 > Figure 19.1: Basic database functions.
+
+---
 
 unless speciﬁed otherwise, so any key initially has an empty list associated with
 it. Finally, the macro fact adds a new fact to the database.
@@ -12093,6 +12497,8 @@ Calling `db-query` is not a very ﬂexible way of looking at the contents of the
 database. Usually the user wants to ask questions which depend on more than
 just the ﬁrst element of a fact. A query language is a language for expressing
 
+---
+
 ```
 query    :   ( symbol argument *)
          :   (not query )
@@ -12103,6 +12509,8 @@ argument :   ? symbol
          :    number
 ```
 > Figure 19.2: Syntax of queries.
+
+---
 
 more complicated questions. In a typical query language, the user can ask for all
 the values which satisfy some combination of restrictions—for example, the last
@@ -12191,6 +12599,8 @@ The macro with-answer provides a clean way of using the query interpreter
 within Lisp programs. It takes as its ﬁrst argument any legal query; the rest
 of the arguments are treated as a body of code. A with-answer expands into
 
+---
+
 ```
 (defmacro with-answer (query &body body)
   (let ((binds (gensym)))
@@ -12231,6 +12641,10 @@ of the arguments are treated as a body of code. A with-answer expands into
 ```
 > Figure 19.3: Query interpreter.
 
+---
+
+---
+
 ```
 (clear-db)
 (fact painter hogarth william english)
@@ -12241,6 +12655,8 @@ of the arguments are treated as a body of code. A with-answer expands into
 (fact dates reynolds 1723 1792)
 ```
 > Figure 19.4: Assertion of sample facts.
+
+---
 
 code which collects all the sets of bindings generated by the query, then iterates
 through the body with the variables in the query bound as speciﬁed by each set of
@@ -12315,6 +12731,8 @@ The last name and year of birth of everyone who died in 1772 or 1792.
 The last name of every English painter not born the same year as a Venetian
 one.
 
+---
+
 ```
 > (with-answer (and (painter ?x _ english)
                      (dates ?x ?b _)
@@ -12326,6 +12744,8 @@ one.
 ```
 
 > Figure 19.5: The query interpreter in use.
+
+---
 
 then we would get nil as the result if there were any painters born in 1772. Even
 in the ﬁrst example, we shouldn’t expect to be able to use the value of ?d within
@@ -12390,6 +12810,8 @@ REYNOLDS was born in my favorite year.
 NIL
 ```
 
+---
+
 ```
 (defmacro with-answer (query &body body)
   ‘(with-gensyms ,(vars-in query #’simple?)
@@ -12433,6 +12855,10 @@ NIL
 ```
 > Figure 19.6: Query compiler.
 
+---
+
+---
+
 ```
 (with-answer (painter ?x ?y ?z)
   (format t "~A ~A is a painter.~%" ?y ?x))
@@ -12455,6 +12881,8 @@ NIL
          nil)))
 ```
 > Figure 19.7: Two expansions of the same query.
+
+---
 
 This could have been done in the query interpreter, but only at the cost of calling
 eval explicitly. And even then, it wouldn’t have been possible to refer to lexical
@@ -12481,6 +12909,8 @@ NIL
 
 A well-implemented embedded language can have a seamless interface with the
 base language on both sides.
+
+---
 
 ```
 ;; The ﬁrst name and nationality of every painter called Hogarth.
@@ -12510,6 +12940,8 @@ NIL
 NIL
 ```
 > Figure 19.8: The query compiler in use.
+
+---
 
 Aside from these two additions—the evaluation of arguments and the new
 lisp operator—the query language supported by the query compiler is identical
@@ -12577,6 +13009,8 @@ waiting for the value it will return.  For example, in
 3. In Scheme, named functions are usually deﬁned with define, which takes
  the place of defun as well as defvar. The Common Lisp:
 
+---
+
 ```
 (defun foo (x) (1+ x))
 has two possible Scheme translations:
@@ -12600,6 +13034,8 @@ has two possible Scheme translations:
  should be obvious from the context.
 
 > Figure 20.1: Some differences between Scheme and Common Lisp.
+
+---
 
 ```
 (/ (- x 1) 2)
@@ -12766,11 +13202,15 @@ a real program we would want to do something with the nodes as we encountered
 them. Here we just print them. The function dft, given for comparison, does an
 ordinary depth-ﬁrst traversal:
 
+---
+
 ```
 > (dft t1)
 ABDHCEFIG()
 ```
 > Figure 20.2: Two Trees.
+
+---
 
 
 The function dft-node follows the same path through the tree, but deals out
@@ -12810,6 +13250,8 @@ Finally, the function dft2 neatly packages up what we just did by hand:
 ABDHCEFIG()
 ```
 
+---
+
 ```
 (define (dft tree)
   (cond ((null? tree) ())
@@ -12845,6 +13287,8 @@ ABDHCEFIG()
                 (restart)))))
 ```
 > Figure 20.3: Tree traversal using continuations.
+
+---
 
 Notice that there is no explicit recursion or iteration in the
 deﬁnition of dft2: successive nodes are printed because the
@@ -12953,6 +13397,8 @@ deﬁnition of =values shows how this continuation will be used. Any
 function deﬁned using =defun must return with =values, or call some
 other function
 
+---
+
 ```
 (setq *cont* #’identity)
 
@@ -12980,6 +13426,8 @@ other function
   ‘(apply ,fn *cont* ,@args))
 ```
 > Figure 20.4: Continuation-passing macros.
+
+---
 
 which does so. The syntax of =values is the same as that of the Common Lisp
 form values. It can return multiple values if there is an =bind with the same
@@ -13117,6 +13565,8 @@ were built by the network compiler on page 80.
    after an =bind should be put in its body. So if we want to have
    several =binds one after another, they must be nested:
 
+---
+
 ```
 (=defun foo (x)
   (=bind (y) (bar x)
@@ -13126,6 +13576,8 @@ were built by the network compiler on page 80.
       (=values x y z))))
 ```
 > Figure 20.5: Restrictions on continuation-passing macros.
+
+---
 
 The remaining macros, =apply and =funcall, are for use with functions
 deﬁned by =lambda. Note that "functions" deﬁned with =defun, because they
@@ -13150,6 +13602,8 @@ special macros. Built-in functions like list, for example, are exempt.
 
 Figure 20.6 contains the code from Figure 20.3, translated from Scheme into
 Common Lisp, and using the continuation-passing macros instead of Scheme
+
+---
 
 ```
 (defun dft (tree)
@@ -13180,6 +13634,8 @@ Common Lisp, and using the continuation-passing macros instead of Scheme
              (restart)))))
 ```
 > Figure 20.6: Tree traversal using continuation-passing macros.
+
+---
 
 
 continuations. With the same example tree, dft2 works just as before:
@@ -13391,6 +13847,8 @@ new operators. The basic elements of our language will be as follows:
 > ﬂy. From running processes it will be possible to deﬁne new
 > functions, and to instantiate and kill processes.
 
+---
+
 ```
 (defstruct proc         pri state wait)
 
@@ -13420,6 +13878,8 @@ new operators. The basic elements of our language will be as follows:
      (catch *halt* (loop (pick-process)))))
 ```
 > Figure 21.1: Process structure and instantiation.
+
+---
 
 Continuations make it possible to store the state of a Lisp program. Being able to
 store several states at once is not very far from having multiple processes. Starting
@@ -13538,6 +13998,8 @@ happen after the wait must be put in its body. Thus, if we want to have a proces
 wait several times, the wait expressions must be nested. By asserting facts aimed
 at one another, processes can cooperate in reaching some goal, as in Figure 21.4.
 
+---
+
 ```
 (defun pick-process ()
   (multiple-value-bind (p val) (most-urgent-process)
@@ -13582,6 +14044,10 @@ at one another, processes can cooperate in reaching some goal, as in Figure 21.4
 ```
 > Figure 21.2: Process scheduling.
 
+---
+
+---
+
 ```
 (defvar *open-doors* nil)
 
@@ -13593,6 +14059,8 @@ at one another, processes can cooperate in reaching some goal, as in Figure 21.4
   (fork (pedestrian) 1))
 ```
 > Figure 21.3: One process with one wait.
+
+---
 
 Processes instantiated from visitor and host, if given the same door, will
 exchange control via messages on a blackboard:
@@ -13630,6 +14098,8 @@ does the capture process resume, and the barbarians turn to fortifying their own
 position.
 
 
+---
+
 ```
 (defvar *bboard* nil)
 
@@ -13663,6 +14133,8 @@ position.
 ```
 > Figure 21.4: Synchronization with a blackboard.
 
+---
+
 
 Underlying wait expressions is the more general arbitrator. This function
 stores the current process, and then calls pick-process to start some process
@@ -13678,6 +14150,8 @@ ping their bodies in lambda-expressions. For example,
 ```
 (wait d (car *bboard*) (=values d))
 ```
+
+---
 
 ```
 (=defun capture (city)
@@ -13701,6 +14175,8 @@ ping their bodies in lambda-expressions. For example,
 ```
 
 > Figure 21.5: Effect of changing priorities.
+
+---
 
 expands into:
 
@@ -13977,6 +14453,8 @@ algorithms like the one above, as if it really were possible to guess what ances
 to follow. By using choose it is possible to write an algorithm to search some
 problem space just by writing an algorithm to traverse it.
 
+---
+
 ```
 (define (descent n1 n2)
   (if (eq? n1 n2)
@@ -13992,6 +14470,10 @@ problem space just by writing an algorithm to traverse it.
 ```
 > Figure 22.1: Deterministic tree search.
 
+---
+
+---
+
 ```
 (define (descent n1 n2)
   (cond ((eq? n1 n2) (list n2))
@@ -13999,6 +14481,8 @@ problem space just by writing an algorithm to traverse it.
         (else (cons n1 (descent (choose (kids n1)) n2)))))
 ```
 > Figure 22.2: Nondeterministic tree search.
+
+---
 
 
 ## 22.2 Search
@@ -14021,6 +14505,8 @@ right path. It is written on the assumption that choose has chosen an n with the
 desired properties. If we are used to looking at deterministic programs, we may
 not perceive that choose has to work as if it could guess what n would make it
 
+---
+
 ```
 (define (two-numbers)
   (list (choose ’(0 1 2 3 4 5))
@@ -14033,6 +14519,8 @@ not perceive that choose has to work as if it could guess what n would make it
         (fail))))
 ```
 > Figure 22.3: Choice in a subroutine.
+
+---
 
 through the computation which follows without failing.
 
@@ -14126,6 +14614,8 @@ speciﬁcation. But a program which used these versions of choose and
 fail to search a graph might not terminate, if the graph contained
 cycles.
 
+---
+
 ```
 (define *paths* ())
 (define failsym ’@)
@@ -14154,6 +14644,8 @@ cycles.
                   (p1)))))))
 ```
 > Figure 22.4: Scheme implementation of choose and fail.
+
+---
 
 In practice, nondeterminism usually means using a depth-ﬁrst implementation
 equivalent to the one in Figure 22.4, and leaving it to the user to avoid loops in
@@ -14212,6 +14704,8 @@ different form. It should be given a symbol, a list of choices, and a body of co
 It will do a choose on the list of choices, bind the symbol to the value chosen, and
 evaluate the body of code:
 
+---
+
 ```
 (defparameter *paths* nil)
 (defconstant failsym ’@)
@@ -14243,6 +14737,8 @@ evaluate the body of code:
       failsym))
 ```
 > Figure 22.5: Nondeterministic operators in Common Lisp.
+
+---
 
 ```
 > (choose-bind x ’(marrakesh strasbourg vegas)
@@ -14311,6 +14807,8 @@ With these macros, we can successfully run the example in which the nonde-
 terministic choice occurs in a subroutine. Figure 22.6 shows the Common Lisp
 version of parlor-trick, which works as it did in Scheme:
 
+---
+
 ```
 (=defun two-numbers ()
   (choose-bind n1 ’(0 1 2 3 4 5)
@@ -14324,6 +14822,8 @@ version of parlor-trick, which works as it did in Scheme:
         (fail))))
 ```
 > Figure 22.6: Common Lisp choice in a subroutine.
+
+---
 
 ```
 > (parlor-trick 7)
@@ -14420,6 +14920,8 @@ number of boxes of Chocoblobs will also contain tokens entitling the
 recipient to valuable prizes. To ensure fairness, no two of the
 winning boxes are sent to the same city.
 
+---
+
 ```
 > (=defun descent (n1 n2)
     (cond ((eq n1 n2) (=values (list n2)))
@@ -14450,6 +14952,8 @@ KIDS
 ```
 > Figure 22.7: Nondeterministic search in Common Lisp
 
+---
+
 After the promotion has begun, it emerges that the tokens are small enough to
 be swallowed by children. Hounded by visions of lawsuits, Chocoblob lawyers
 begin a frantic search for all the special boxes. Within each city, there are multiple
@@ -14462,6 +14966,8 @@ What’s cut is a portion of the search tree. For Chocoblobs, the search tree
 exists physically: the root node is at the company’s head ofﬁce; the children of this
 node are the cities where the special boxes were sent; the children of those nodes
 are the stores in each city; and the children of each store represent the boxes in
+
+---
 
 ```
 (define (find-boxes)
@@ -14480,6 +14986,8 @@ are the stores in each city; and the children of each store represent the boxes 
   (member x ’((la 1 2) (ny 1 1) (bos 2 2))))
 ```
 > Figure 22.8: Exhaustive Chocoblob search.
+
+---
 
 that store. When the lawyers searching this tree ﬁnd one of the boxes containing
 a coin, they can prune off all the unexplored branches descending from the city
@@ -14511,6 +15019,8 @@ understood independently of any particular implementation, pruning the
 search tree is an optimization technique, and depends very much on how
 choose is implemented. The mark and
 
+---
+
 ```
 (define (mark) (set! *paths* (cons fail *paths*)))
 
@@ -14523,6 +15033,10 @@ choose is implemented. The mark and
          (cut))))
 ```
 > Figure 22.9: Marking and pruning search trees.
+
+---
+
+---
 
 ```
 (define (find-boxes)
@@ -14540,6 +15054,8 @@ choose is implemented. The mark and
 ```
 > Figure 22.10: Pruned Chocoblob search.
 
+---
+
 cut deﬁned in Figure 22.9 are suitable for use with the depth-ﬁrst implementation
 of choose (Figure 22.4).
 
@@ -14555,10 +15071,14 @@ Figure 22.10 shows how these operators would be used to prune the search
 tree in the Chocoblob case. (Changed lines are indicated by semicolons.) We call
 mark upon choosing a city. At this point, *paths* contains one continuation,
 
+---
+
 ```
 [ MISSING ]
 ```
 > Figure 22.11: A directed graph with a loop.
+
+---
 
 representing the search of the remaining cities.
 
@@ -14595,6 +15115,8 @@ circular paths. The depth-ﬁrst implementation of choose and fail given in Sec-
 tion 22.3 is vulnerable to the problem of circular paths, but if we were being
 picky, we would expect nondeterministic choose to be able to select an object
 
+---
+
 ```
 (define (path node1 node2)
   (bf-path node2 (list (list node1))))
@@ -14614,6 +15136,10 @@ picky, we would expect nondeterministic choose to be able to select an object
 ```
 > Figure 22.12: Deterministic search.
 
+---
+
+---
+
 ```
 (define (path node1 node2)
   (cond ((null? (neighbors node1)) (fail))
@@ -14622,6 +15148,8 @@ picky, we would expect nondeterministic choose to be able to select an object
                 (cons n (path n node2))))))
 ```
 > Figure 22.13: Nondeterministic search.
+
+---
 
 which meets any computable speciﬁcation, and this case is no exception. Using a
 correct choose, we should be able to write the shorter and clearer version of path
@@ -14638,6 +15166,8 @@ treating the list of stored paths as a queue. Programs using
 true-choose will search their state-space breadth-ﬁrst. When the
 program reaches a choice-point, continuations to follow each choice
 are appended to the end of the list of stored paths.
+
+---
 
 ```
 (define *paths* ())
@@ -14665,6 +15195,8 @@ are appended to the end of the list of stored paths.
                   (p1)))))))
 ```
 > Figure 22.14: Correct choose in Scheme.
+
+---
 
 (Scheme’s map returns the same values as Common Lisp’s mapcar.) After this
 there is a call to fail, which is unchanged.
@@ -14762,6 +15294,8 @@ shown in Figure 23.2.
 What does this ATN do when given the input (spot runs)? The ﬁrst node has
 one outgoing arc, a cat, or category arc, leading to node s2. It says, effectively,
 
+---
+
 ```
 (defnode s
   (cat noun s2
@@ -14778,12 +15312,18 @@ one outgoing arc, a cat, or category arc, leading to node s2. It says, effective
 ```
 > Figure 23.1: A very small ATN.
 
+---
 
+
+
+---
 
 ```
 [ MISSING ]
 ```
 > Figure 23.2: Graph of a small ATN.
+
+---
 
 you can follow me if the current word is a noun, and if you do, you must store
 the current word (indicated by *) in the subj register. So we leave this node with
@@ -14902,6 +15442,8 @@ gets translated into a function deﬁnition of the following form:
     <translation of arc 2>))
 ```
 
+---
+
 ```
 (defmacro defnode (name &rest arcs)
   ‘(=defun ,name (pos regs) (choose ,@arcs)))
@@ -14948,6 +15490,10 @@ gets translated into a function deﬁnition of the following form:
 ```
 > Figure 23.3: Compilation of nodes and arcs.
 
+---
+
+---
+
 ```
 (defnode s
   (down np s/subj
@@ -14979,6 +15525,8 @@ gets translated into a function deﬁnition of the following form:
               (fail))))))
 ```
 > Figure 23.4: Macroexpansion of a node function.
+
+---
 
 Figure 23.4 shows the macroexpansion of the ﬁrst node in the sample ATN of
 Figure 23.11. When called at runtime, node functions like s nondeterministically
@@ -15095,6 +15643,8 @@ Superﬁcially with-parses resembles operators like dolist, but underneath it
 uses backtracking search instead of simple iteration. A with-parses expression
 will return @, because that’s what fail returns when it runs out of choices.
 
+---
+
 ```
 (defmacro with-parses (node sent &body body)
   (with-gensyms (pos regs)
@@ -15107,6 +15657,8 @@ will return @, because that’s what fail returns when it runs out of choices.
              (fail))))))
 ```
 > Figure 23.5: Toplevel macro.
+
+---
 
 Before going on to look at a more representative ATN, let’s look at a parsing
 generated from the tiny ATN deﬁned earlier. The ATN compiler (Figure 23.3)
@@ -15142,11 +15694,17 @@ deﬁne the ATN (or set of ATNs) represented in Figure 23.6. This network is jus
 big enough to yield several parsings for the classic parser fodder "Time ﬂies like
 an arrow."
 
+---
+
 ```
 [ MISSING ]
 ```
 
 > Figure 23.6: Graph of a larger ATN.
+
+---
+
+---
 
 ```
 (defun types (word)
@@ -15162,10 +15720,14 @@ an arrow."
 ```
 > Figure 23.7: Nominal dictionary.
 
+---
+
 We need a slightly larger dictionary to parse more complex input. The function
 types (Figure 23.7) provides a dictionary of the most primitive sort. It deﬁnes a
 22-word vocabulary, and associates each word with a list of one or more simple
 grammatical roles.
+
+---
 
 ```
 (defnode mods
@@ -15178,6 +15740,8 @@ grammatical roles.
   (up ‘(n-group ,(getr mods))))
 ```
 > Figure 23.8: Sub-network for strings of modiﬁers.
+
+---
 
 The components of an ATN are themselves ATNs. The smallest ATN in our set
 is the one in Figure 23.8. It parses strings of modiﬁers, which in this case means
@@ -15214,6 +15778,8 @@ versa, so the two networks each contain a push arc which calls the other.
 The noun phrase network contains six nodes. The ﬁrst node, np has three
 choices. If it reads a pronoun, then it can move to node pron, which pops out of
 the network:
+
+---
 
 ```
 (defnode np
@@ -15252,12 +15818,16 @@ the network:
 ```
 > Figure 23.9: Noun phrase sub-network.
 
+---
+
 ```
 > (with-parses np ’(it)
     (format t "Parsing: ~A~%" parse))
 Parsing: (NP (PRONOUN IT))
 @
 ```
+
+---
 
 ```
 (defnode pp
@@ -15273,6 +15843,8 @@ Parsing: (NP (PRONOUN IT))
            (obj ,(getr op)))))
 ```
 > Figure 23.10: Prepositional phrase sub-network.
+
+---
 
 Both the other arcs lead to node np/det: one arc reads a determiner (e.g. "the"),
 and the other arc simply jumps, reading no input. At node np/det, both arcs
@@ -15311,6 +15883,8 @@ difﬁcult for humans even to detect the syntactic structure.  Here the
 noun phrase "a time ﬂy like him" has the same form as "a Lisp hacker
 like him."
 
+---
+
 ```
  (defnode s
    (down np s/subj
@@ -15344,10 +15918,14 @@ like him."
 ```
 > Figure 23.11: Sentence network.
 
+---
+
 Now all we need is a network for recognizing sentence structure. The
 network shown in Figure 23.11 parses both commands and statements. The
 start node is conventionally called s. The ﬁrst node leaving it pushes
 for a noun phrase,
+
+---
 
 ```
  > (with-parses s ’(time flies like an arrow)
@@ -15377,6 +15955,8 @@ for a noun phrase,
  @
 ```
 > Figure 23.12: Two parsings for a sentence.
+
+---
 
 which will be the subject of the sentence. The second outgoing arc reads a verb.
 When a sentence is syntactically ambiguous, both arcs could succeed, ultimately
@@ -15421,10 +16001,14 @@ true in the database. In the following example, (after calling clear-db) we asse
 two facts and then query the database:
 
 
+---
+
 ```
 [ MISSING ]
 ```
 > Figure 24.1: Layers of abstraction.
+
+---
 
 ```
 > (fact painter reynolds)
@@ -15513,6 +16097,8 @@ time. We will follow a similar strategy here. In order to introduce some of the
 topics involved, we will begin with a simple interpreter. Later we will show how
 to write the same program much more efﬁciently.
 
+---
+
 ```
  (defmacro with-inference (query &body body)
   ‘(progn
@@ -15541,6 +16127,8 @@ to write the same program much more efﬁciently.
    (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
 ```
 > Figure 24.2: Toplevel macro.
+
+---
 
 Figures 24.2–24.4 contain the code for a simple Prolog interpreter. It ac-
 cepts the same queries as the query interpreter of Section 19.3, but uses rules
@@ -15609,6 +16197,8 @@ returning nil if any were found. With nondeterministic search we have to be
 more careful: we don’t want the interpretation of (painter ?x) to fail back
 outside the scope of the not, nor do we want it to leave saved paths that might
 
+---
+
 ```
  (=defun prove-query (expr binds)
    (case (car expr)
@@ -15643,6 +16233,8 @@ outside the scope of the not, nor do we want it to leave saved paths that might
 ```
 > Figure 24.3: Interpretation of queries.
 
+---
+
 be restarted later. So now the test for (painter ?x) is done with a temporarily
 empty list of saved states, and the old list is restored on the way out.
 
@@ -15651,6 +16243,8 @@ interpretation of simple patterns—expressions such as (painter ?x) which con-
 sist just of a predicate and some arguments. When the query interpreter generated
 bindings for a simple pattern, it called lookup (page 251). Now, instead of calling
 lookup, we have to get any bindings implied by the rules.
+
+---
 
 ```
  (defvar *rlist* nil)
@@ -15675,6 +16269,10 @@ lookup, we have to get any bindings implied by the rules.
 ```
 > Figure 24.4: Code involving rules.
 
+---
+
+---
+
 ```
   rule     :   (<- sentence query )
   query    :   (not query )
@@ -15688,6 +16286,8 @@ lookup, we have to get any bindings implied by the rules.
   variable :   ? symbol
 ```
 > Figure 24.5: Syntax of rules.
+
+---
 
 Code for deﬁning and using rules is shown in Figure 24.4. The rules are kept
 in a global list, *rlist*. Each rule is represented as a dotted pair of body and
@@ -15874,6 +16474,8 @@ append([X | Xs], Ys, [X | Zs]) <- append(Xs, Ys, Zs).
 
 becomes:
 
+---
+
 ```
  (<- (append nil ?xs ?xs))
  (<- (append (?x . ?xs) ?ys (?x . ?zs))
@@ -15881,6 +16483,8 @@ becomes:
 ```
 
 > Figure 24.6: Prolog syntax equivalence.
+
+---
 
 ```
 > (with-inference (append ?x (c d) (a b c d))
@@ -16056,6 +16660,8 @@ that they haven’t yet been assigned real values by matching. Thus the function
 varsym?, which match and fullbind use to detect variables, has to be changed
 to look for gensyms.
 
+---
+
 ```
  (defmacro with-inference (query &rest body)
    (let ((vars (vars-in query #’simple?)) (gb (gensym)))
@@ -16073,6 +16679,8 @@ to look for gensyms.
 ```
 
 > Figure 24.7: New toplevel macro.
+
+---
 
 To generate the code to establish bindings for the query, with-inference
 calls gen-query (Figure 24.8). The ﬁrst thing gen-query does is look to see
@@ -16102,6 +16710,8 @@ conjuncts can be proved. So to generate the expansion of an and, we nest
 the expansion of the second conjunct within that of the ﬁrst. When (big ?x)
 succeeds we try (red ?x), and if that succeeds, we evaluate the Lisp expressions.
 So the whole expression expands as in Figure 24.9.
+
+---
 
 ```
  (defun gen-query (expr &optional binds)
@@ -16146,6 +16756,10 @@ So the whole expression expands as in Figure 24.9.
 ```
 > Figure 24.8: Compilation of queries.
 
+---
+
+---
+
 ```
  (with-inference (and (big ?x) (red ?x))
    (print ?x))
@@ -16161,6 +16775,8 @@ So the whole expression expands as in Figure 24.9.
       (fail)))
 ```
 > Figure 24.9: Expansion of a conjunction.
+
+---
 
 
 An and means nesting; an or means a choose. Given a query like
@@ -16193,6 +16809,8 @@ is to add extras like cuts, arithmetic, and I/O.
 Putting a cut in a Prolog rule causes the search tree to be pruned. Ordinarily,
 when our program encounters a fail, it backtracks to the last choice point. The
 
+---
+
 ```
  (defvar *rules* nil)
 
@@ -16218,6 +16836,8 @@ when our program encounters a fail, it backtracks to the last choice point. The
                 (fail)))))))
 ```
 > Figure 24.10: Code for deﬁning rules.
+
+---
 
 implementation of choose in Section 22.4 stores choice points in the global variable
 *paths*. Calling fail restarts the search at the most recent choice point, which
@@ -16294,6 +16914,8 @@ HEPWORTH
 @
 ```
 
+---
+
 ```
  (defun rule-fn (ant con)
    (with-gensyms (val win fact binds paths)                  ;
@@ -16339,6 +16961,10 @@ HEPWORTH
 ```
 > Figure 24.11: Adding support for new operators.
 
+---
+
+---
+
 ```
  (defun gen-and (clauses binds paths)                       ;
    (if (null clauses)
@@ -16380,6 +17006,10 @@ HEPWORTH
 ```
 > Figure 24.12: Adding support for new operators.
 
+---
+
+---
+
 ```
   rule     :   (<- sentence query )
   query    :   (not query )
@@ -16395,6 +17025,8 @@ HEPWORTH
   variable :   ? symbol
 ```
 > Figure 24.13: New syntax of rules.
+
+---
 
 The cut is sometimes used in conjunction with the Prolog fail operator. Our
 function fail does exactly the same thing. Putting a cut in a rule makes it like a
@@ -16529,6 +17161,8 @@ done, then the query will terminate in the second rule. Otherwise the query will
 only match the third rule, which prints the value read, and starts the process over
 again.
 
+---
+
 ```
  (setq *rules* nil)
 
@@ -16553,6 +17187,10 @@ again.
 ```
 > Figure 24.14: Quicksort.
 
+---
+
+---
+
 ```
  (<- (echo)
      (is ?x (read))
@@ -16566,6 +17204,8 @@ again.
      (echo ?y))
 ```
 > Figure 24.15: An I/O loop in Prolog.
+
+---
 
 Collectively, the rules deﬁne a program that will continue to echo what you
 type, until you type done:
@@ -16773,6 +17413,8 @@ In fact, the only ingredient plain Lisp lacks is inheritance, and we can provide
 a rudimentary version of that in six lines of code, by deﬁning a recursive version
 of gethash:
 
+---
+
 ```
 (defun rget (obj prop)
   (multiple-value-bind (val win) (gethash prop obj)
@@ -16804,6 +17446,8 @@ of gethash:
 ```
 > Figure 25.1: Multiple inheritance.
 
+---
+
 
 If we just use rget in place of gethash, we will get inherited properties and
 methods. We specify an object’s parent thus:
@@ -16827,10 +17471,14 @@ are both descended from d. A depth-ﬁrst (or rather, height-ﬁrst) traversal w
 go a, b, d, c, d. If the desired property were present in both d and c, we would
 
 
+---
+
 ```
 [ MISSING ]
 ```
 > Figure 25.2: Multiple paths to a superclass.
+
+---
 
 get the value stored in d, not the one stored in c. This would violate
 the principle that subclasses override the default values provided by
@@ -16870,6 +17518,8 @@ scoundrel ﬁrst and a patriot second:
 #<Hash-Table C4219E>
 ```
 
+---
+
 ```
  (defun obj (&rest parents)
    (let ((obj (make-hash-table)))
@@ -16886,6 +17536,8 @@ scoundrel ﬁrst and a patriot second:
           (ancestors obj)))
 ```
 > Figure 25.3: A function to create objects.
+
+---
 
 ```
 > (setf (gethash ’serves scoundrel) ’self
@@ -16916,6 +17568,8 @@ should be treated as a method. Otherwise it will be treated as a slot, and the v
 retrieved by rget will simply be returned. Once we have deﬁned the name of
 either kind of property,
 
+---
+
 ```
  (defmacro defprop (name &optional meth?)
    ‘(progn
@@ -16933,6 +17587,8 @@ either kind of property,
          (error "No ~A method for ~A." name obj))))
 ```
 > Figure 25.4: Functional syntax.
+
+---
 
 ```
 (defprop find-owner t)
@@ -17016,6 +17672,8 @@ methods. Around- and primary methods can use call-next to invoke the next
 method, which is the code that would have run if the current method didn’t exist.
 For example, if the currently running method is the only around-method, the next
 
+---
+
 ```
  (defstruct meth       around before primary after)
 
@@ -17052,11 +17710,15 @@ For example, if the currently running method is the only around-method, the next
 ```
 > Figure 25.5: Auxiliary methods.
 
+---
+
 method would be the usual sandwich of before-, most speciﬁc primary, and after-
 methods. Within the most speciﬁc primary method, the next method would be the
 second most speciﬁc primary method. Since the behavior of call-next depends
 on where it is called, it is never deﬁned globally with a defun, but is deﬁned
 locally within each method deﬁned by defmeth.
+
+---
 
 ```
  (defun run-befores (obj prop args)
@@ -17074,6 +17736,8 @@ locally within each method deﬁned by defmeth.
      (rec (ancestors obj))))
 ```
 > Figure 25.6: Auxiliary methods (continued).
+
+---
 
 An around- or primary method can use next-p to check whether there is a
 next method. If the current method is the primary method of an object with no
@@ -17102,6 +17766,8 @@ Now the area of an instance is calculated according to the method of the class:
     (area myrec))
 6
 ```
+
+---
 
 ```
  (defmacro defmeth ((name &optional (type :primary))
@@ -17147,12 +17813,18 @@ Now the area of an instance is calculated according to the method of the class:
 ```
 > Figure 25.7: Deﬁning methods.
 
+---
+
+---
+
 ```
 (defmacro undefmeth ((name &optional (type :primary)) obj)
   ‘(setf (,(symb ’meth- type) (gethash ’,name ,obj))
          nil))
 ```
 > Figure 25.8: Removing methods.
+
+---
 
 In a more complicated example, suppose we have deﬁned a backup method for
 the filesystem object:
@@ -17252,6 +17924,8 @@ citrus, (orange sweet) for orange, and (dented) for my-orange, it would
 be convenient to be able to make (props my-orange) return the union of all
 these values: (dented orange sweet round acidic).
 
+---
+
 ```
  (defmacro children (obj)
    ‘(gethash ’children ,obj))
@@ -17286,6 +17960,8 @@ these values: (dented orange sweet round acidic).
 ```
 > Figure 25.9: Maintaining parent and child links.
 
+---
+
 We could have this if we allowed methods to apply some function to the values
 of all the primary methods, instead of just returning the value of the most speciﬁc.
 Figure 25.10 contains a macro which allows us to deﬁne the way methods are
@@ -17294,6 +17970,8 @@ combination.
 
 We deﬁne the form of combination for a method via defcomb, which takes
 a method name and a second argument describing the desired combination.
+
+---
 
 ```
  (defmacro defcomb (name op)
@@ -17332,10 +18010,14 @@ a method name and a second argument describing the desired combination.
 ```
 > Figure 25.10: Method combination.
 
+---
+
 Ordinarily this second argument should be a function. However, it can also be one
 of :progn, :and, :or, or :standard. With the former three, primary meth-
 ods will be combined as though according to the corresponding operator, while
 :standard indicates that we want the traditional way of running methods.
+
+---
 
 ```
  (defun comb-and (obj name args ancs &optional (last t))
@@ -17355,6 +18037,8 @@ ods will be combined as though according to the corresponding operator, while
               (comb-or obj name args (cdr ancs))))))
 ```
 > Figure 25.11: Method combination (continued).
+
+---
 
 The central function in Figure 25.10 is the new run-core-methods. If the
 method being called has no mcombine property, then the method call proceeds as
@@ -17895,6 +18579,8 @@ we redeﬁne what combine does when its ﬁrst two arguments are strings.
 Unfortunately, if instead of redeﬁning a method we want to remove it, there
 is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
 
+---
+
 ```
  (defmacro undefmethod (name &rest args)
    (if (consp (car args))
@@ -17911,6 +18597,8 @@ is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
                                   (list ,@classes)))))
 ```
 > Figure 25.12: Macro for removing methods.
+
+---
 
 one. The details of how to remove a method by hand are summarized in the
 implementation of undefmethod in Figure 25.12. We use this macro by giving
