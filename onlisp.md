@@ -11603,7 +11603,7 @@ To be able to write such an operator we have to invent some way of
 distinguishing variables. We can’t just say that all symbols are
 variables, because we will want symbols to occur as arguments within
 patterns. Here we will say that a pattern variable is a symbol
-beginning with a question mark. If it becomes in- convenient, this
+beginning with a question mark. If it becomes inconvenient, this
 convention could be changed simply by redeﬁning the predicate var?.
 
 Figure 18.5 contains a pattern-matching function similar to ones that appear
@@ -12356,7 +12356,7 @@ continues a trend which began with avg (page 182), and continued with
 if-match (page 242): it does at compile-time much of the work that the
 old version did at runtime. The code in Figure 19.6 bears a superﬁcial
 resemblance to that in Figure 19.3, but none of these functions are
-called at runtime. Instead of gen- erating bindings, they generate
+called at runtime. Instead of generating bindings, they generate
 code, which becomes part of the expansion of with-answer. At runtime
 this code will generate all the bindings which satisfy the query
 according to the current state of the database.
@@ -12546,11 +12546,11 @@ continuations work in Scheme. (Figure 20.1 lists some other
 differences between Scheme and Common Lisp.)
 
 A continuation is a function representing the future of a
-computation. When- ever an expression is evaluated, something is
+computation. Whenever an expression is evaluated, something is
 waiting for the value it will return.  For example, in
 
 1. Scheme makes no distinction between what Common Lisp calls the
- symbol-value and symbol-function of a symbol. In Scheme, a vari- able
+ symbol-value and symbol-function of a symbol. In Scheme, a variable
  has a single value, which can be either a function or some other sort
  of object. Thus there is no need for sharp-quote or funcall in
  Scheme. The Common Lisp:
@@ -13142,7 +13142,7 @@ ADD1
 
 Figure 20.5 summarizes all the restrictions imposed by the
 continuation-passing macros. Functions which neither save
-continuations, nor call other func- tions which do, need not use these
+continuations, nor call other functions which do, need not use these
 special macros. Built-in functions like list, for example, are exempt.
 
 Figure 20.6 contains the code from Figure 20.3, translated from Scheme into
@@ -13456,7 +13456,7 @@ Generally it is not a good idea to call eval at runtime, for two reasons:
    it.
 
 2. It’s less powerful, because the expression is evaluated with no
-   lexical con- text. Among other things, this means that you can’t
+   lexical context. Among other things, this means that you can’t
    refer to ordinary variables visible outside the expression being
    evaluated.
 
@@ -14080,7 +14080,7 @@ far are real running programs.
 These examples show the value of nondeterminism as an abstraction. The
 best programming language abstractions save not just typing, but
 thought. In automata theory, some proofs are difﬁcult even to conceive
-of without relying on nonde- terminism. A language which allows
+of without relying on nondeterminism. A language which allows
 nondeterminism may give programmers a similar advantage.
 
 ## 22.3 Scheme Implementation
@@ -14089,7 +14089,7 @@ This section explains how to use continuations to simulate
 nondeterminism. Fig ure 22.4 contains Scheme implementations of choose
 and fail. Beneath the surface, choose and fail simulate nondeterminism
 by backtracking. A backtracking search program must somehow store
-enough information to pursue other alterna- tives if the chosen one
+enough information to pursue other alternatives if the chosen one
 fails. This information is stored in the form of continuations on the
 global list *paths*.
 
@@ -14111,10 +14111,10 @@ return straight there.
 The implementation in Figure 22.4 treats *paths* as a stack, always
 failing back to the most recent choice point. This strategy, known as
 chronological backtracking, results in depth-ﬁrst search of the
-problem space. The word "non- determinism" is often used as if it were
+problem space. The word "nondeterminism" is often used as if it were
 synonymous with the depth-ﬁrst implementation. Floyd’s classic paper
 on nondeterministic algorithms uses the term in this sense, and this
-is also the kind of nondeterminism we ﬁnd in nondetermin- istic
+is also the kind of nondeterminism we ﬁnd in nondeterministic
 parsers and in Prolog. However, it should be noted that the
 implementation given in Figure 22.4 is not the only possible
 implementation, nor even a correct one. In principle, choose ought to
@@ -18731,7 +18731,7 @@ wasn’t speciﬁcally intended for use on them.
 
 66 If we could tell how many parameters each function had, we could
 write a version of compose so that, in f g, multiple values returned
-by g would become the correspond- ing arguments to f. In CLTL2, the
+by g would become the corresponding arguments to f. In CLTL2, the
 new function function-lambda-expression returns a lambda-expression
 representing the original source code of a function.  However, it has
 the option of returning nil, and usually does so for built-in func-
@@ -18763,7 +18763,7 @@ and lists:
 
 95 McCarthy, John, Paul W. Abrahams, Daniel J. Edwards, Timothy
 P. Hart, and Michael I. Levin. Lisp 1.5 Programmer’s Manual, 2nd
-Edition. MIT Press, Cam- bridge, 1965, pp. 70-71.
+Edition. MIT Press, Cambridge, 1965, pp. 70-71.
 
 106 When Section 8.1 says that a certain kind of operator can only be
 written as a macro, it means, can only be written by the user as a
@@ -18790,7 +18790,7 @@ latter. However, an expression of the form (quote x) should not be
 treated this way: the whole point of a quote is that its argument is
 not evaluated. So eval has to have one clause which deals speciﬁcally
 with quote.  Language designers regard special forms as something like
-constitutional amend- ments. It is necessary to have a certain number,
+constitutional amendments. It is necessary to have a certain number,
 but the fewer the better. The special forms in Common Lisp are listed
 in CLTL2, p. 73.  The preceding sketch of eval is inaccurate in that
 it retrieves the function before evaluating the arguments, whereas in
@@ -18877,7 +18877,7 @@ we could say
 ```
 
 Deﬁning an inversion for values would also render multiple-value-setq
-un- necessary. Unfortunately, as things stand in Common Lisp it is
+unnecessary. Unfortunately, as things stand in Common Lisp it is
 impossible to deﬁne such an inversion; get-setf-method won’t return
 more than one store variable, and presumably the expansion function of
 psetf wouldn’t know what to do with them if it did.
@@ -19133,7 +19133,7 @@ work for programs with an inﬁnite search-space:
 ```
 
 With true-choose deﬁned as above, (guess n) would only terminate for
-non- positive n.
+nonpositive n.
 
 How we deﬁne a correct choose also depends on what we call a choice
 point. This version treats each (textual) call to true-choose as a
@@ -19204,7 +19204,7 @@ need to use Lisp because we want to do Lisp programming."  To
 administrative ears, this sounds like circular reasoning. Such ears
 would rather hear that Lisp’s value hinged on a single, easily
 understood concept. For years we have tried to oblige them, with
-little success. Lisp has been described as a "list- processing
+little success. Lisp has been described as a "list-processing
 language," a language for "symbolic computation," and most recently, a
 "dynamic language." None of these phrases captures more than a
 fraction of what Lisp is about. When retailed through college
