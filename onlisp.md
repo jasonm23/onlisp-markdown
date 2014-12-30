@@ -12,7 +12,7 @@
 > To my family, and to Jackie.
 
 ---
-### Preface
+##### Preface
 
 This book is intended for anyone who wants to become a better Lisp programmer.
 It assumes some familiarity with Lisp, but not necessarily extensive programming
@@ -31,7 +31,7 @@ their programs down toward the language, experienced Lisp programmers build
 the language up toward their programs. This book teaches how to program in the
 bottom-up style for which Lisp is inherently well-suited.
 
-### Bottom-up Design
+##### Bottom-up Design
 
 Bottom-up design is becoming more important as software grows in complexity.
 Programs today may have to meet speciﬁcations which are extremely complex,
@@ -116,7 +116,7 @@ wanted to explain why Lisp is different. This turns out to be a subtle question�
 subtle to be answered with phrases like "symbolic computation." What I have
 learned so far, I have tried to explain as clearly as I can.
 
-# Plan of the Book
+##### Plan of the Book
 
 Since functions are the foundation of Lisp programs, the book begins with several
 chapters on functions. Chapter 2 explains what Lisp functions are and the
@@ -128,7 +128,7 @@ how to use functions in place of traditional data structures.
 
 The remainder of the book deals more with macros than functions. Macros
 receive more attention partly because there is more to say about them, and partly
-because they have not till now been adequately described in print. Chapters 7–10
+because they have not till now been adequately described in print. Chapters 7-10
 form a complete tutorial on macro technique. By the end of it you will know most
 of what an experienced Lisp programmer knows about macros: how they work;
 how to deﬁne, test, and debug them; when to use macros and when not; the major
@@ -136,16 +136,18 @@ types of macros; how to write programs which generate macro expansions; how
 macro style differs from Lisp style in general; and how to detect and cure each of
 the unique problems that afﬂict macros.
 
-Following this tutorial, Chapters 11–18 show some of the powerful abstrac-
-tions you can build with macros. Chapter 11 shows how to write the classic
-macros—those which create context, or implement loops or conditionals. Chap-
-ter 12 explains the role of macros in operations on generalized variables. Chap-
-ter 13 shows how macros can make programs run faster by shifting computation
-to compile-time. Chapter 14 introduces anaphoric macros, which allow you to
-use pronouns in your programs. Chapter 15 shows how macros provide a more
-convenient interface to the function-builders deﬁned in Chapter 5. Chapter 16
-shows how to use macro-deﬁning macros to make Lisp write your programs for
-you. Chapter 17 discusses read-macros, and Chapter 18, macros for destructuring.
+Following this tutorial, Chapters 11-18 show some of the powerful
+abstractions you can build with macros. Chapter 11 shows how to write
+the classic macros, those which create context, or implement loops or
+conditionals. Chapter 12 explains the role of macros in operations on
+generalized variables. Chapter 13 shows how macros can make programs
+run faster by shifting computation to compile-time. Chapter 14
+introduces anaphoric macros, which allow you to use pronouns in your
+programs. Chapter 15 shows how macros provide a more convenient
+interface to the function-builders deﬁned in Chapter 5. Chapter 16
+shows how to use macro-deﬁning macros to make Lisp write your programs
+for you. Chapter 17 discusses read-macros, and Chapter 18, macros for
+destructuring.
 
 With Chapter 19 begins the fourth part of the book, devoted to embedded
 languages. Chapter 19 introduces the subject by showing the same program, a
@@ -190,7 +192,7 @@ community, but many have not till now been written down anywhere. And some
 issues, such as the proper role of macros or the nature of variable capture, are only
 vaguely understood even by many experienced Lisp programmers.
 
-# Examples
+##### Examples
 
 Lisp is a family of languages. Since Common Lisp promises to remain a widely
 used dialect, most of the examples in this book are in Common Lisp. The language
@@ -210,7 +212,7 @@ The code is available by anonymous FTP from endor.harvard.edu, where
 it’s in the directory pub/onlisp. Questions and comments can be sent to
 onlisp@das.harvard.edu.
 
-# Acknowledgements
+##### Acknowledgements
 
 While writing this book I have been particularly thankful for the help of Robert
 Morris. I went to him constantly for advice and was always glad I did. Several
@@ -226,8 +228,8 @@ was completely rewritten at his suggestion, and the example of variable capture
 on page 119 is one that he provided.
 
 I was fortunate to have David Touretzky and Skona Brittain as the technical
-reviewers for the book. Several sections were added or rewritten at their sugges-
-tion. The alternative true nondeterministic choice operator on page 397 is based
+reviewers for the book. Several sections were added or rewritten at their suggestion.
+The alternative true nondeterministic choice operator on page 397 is based
 on a suggestion by David Toureztky.
 
 Several other people consented to read all or part of the manuscript, including
@@ -468,8 +470,8 @@ an institution.
 
 Fortunately, word has begun to spread that AI is not what Lisp is all about.
 Recent advances in hardware and software have made Lisp commercially viable:
-it is now used in Gnu Emacs, the best Unix text-editor; Autocad, the industry stan-
-dard desktop CAD program; and Interleaf, a leading high-end publishing program.
+it is now used in Gnu Emacs, the best Unix text-editor; Autocad, the industry standard
+desktop CAD program; and Interleaf, a leading high-end publishing program.
 The way Lisp is used in these programs has nothing whatever to do with AI.
 
 If Lisp is not the language of AI, what is it? Instead of judging Lisp by the
@@ -561,19 +563,21 @@ have four of its own subroutines," and so on. This process continues until the
 whole program has the right level of granularity—each part large enough to do
 something substantial, but small enough to be understood as a single unit.
 
-Experienced Lisp programmers divide up their programs differently. As well
-as top-down design, they follow a principle which could be called bottom-up
-design—changing the language to suit the problem. In Lisp, you don’t just write
-your program down toward the language, you also build the language up toward
-your program. As you’re writing a program you may think "I wish Lisp had such-
-and-such an operator." So you go and write it. Afterward you realize that using
-the new operator would simplify the design of another part of the program, and so
-on. Language and program evolve together. Like the border between two warring
-states, the boundary between language and program is drawn and redrawn, until
-eventually it comes to rest along the mountains and rivers, the natural frontiers
-of your problem. In the end your program will look as if the language had been
-designed for it. And when language and program ﬁt one another well, you end up
-with code which is clear, small, and efﬁcient.
+Experienced Lisp programmers divide up their programs differently. As
+well as top-down design, they follow a principle which could be called
+bottom-up design—changing the language to suit the problem. In Lisp,
+you don’t just write your program down toward the language, you also
+build the language up toward your program. As you’re writing a program
+you may think "I wish Lisp had such-and-such an operator." So you go
+and write it. Afterward you realize that using the new operator would
+simplify the design of another part of the program, and so
+on. Language and program evolve together. Like the border between two
+warring states, the boundary between language and program is drawn and
+redrawn, until eventually it comes to rest along the mountains and
+rivers, the natural frontiers of your problem. In the end your program
+will look as if the language had been designed for it. And when
+language and program ﬁt one another well, you end up with code which
+is clear, small, and efﬁcient.
 
 It’s worth emphasizing that bottom-up design doesn’t mean just writing the
 same program in a different order. When you work bottom-up, you usually end
@@ -600,10 +604,10 @@ you will have to travel from the top down to it. This brings several advantages:
    of utilities, writing a new program can take only a fraction of the effort it
    would require if you had to start with raw Lisp.
 
-3. Bottom-up design makes programs easier to read. An instance of this type
-   of abstraction asks the reader to understand a general-purpose operator; an
-   instance of functional abstraction asks the reader to understand a special-
-   purpose subroutine. 1
+3. Bottom-up design makes programs easier to read. An instance of this
+   type of abstraction asks the reader to understand a general-purpose
+   operator; an instance of functional abstraction asks the reader to
+   understand a special-purpose subroutine.
 
 4. Because it causes you always to be on the lookout for patterns in your
    code, working bottom-up helps to clarify your ideas about the design of
@@ -810,11 +814,12 @@ not Why Lisp?, but When?
 
 # 2 Functions
 
-Functions are the building-blocks of Lisp programs. They are also the building-
-blocks of Lisp. In most languages the + operator is something quite different
-from user-deﬁned functions. But Lisp has a single model, function application, to
-describe all the computation done by a program. The Lisp + operator is a function,
-just like the ones you can deﬁne yourself.
+Functions are the building-blocks of Lisp programs. They are also the
+building-blocks of Lisp. In most languages the + operator is something
+quite different from user-deﬁned functions. But Lisp has a single
+model, function application, to describe all the computation done by a
+program. The Lisp + operator is a function, just like the ones you can
+deﬁne yourself.
 
 In fact, except for a small number of operators called special forms, the core
 of Lisp is a collection of Lisp functions. What’s to stop you from adding to this
@@ -853,8 +858,8 @@ functions at runtime turns out to be a routinely used Lisp programming technique
 
 ## 2.2 Deﬁning Functions
 
-Most people ﬁrst learn how to make functions with defun. The following expres-
-sion deﬁnes a function called double which returns twice its argument.
+Most people ﬁrst learn how to make functions with defun. The following expression
+deﬁnes a function called double which returns twice its argument.
 
 ```
 > (defun double (x) (* x 2))
@@ -986,8 +991,8 @@ function as its value:
 T
 ```
 
-Beneath the surface, defun is setting the symbol-function of its ﬁrst argu-
-ment to a function constructed from the remaining arguments. The following two
+Beneath the surface, defun is setting the symbol-function of its ﬁrst argument
+to a function constructed from the remaining arguments. The following two
 expressions do approximately the same thing:
 
 ```
@@ -1079,8 +1084,8 @@ to deﬁne a function, called plus ten or some such, just for this one use. With
 lambda-expressions, we can refer to functions directly.
 
 One of the big differences between Common Lisp and the dialects which
-preceded it are the large number of built-in functions that take functional argu-
-ments. Two of the most commonly used, after the ubiquitous mapcar, are sort
+preceded it are the large number of built-in functions that take functional arguments.
+Two of the most commonly used, after the ubiquitous mapcar, are sort
 and remove-if. The former is a general-purpose sorting function. It takes a list
 and a predicate, and returns a list sorted by passing each pair of elements to the
 predicate.
@@ -1207,8 +1212,8 @@ the value of a bound variable—when scope-test is called, the value of x should
 be whatever is passed as the argument. But what should be the value of y? This
 is the question answered by the dialect’s scope rules.
 
-In a dynamically scoped Lisp, to ﬁnd the value of a free variable when exe-
-cuting scope-test, we look back through the chain of functions that called it.
+In a dynamically scoped Lisp, to ﬁnd the value of a free variable when executing
+scope-test, we look back through the chain of functions that called it.
 When we ﬁnd an environment where y was bound, that binding of y will be the
 one used in scope-test. If we ﬁnd none, we take the global value of y. Thus, in
 a dynamically scoped Lisp, y would have the value it had in the calling expression:
@@ -1281,8 +1286,8 @@ surrounding environment. Under lexical scope, every such use of a mapping
 function causes the creation of a closure.
 
 Closures play a more conspicuous role in a style of programming promoted
-by Abelson and Sussman’s classic Structure and Interpretation of Computer Pro-
-grams. Closures are functions with local state. The simplest way to use this state
+by Abelson and Sussman’s classic Structure and Interpretation of Computer Programs.
+Closures are functions with local state. The simplest way to use this state
 is in a situation like the following:
 
 ```
@@ -1943,8 +1948,8 @@ by names like sort, remove, or substitute. If you want side-effects, use setq
 on the return value.
 
 This very rule suggests that some side-effects are inevitable. Having functional
-programming as an ideal doesn’t imply that programs should never have side-
-effects. It just means that they should have no more than necessary.
+programming as an ideal doesn’t imply that programs should never have sideeffects.
+It just means that they should have no more than necessary.
 
 
 It may take time to develop this habit. One way to start is to treat the following
@@ -1964,8 +1969,8 @@ for a function to return multiple values. If functions can only return one value
 they have to "return" the rest by altering their parameters. Fortunately, this isn’t
 necessary in Common Lisp, because any function can return multiple values.
 
-The built-in function truncate returns two values, for example—the trun-
-cated integer, and what was cut off in order to create it. A typical implementation
+The built-in function truncate returns two values, for example—the truncated
+integer, and what was cut off in order to create it. A typical implementation
 will print both when truncate is called at the toplevel:
 
 ```
@@ -2056,8 +2061,8 @@ to another mode of travel, this may not be your experience at ﬁrst. One of
 the obstacles to learning Lisp as a second language is learning to program in a
 functional style.
 
-Fortunately there is a trick for transforming imperative programs into func-
-tional ones. You can begin by applying this trick to ﬁnished code. Soon you will
+Fortunately there is a trick for transforming imperative programs into functional
+ones. You can begin by applying this trick to ﬁnished code. Soon you will
 begin to anticipate yourself, and transform your code as you write it. Soon after
 that, you will begin to conceive of programs in functional terms from the start.
 
@@ -2166,8 +2171,8 @@ If it were written slightly differently, however,
 then the call to nconc would be modifying an argument passed to not-ok.
 
 Many Lisp programs violate this convention, at least locally. However, as we
-saw with ok, local violations need not disqualify the calling function. And func-
-tions which do meet the preceding conditions will retain many of the advantages
+saw with ok, local violations need not disqualify the calling function. And functions
+which do meet the preceding conditions will retain many of the advantages
 of purely functional code.
 
 To write programs that are really indistinguishable from functional code, we
@@ -2293,8 +2298,8 @@ When a function is written, they can test it on a selection of representative ca
 then move on to the next one. If each brick does what it’s supposed to do, the wall
 will stand.
 
-In Lisp, the wall can be better-designed as well. Imagine the kind of conver-
-sation you would have with someone so far away that there was a transmission
+In Lisp, the wall can be better-designed as well. Imagine the kind of conversation
+you would have with someone so far away that there was a transmission
 delay of one minute. Now imagine speaking to someone in the next room. You
 wouldn’t just have the same conversation faster, you would have a different kind
 of conversation. In Lisp, developing software is like speaking face-to-face. You
@@ -2461,8 +2466,8 @@ used the predeﬁned mapcan and in the second we wrote a new utility, find2, but
 the general principle is the same: instead of mixing the general and the speciﬁc,
 deﬁne the general and pass the speciﬁc as an argument.
 
-When carefully applied, this principle yields noticeably more elegant pro-
-grams. It is not the only force driving bottom-up design, but it is a major one. Of
+When carefully applied, this principle yields noticeably more elegant programs.
+It is not the only force driving bottom-up design, but it is a major one. Of
 the 32 utilities deﬁned in this chapter, 18 take functional arguments.
 
 ## 4.2 Invest in Abstraction
@@ -2477,13 +2482,13 @@ just as many lines of code. But we have made the program shorter in one sense,
 because the length of the utility does not have to be charged against the current
 program.
 
-It is not just an accounting trick to treat extensions to Lisp as capital expendi-
-tures. Utilities can go into a separate ﬁle; they will not clutter our view as we’re
+It is not just an accounting trick to treat extensions to Lisp as capital expenditures.
+Utilities can go into a separate ﬁle; they will not clutter our view as we’re
 working on the program, nor are they likely to be involved if we have to return
 later to change the program in some respect.
 
-As capital expenditures, however, utilities demand extra attention. It is espe-
-cially important that they be well-written. They are going to be used repeatedly,
+As capital expenditures, however, utilities demand extra attention. It is especially
+important that they be well-written. They are going to be used repeatedly,
 so any incorrectness or inefﬁciency will be multiplied. Extra care must also go
 into their design: a new utility must be written for the general case, not just for the
 problem at hand. Finally, like any capital expenditure, we need not be in a hurry
@@ -2654,8 +2659,8 @@ both arguments are lists.
 
 The next function, filter, is to some what remove-if-not is to find-if.
 The built-in remove-if-not returns all the values that might have been returned
-if you called find-if with the same function on successive cdrs of a list. Analo-
-gously, filter returns what some would have returned for successive cdrs of the
+if you called find-if with the same function on successive cdrs of a list. Analogously,
+filter returns what some would have returned for successive cdrs of the
 list:
 
 ---
@@ -2862,8 +2867,8 @@ argument, which defaults to eql. Also, instead of simply returning t, it tries t
 return potentially useful information: the cdr beginning with the object given as
 the ﬁrst argument.
 
-Note that before returns true if we encounter the ﬁrst argument before en-
-countering the second. Thus it will return true if the second argument doesn’t
+Note that before returns true if we encounter the ﬁrst argument before encountering
+the second. Thus it will return true if the second argument doesn’t
 occur in the list at all:
 
 ```
@@ -3009,12 +3014,12 @@ numbers:
 (-1 -0.5 0.0 0.5 1.0)
 ```
 
-Following mapa-b is the still more general map->, which works for sequences
+Following `mapa-b` is the still more general `map->`, which works for sequences
 of objects of any kind. The sequence begins with the object given as the second
 argument, the end of the sequence is deﬁned by the function given as the third
-argument, and successors are generated by the function given as the fourth argu-
-ment. With map-> it is possible to navigate arbitrary data structures, as well as
-operate on sequences of numbers. We could deﬁne mapa-b in terms of map-> as
+argument, and successors are generated by the function given as the fourth argument.
+With `map->` it is possible to navigate arbitrary data structures, as well as
+operate on sequences of numbers. We could deﬁne `mapa-b` in terms of `map->` as
 follows:
 
 ---
@@ -3166,8 +3171,8 @@ functions, can be passed as arguments.
 ## 4.6 I/O
 
 Figure 4.7 contains three examples of I/O utilities. The need for this kind of
-utility varies from program to program. Those in Figure 4.7 are just a represen-
-tative sample. The ﬁrst is for the case where you want users to be able to type in
+utility varies from program to program. Those in Figure 4.7 are just a representative
+sample. The ﬁrst is for the case where you want users to be able to type in
 expressions without parentheses; it reads a line of input and returns it as a list:
 
 ```
@@ -3221,8 +3226,8 @@ a string:
 ```
 
 Built upon it is symb, which is mostly used for building symbols. It takes one or
-more arguments and returns the symbol (creating one if necessary) whose print-
-name is their concatenation. It can take as an argument any object which has a
+more arguments and returns the symbol (creating one if necessary) whose print name
+is their concatenation. It can take as an argument any object which has a
 printable representation: symbols, strings, numbers, even lists.
 
 ```
@@ -3231,7 +3236,6 @@ printable representation: symbols, strings, numbers, even lists.
 ```
 
 ---
-
 ```
 (defun mkstr (&rest args)
   (with-output-to-string (s)
@@ -3258,8 +3262,8 @@ sends the string to intern. This function is Lisp’s traditional symbol-builder
 takes a string and either ﬁnds the symbol which prints as the string, or makes a
 new one which does.
 
-Any string can be the print-name of a symbol, even a string containing lower-
-case letters or macro characters like parentheses. When a symbol’s name contains
+Any string can be the print-name of a symbol, even a string containing lowercase
+letters or macro characters like parentheses. When a symbol’s name contains
 such oddities, it is printed within vertical bars, as above. In source code, such
 symbols should either be enclosed in vertical bars, or the offending characters
 preceded by backslashes:
@@ -3434,8 +3438,8 @@ originally given as an argument:
 5
 ```
 
-Under lexical scope, instead of merely choosing among a group of constant func-
-tions, we can build new closures at runtime. With dynamic scope this technique
+Under lexical scope, instead of merely choosing among a group of constant functions,
+we can build new closures at runtime. With dynamic scope this technique
 is impossible.2 If we consider how complement would be written, we see that it
 too must return a closure:
 
@@ -3463,18 +3467,12 @@ functions.
 
 An orthogonal language is one in which you can express a lot by combining a small
 number of operators in a lot of different ways. Toy blocks are very orthogonal; a
-plastic model kit is hardly orthogonal at all. The main advantage of complement
-is that it makes a language more orthogonal. Before complement, Common
-Lisp had pairs of functions like remove-if and remove-if-not, subst-if and
-subst-if-not, and so on. With complement we can do without half of them.
-
-The setf macro also improves Lisp’s orthogonality. Earlier dialects of Lisp
-would often have pairs of functions for reading and writing data. With property-
-lists, for example, there would be one function to establish properties and another
-function to ask about them. In Common Lisp, we have only the latter, get. To
+plastic model kit is hardly orthogonal at all. The main advantage of `complement`
+is that it makes a language more orthogonal. Before `complement`, Common
+Lisp had pairs of functions like `remove-if` and `remove-if-not`, `subst-if` and
+`subst-if-not`, and so on. With `complement` we can do without half of them.
 
 ---
-
 ```
 (defvar *!equivs* (make-hash-table))
 
@@ -3484,30 +3482,35 @@ function to ask about them. In Common Lisp, we have only the latter, get. To
 (defun def! (fn fn!)
   (setf (gethash fn *!equivs*) fn!))
 ```
-
 > Figure 5.1: Returning destructive equivalents.
 
 ---
 
-
-establish a property, we use get in combination with setf:
+The `setf` macro also improves Lisp’s orthogonality. Earlier dialects
+of Lisp would often have pairs of functions for reading and writing
+data. With property lists, for example, there would be one function to
+establish properties and another function to ask about them. In Common
+Lisp, we have only the latter, `get`. To establish a property, we use
+`get` in combination with `setf`:
 
 ```
 (setf (get ’ball ’color) ’red)
 ```
 
-We may not be able to make Common Lisp smaller, but we can do something
-almost as good: use a smaller subset of it. Can we deﬁne any new operators which
-would, like complement and setf, help us toward this goal? There is at least
-one other way in which functions are grouped in pairs. Many functions also come
-in a destructive version: remove-if and delete-if, reverse and nreverse,
-append and nconc. By deﬁning an operator to return the destructive counterpart
-of a function, we would not have to refer to the destructive functions directly.
+We may not be able to make Common Lisp smaller, but we can do
+something almost as good: use a smaller subset of it. Can we deﬁne any
+new operators which would, like `complement` and `setf`, help us
+toward this goal? There is at least one other way in which functions
+are grouped in pairs. Many functions also come in a destructive
+version: `remove-if` and `delete-if`, `reverse` and `nreverse`,
+`append` and `nconc`. By deﬁning an operator to return the destructive
+counterpart of a function, we would not have to refer to the
+destructive functions directly.
 
 Figure 5.1 contains code to support the notion of destructive counterparts.
-The global hash-table *!equivs* maps functions to their destructive equivalents;
-! returns destructive equivalents; and def! sets them. The name of the ! (bang)
-operator comes from the Scheme convention of appending ! to the names of
+The global hash-table `*!equivs*` maps functions to their destructive equivalents;
+`!` returns destructive equivalents; and `def!` sets them. The name of the `!` (bang)
+operator comes from the Scheme convention of appending `!` to the names of
 functions with side-effects. Now once we have deﬁned
 
 ```
@@ -3534,7 +3537,6 @@ which would be more visible in Scheme:
 ```
 
 ---
-
 ```
 (defun memoize (fn)
   (let ((cache (make-hash-table :test #’equal)))
@@ -3549,14 +3551,14 @@ which would be more visible in Scheme:
 
 ---
 
-As well as greater orthogonality, the ! operator brings a couple of other bene-
-ﬁts. It makes programs clearer, because we can see immediately that (! #’foo)
-is the destructive equivalent of foo. Also, it gives destructive operations a dis-
-tinct, recognizable form in source code, which is good because they should receive
+As well as greater orthogonality, the `!` operator brings a couple of other beneﬁts.
+It makes programs clearer, because we can see immediately that `(! #’foo)`
+is the destructive equivalent of foo.  Also, it gives destructive operations a distinct,
+recognizable form in source code, which is good because they should receive
 special attention when we are searching for a bug.
 
 Since the relation between a function and its destructive counterpart will
-usually be known before runtime, it would be most efﬁcient to deﬁne ! as a
+usually be known before runtime, it would be most efﬁcient to deﬁne `!` as a
 macro, or even provide a read macro for it.
 
 ## 5.3 Memoizing
@@ -3567,7 +3569,7 @@ all the previous calls, and each time the function is about to be called, to loo
 in the cache to see if the value is already known.
 
 Figure 5.2 contains a generalized memoizing utility. We give a function to
-memoize, and it returns an equivalent memoized version—a closure containing a
+memoize, and it returns an equivalent memoized version, a closure containing a
 hash-table in which to store the results of previous calls.
 
 ```
@@ -3581,11 +3583,7 @@ Elapsed Time = 0.00 seconds
 1
 ```
 
-With a memoized function, repeated calls are just hash-table lookups. There is
-of course the additional expense of a lookup on each initial call, but since we
-
 ---
-
 ```
 (defun compose (&rest fns)
   (if fns
@@ -3597,15 +3595,15 @@ of course the additional expense of a lookup on each initial call, but since we
                     :initial-value (apply fn1 args))))
       #’identity))
 ```
-
 > Figure 5.3: An operator for functional composition.
 
 ---
 
-
-
+With a memoized function, repeated calls are just hash-table lookups. There is
+of course the additional expense of a lookup on each initial call, but since we
 would only memoize a function that was sufﬁciently expensive to compute, it’s
 reasonable to assume that this cost is insigniﬁcant in comparison.
+
 Though adequate for most uses, this implementation of memoize has several
 limitations. It treats calls as identical if they have equal argument lists; this could
 be too strict if the function had keyword parameters. Also, it is intended only for
@@ -3614,13 +3612,13 @@ single-valued functions, and cannot store or return multiple values.
 
 ## 5.4 Composing Functions
 
-The complement of a function f is denoted ∼f. Section 5.1 showed that closures
-make it possible to deﬁne ∼ as a Lisp function. Another common operation on
-functions is composition, denoted by the operator . If f and g are functions, then
-f g is also a function, and f g(x) = f (g(x)). Closures also make it possible to
-deﬁne  as a Lisp function.
+The complement of a function `f` is denoted `∼f`. Section 5.1 showed that closures
+make it possible to deﬁne `∼` as a Lisp function. Another common operation on
+functions is composition, denoted by the operator . If `f` and `g` are functions, then
+`f g` is also a function, and `f g(x) = f (g(x))`. Closures also make it possible to
+deﬁne **MISSING** as a Lisp function.
 
-Figure 5.3 deﬁnes a compose function which takes any number of functions
+Figure 5.3 deﬁnes a `compose` function which takes any number of functions
 and returns their composition. For example
 
 ```
@@ -3635,7 +3633,7 @@ returns a function equivalent to
 
 All the functions given as arguments to compose must be functions of one argument,
 except the last. On the last function there are no restrictions, and whatever
-arguments it takes, so will the function returned by compose:
+arguments it takes, so will the function returned by `compose`:
 
 ```
 > (funcall (compose #’1+ #’find-if) #’oddp ’(2 3 4))
@@ -3643,7 +3641,6 @@ arguments it takes, so will the function returned by compose:
 ```
 
 ---
-
 ```
 (defun fif (if then &optional else)
   #’(lambda (x)
@@ -3665,12 +3662,11 @@ arguments it takes, so will the function returned by compose:
          #’(lambda (x)
              (or (funcall fn x) (funcall chain x))))))
 ```
-
 > Figure 5.4: More function builders.
 
 ---
 
-Since not is a Lisp function, complement is a special case of compose. It could
+Since `not` is a Lisp function, `complement` is a special case of `compose`. It could
 be deﬁned as:
 
 ```
@@ -3690,7 +3686,7 @@ example, we often see expressions like
 ```
 
 We could deﬁne an operator to build functions like this one automatically. Using
-fif from Figure 5.4, we could get the same effect with:
+`fif` from Figure 5.4, we could get the same effect with:
 
 ```
 (mapcar (fif #’slave #’owner #’employer)
@@ -3698,7 +3694,7 @@ fif from Figure 5.4, we could get the same effect with:
 ```
 
 Figure 5.4 contains several other constructors for commonly occurring types
-of functions. The second, fint, is for cases like this:
+of functions. The second, `fint`, is for cases like this:
 
 ```
 (find-if #’(lambda (x)
@@ -3706,8 +3702,8 @@ of functions. The second, fint, is for cases like this:
          docs)
 ```
 
-The predicate given as the second argument to find-if deﬁnes the intersection of
-the three predicates called within it. With fint, whose name stands for "function
+The predicate given as the second argument to `find-if` deﬁnes the intersection of
+the three predicates called within it. With `fint`, whose name stands for "function
 intersection," we can say:
 
 ```
@@ -3715,7 +3711,7 @@ intersection," we can say:
 ```
 
 We can deﬁne a similar operator to return the union of a set of predicates. The
-function fun is like fint but uses or instead of and.
+function fun is like `fint` but uses `or` instead of `and`.
 
 ## 5.5 Recursion on Cdrs
 
@@ -3747,11 +3743,11 @@ or this:
            (our-every fn (cdr lst)))))
 ```
 
-Structurally these two functions have a lot in common. They both operate recur-
-sively on successive cdrs of a list, evaluating the same expression on each step,
+Structurally these two functions have a lot in common. They both
+operate recursively on successive `cdrs` of a list, evaluating the same
+expression on each step,
 
 ---
-
 ```
 (defun lrec (rec &optional base)
   (labels ((self (lst)
@@ -3764,7 +3760,6 @@ sively on successive cdrs of a list, evaluating the same expression on each step
                                   (self (cdr lst)))))))
     #’self))
 ```
-
 > Figure 5.5: Function to deﬁne ﬂat list recursers.
 
 ---
@@ -3776,30 +3771,30 @@ the question of how to package the pattern in a new abstraction does not arise.
 
 However, a pattern it is, all the same. Instead of writing these functions out
 by hand, we should be able to write a function which will generate them for us.
-Figure 5.5 contains a function-builder called lrec ("list recurser") which should
-be able to generate most functions that recurse on successive cdrs of a list.
+Figure 5.5 contains a function-builder called `lrec` ("list recurser") which should
+be able to generate most functions that recurse on successive `cdrs` of a list.
 
-The ﬁrst argument to lrec must be a function of two arguments: the current
-car of the list, and a function which can be called to continue the recursion. Using
-lrec we could express our-length as:
+The ﬁrst argument to `lrec` must be a function of two arguments: the current
+`car` of the list, and a function which can be called to continue the recursion. Using
+`lrec` we could express `our-length` as:
 
 ```
 (lrec #’(lambda (x f) (1+ (funcall f))) 0)
 ```
 
-To ﬁnd the length of the list, we don’t need to look at the elements, or stop part-
-way, so the object x is always ignored, and the function f always called. However,
-we need to take advantage of both possibilities to express our-every, for e.g.
-oddp:3
+To ﬁnd the length of the list, we don’t need to look at the elements,
+or stop part-way, so the object `x` is always ignored, and the function
+`f` always called. However, we need to take advantage of both
+possibilities to express `our-every`, for e.g.
 
 ```
 (lrec #’(lambda (x f) (and (oddp x) (funcall f))) t)
 ```
 
-The deﬁnition of lrec uses labels to build a local recursive function called
-self. In the recursive case the function rec is passed two arguments, the current
-car of the list, and a function embodying the recursive call. In functions like
-our-every, where the recursive case is an and, if the ﬁrst argument returns false
+The deﬁnition of `lrec` uses labels to build a local recursive function called
+self. In the recursive case the function `rec` is passed two arguments, the current
+`car` of the list, and a function embodying the recursive call. In functions like
+`our-every`, where the recursive case is an and, if the ﬁrst argument returns false
 we want to stop right there. Which means that the argument passed in the recursive
 
 ---
@@ -3824,37 +3819,21 @@ we want to stop right there. Which means that the argument passed in the recursi
 case must not be a value but a function, which we can call (if we want) in order to
 get a value.
 
-Figure 5.6 shows some existing Common Lisp functions deﬁned with lrec. 4
-Calling lrec will not always yield the most efﬁcient implementation of a given
-function. Indeed, lrec and the other recurser generators to be deﬁned in this
-chapter tend to lead one away from tail-recursive solutions. For this reason they
-are best suited for use in initial versions of a program, or in parts where speed is
-not critical.
+Figure 5.6 shows some existing Common Lisp functions deﬁned with `lrec`.
 
 ## 5.6 Recursion on Subtrees
 
 There is another recursive pattern commonly found in Lisp programs: recursion
 on subtrees. This pattern is seen in cases where you begin with a possibly nested
-list, and want to recurse down both its car and its cdr.
+list, and want to recurse down both its `car` and its `cdr`.
 
 The Lisp list is a versatile structure. Lists can represent, among other things,
 sequences, sets, mappings, arrays, and trees. There are several different ways to
 interpret a list as a tree. The most common is to regard the list as a binary tree
-whose left branch is the car and whose right branch is the cdr. (In fact, this is
+whose left branch is the `car` and whose right branch is the `cdr`. (In fact, this is
 usually the internal representation of lists.) Figure 5.7 shows three examples of
 lists and the trees they represent. Each internal node in such a tree corresponds
 to a dot in the dotted-pair representation of the list, so the tree structure may be
-
----
-
-```
-(a . b)                  (a b c)                          (a b (c d))
-```
-
-> Figure 5.7: Lists as trees.
-
----
-
 easier to interpret if the lists are considered in that form:
 
 ```
@@ -3862,9 +3841,18 @@ easier to interpret if the lists are considered in that form:
 (a b (c d))       =   (a . (b . ((c . (d . nil)) . nil)))
 ```
 
+---
+
+```
+(a . b)                  (a b c)                          (a b (c d))
+```
+> Figure 5.7: Lists as trees.
+
+---
+
 Any list can be interpreted as a binary tree. Hence the distinction between pairs
-of Common Lisp functions like copy-list and copy-tree. The former copies
-a list as a sequence—if the list contains sublists, the sublists, being mere elements
+of Common Lisp functions like `copy-list` and `copy-tree`. The former copies
+a list as a sequence, if the list contains sublists, the sublists, being mere elements
 in the sequence, are not copied:
 
 ```
@@ -3875,7 +3863,7 @@ in the sequence, are not copied:
 T
 ```
 
-In contrast, copy-tree copies a list as a tree—sublists are subtrees, and so must
+In contrast, `copy-tree` copies a list as a tree, sublists are subtrees, and so must
 also be copied:
 
 ```
@@ -3883,7 +3871,7 @@ also be copied:
 NIL
 ```
 
-We could deﬁne a version of copy-tree as follows:
+We could deﬁne a version of `copy-tree` as follows:
 
 ```
 (defun our-copy-tree (tree)
@@ -3914,13 +3902,13 @@ A tree has more leaves than the atoms you can see when it is represented as a li
 ```
 
 The leaves of a tree are all the atoms you can see when you look at the tree in
-its dotted-pair representation. In dotted-pair notation, ((a b (c d)) (e) f)
+its dotted-pair representation. In dotted-pair notation, `((a b (c d)) (e) f)`
 would have four nils that aren’t visible in the list representation (one for each
-pair of parentheses) so count-leaves returns 10.
+pair of parentheses) so `count-leaves` returns 10.
 
 In the last chapter we deﬁned several utilities which operate on trees. For
-example, flatten (page 47) takes a tree and returns a list of all the atoms in it.
-That is, if you give flatten a nested list, you’ll get back a list that looks the same
+example, `flatten` (page 47) takes a tree and returns a list of all the atoms in it.
+That is, if you give `flatten` a nested list, you’ll get back a list that looks the same
 except that it’s missing all but the outermost pair of parentheses:
 
 ```
@@ -3938,7 +3926,7 @@ This function could also be deﬁned (somewhat inefﬁciently) as follows:
              (if (cdr tree) (flatten (cdr tree))))))
 ```
 
-Finally, consider rfind-if, a recursive version of find-if which works on
+Finally, consider `rfind-if`, a recursive version of `find-if` which works on
 trees as well as ﬂat lists:
 
 ```
@@ -3947,11 +3935,10 @@ trees as well as ﬂat lists:
       (and (funcall fn tree) tree)
       (or (rfind-if fn (car tree))
           (if (cdr tree) (rfind-if fn (cdr tree))))))
-
 ```
 
-To generalize find-if for trees, we have to decide whether we want to search
-for just leaves, or for whole subtrees. Our rfind-if takes the former approach,
+To generalize `find-if` for trees, we have to decide whether we want to search
+for just leaves, or for whole subtrees. Our `rfind-if` takes the former approach,
 so the caller can assume that the function given as the ﬁrst argument will only be
 called on atoms:
 
@@ -3960,19 +3947,19 @@ called on atoms:
 3
 ```
 
-How similar in form are these four functions, copy-tree, count-leaves,
-flatten, and rfind-if. Indeed, they’re all instances of an archetypal function
+How similar in form are these four functions, `copy-tree`, `count-leaves`,
+`flatten`, and `rfind-if`. Indeed, they’re all instances of an archetypal function
 for recursion on subtrees. As with recursion on cdrs, we need not leave this
-archetype to ﬂoat vaguely in the background—we can write a function to generate
+archetype to ﬂoat vaguely in the background, we can write a function to generate
 instances of it.
 
 To get at the archetype itself, let’s look at these functions and see what’s not
-pattern. Essentially our-copy-tree is two facts:
+pattern. Essentially `our-copy-tree` is two facts:
 
 1. In the base case it returns its argument.
 
-2. In the recursive case, it applies cons to the recursions down the left (car)
-   and right (cdr) subtrees.
+2. In the recursive case, it applies `cons` to the recursions down the left (`car`)
+   and right (`cdr`) subtrees.
 
 We should thus be able to express it as a call to a builder with two arguments:
 
@@ -3980,22 +3967,21 @@ We should thus be able to express it as a call to a builder with two arguments:
 (ttrav #’cons #’identity)
 ```
 
-A deﬁnition of ttrav ("tree traverser") is shown in Figure 5.8. Instead of
+A deﬁnition of `ttrav` ("tree traverser") is shown in Figure 5.8. Instead of
 passing one value in the recursive case, we pass two, one for the left subtree and
 one for the right. If the base argument is a function it will be called on the current
 leaf. In ﬂat list recursion, the base case is always nil, but in tree recursion the
 base case could be an interesting value, and we might want to use it.
 
-With ttrav we could express all the preceding functions except rfind-if.
-(They are shown in Figure 5.9.) To deﬁne rfind-if we need a more general tree
-recursion builder which gives us control over when, and if, the recursive calls are
+With `ttrav` we could express all the preceding functions except `rfind-if`.
+(They are shown in Figure 5.9.) To deﬁne `rfind-if` we need a more general tree
+recursion builder which gives us control over `when`, and `if`, the recursive calls are
 made. As the ﬁrst argument to ttrav we gave a function which took the results of
 the recursive calls. For the general case, we want to use instead a function which
 takes two closures representing the calls themselves. Then we can write recursers
 which only traverse as much of the tree as they want to.
 
 ---
-
 ```
 (defun ttrav (rec &optional (base #’identity))
   (labels ((self (tree)
@@ -4008,13 +3994,11 @@ which only traverse as much of the tree as they want to.
                                   (self (cdr tree)))))))
     #’self))
 ```
-
 > Figure 5.8: Function for recursion on trees.
 
 ---
 
 ---
-
 ```
 ; our-copy-tree
 (ttrav #’cons)
@@ -4025,7 +4009,6 @@ which only traverse as much of the tree as they want to.
 ; flatten
 (ttrav #’nconc #’mklist)
 ```
-
 > Figure 5.9: Functions expressed with ttrav.
 
 ---
@@ -4069,21 +4052,22 @@ Now we can also express rfind-if for e.g. oddp as:
                                 (self (cdr tree))))))))
     #’self))
 ```
-
 > Figure 5.10: Function for recursion on trees.
 
 ---
 
 ## 5.7 When to Build Functions
 
-Expressing functions by calls to constructors instead of sharp-quoted lambda-
-expressions could, unfortunately, entail unnecessary work at runtime. A sharp-
-quoted lambda-expression is a constant, but a call to a constructor function will be
-evaluated at runtime. If we really have to make this call at runtime, it might not
-be worth using constructor functions. However, at least some of the time we can
-call the constructor beforehand. By using #., the sharp-dot read macro, we can
-have the new functions built at read-time. So long as compose and its arguments
-are deﬁned when this expression is read, we could say, for example,
+Expressing functions by calls to constructors instead of sharp-quoted
+lambda-expressions could, unfortunately, entail unnecessary work at
+runtime. A sharp-quoted lambda-expression is a constant, but a call
+to a constructor function will be evaluated at runtime. If we really
+have to make this call at runtime, it might not be worth using
+constructor functions. However, at least some of the time we can call
+the constructor beforehand. By using #., the sharp-dot read macro, we
+can have the new functions built at read-time. So long as compose and
+its arguments are deﬁned when this expression is read, we could say,
+for example,
 
 ```
 (find-if #.(compose #’oddp #’truncate) lst)
@@ -4142,7 +4126,6 @@ Is the coin a penny?
 >> yes
 LINCOLN
 ```
-
 > Figure 6.1: Session of twenty questions.
 
 ---
@@ -4312,22 +4295,24 @@ Is the person a man?
 
 From then on, the transcript will be just as it was with the previous implementation.
 
-By representing the nodes as closures, we are able to transform our twenty-
-questions network entirely into code. As it is, the code will have to look up the
-node functions by name at runtime. However, if we know that the network is
-not going to be redeﬁned on the ﬂy, we can add a further enhancement: we can
-have node functions call their destinations directly, without having to go through
-a hash-table.
+By representing the nodes as closures, we are able to transform our
+twenty-questions network entirely into code. As it is, the code will
+have to look up the node functions by name at runtime. However, if we
+know that the network is not going to be redeﬁned on the ﬂy, we can
+add a further enhancement: we can have node functions call their
+destinations directly, without having to go through a hash-table.
 
-Figure 6.6 contains a new version of the program. Now *nodes* is a dis-
-posable list instead of a hash-table. All the nodes are deﬁned with defnode as
-before, but no closures are generated at this point. After all the nodes have been
-deﬁned, we call compile-net to compile a whole network at once. This function
-recursively works its way right down to the leaves of the tree, and on the way
-back up, returns at each step the node/function for each of the two subtrees. 1 So
-now each node will have a direct handle on its two destinations, instead of having
-only their names. When the original call to compile-net returns, it will yield a
-function representing the portion of the network we asked to have compiled.
+Figure 6.6 contains a new version of the program. Now *nodes* is a
+disposable list instead of a hash-table. All the nodes are deﬁned with
+defnode as before, but no closures are generated at this point. After
+all the nodes have been deﬁned, we call compile-net to compile a whole
+network at once. This function recursively works its way right down to
+the leaves of the tree, and on the way back up, returns at each step
+the node/function for each of the two subtrees. 1 So now each node
+will have a direct handle on its two destinations, instead of having
+only their names. When the original call to compile-net returns, it
+will yield a function representing the portion of the network we asked
+to have compiled.
 
 ```
 > (setq n (compile-net ’people))
@@ -4337,10 +4322,10 @@ Is the person a man?
 >>
 ```
 
-Notice that compile-net compiles in both senses. It compiles in the general
-sense, by translating the abstract representation of the network into code. More-
-over, if compile-net itself is compiled, it will return compiled functions. (See
-page 25.)
+Notice that compile-net compiles in both senses. It compiles in the
+general sense, by translating the abstract representation of the
+network into code. Moreover, if compile-net itself is compiled, it
+will return compiled functions. (See page 25.)
 
 After compiling the network, we will no longer need the list made by defnode.
 It can be cut loose (e.g. by setting *nodes* to nil) and reclaimed by the garbage
@@ -4364,19 +4349,20 @@ programs based on the strategy used here.
 Lisp’s macro facility allows you to deﬁne operators that are implemented by
 transformation. The deﬁnition of a macro is essentially a function that generates
 Lisp code—a program that writes programs. From these small beginnings arise
-great possibilities, and also unexpected hazards. Chapters 7–10 form a tutorial
+great possibilities, and also unexpected hazards. Chapters 7-10 form a tutorial
 on macros. This chapter explains how macros work, gives techniques for writing
 and testing them, and looks at the issue of macro style.
 
 ## 7.1 How Macros Work
 
-Since macros can be called and return values, they tend to be associated with func-
-tions. Macro deﬁnitions sometimes resemble function deﬁnitions, and speaking
-informally, people call do, which is actually a macro, a "built-in function." But
-pushing the analogy too far can be a source of confusion. Macros work differently
-from normal functions, and knowing how and why macros are different is the
-key to using them correctly. A function produces results, but a macro produces
-expressions—which, when evaluated, produce results.
+Since macros can be called and return values, they tend to be
+associated with functions. Macro deﬁnitions sometimes resemble
+function deﬁnitions, and speaking informally, people call do, which is
+actually a macro, a "built-in function." But pushing the analogy too
+far can be a source of confusion. Macros work differently from normal
+functions, and knowing how and why macros are different is the key to
+using them correctly. A function produces results, but a macro
+produces expressions—which, when evaluated, produce results.
 
 The best way to begin is to move straight into an example. Suppose we want
 to write a macro nil!, which sets its argument to nil. We want (nil! x) to
@@ -4409,12 +4395,13 @@ given as arguments in the macro call. It returns a list of three elements: setq,
 the expression given as the argument to the macro, and nil. In this case, the
 argument to nil! is x, and the macroexpansion is (setq x nil).
 
-After macroexpansion comes a second step, evaluation. Lisp evaluates the
-macroexpansion (setq x nil) as if you had typed that in the ﬁrst place. Evalu-
-ation does not always come immediately after expansion, as it does at the toplevel.
-A macro call occurring in the deﬁnition of a function will be expanded when the
-function is compiled, but the expansion—or the object code which results from
-it—won’t be evaluated until the function is called.
+After macroexpansion comes a second step, evaluation. Lisp evaluates
+the macroexpansion (setq x nil) as if you had typed that in the ﬁrst
+place. Evaluation does not always come immediately after expansion, as
+it does at the toplevel.  A macro call occurring in the deﬁnition of a
+function will be expanded when the function is compiled, but the
+expansion—or the object code which results from it—won’t be evaluated
+until the function is called.
 
 Many of the difﬁculties you might encounter with macros can be avoided by
 maintaining a sharp distinction between macroexpansion and evaluation. When
@@ -4606,9 +4593,9 @@ inserting while removing the outermost level of parentheses:
 (A 1 2 3 C)
 ```
 
-The comma causes the list (1 2 3) to be inserted in place of b, while the comma-
-at causes the elements of the list to be inserted there. There are some additional
-restrictions on the use of comma-at:
+The comma causes the list (1 2 3) to be inserted in place of b, while
+the `,@` causes the elements of the list to be inserted there. There
+are some additional restrictions on the use of `,@`:
 
 1. In order for its argument to be spliced, comma-at must occur within a
    sequence. It’s an error to say something like ‘,@b because there is nowhere
@@ -4618,8 +4605,8 @@ restrictions on the use of comma-at:
    the middle of a list, as in ‘(a ,@1 b), will cause an error.
 
 Comma-at tends to be used in macros which take an indeterminate number of
-arguments and pass them on to functions or macros which also take an indetermi-
-nate number of arguments. This situation commonly arises when implementing
+arguments and pass them on to functions or macros which also take an indeterminate
+number of arguments. This situation commonly arises when implementing
 implicit blocks. Common Lisp has several operators for grouping code into blocks,
 including block, tagbody, and progn. These operators rarely appear directly in
 source code; they are more often implicit—that is, hidden by macros.
@@ -4660,10 +4647,10 @@ the three expressions in the body will appear within a single progn:
 
 Most macros for iteration splice their arguments in a similar way.
 
-The effect of comma-at can be achieved without using backquote. The ex-
-pression ‘(a ,@b c) is equal to (cons ’a (append b (list ’c))), for ex-
-ample. Comma-at exists only to make such expression-generating expressions
-more readable.
+The effect of comma-at can be achieved without using backquote. The
+expression `‘(a ,@b c)` is equal to `(cons ’a (append b (list ’c)))`,
+for example. `,@` exists only to make such expression-generating
+expressions more readable.
 
 Macro deﬁnitions (usually) generate lists. Although macro expansions could
 be built with the function list, backquote list-templates make the task much
@@ -4687,7 +4674,7 @@ In programming, the best way to learn is often to begin experimenting as soon
 as possible. A full theoretical understanding can come later. Accordingly, this
 section presents a way to start writing macros immediately. It works only for a
 narrow range of cases, but where applicable it can be applied quite mechanically.
-(If you’ve written macros before, you may want to skip this section.)
+(If you've written macros before, you may want to skip this section.)
 
 As an example, we consider how to write a variant of the the built-in Common
 Lisp function member. By default member uses eql to test for equality. If you
@@ -4805,8 +4792,8 @@ However, when you have a sequence of arguments which are going to be sucked
 into a single &rest or &body parameter, treat them as a group, drawing a single
 line for the whole sequence. Figure 7.3 shows the resulting diagram.
 
-To write the body of the macro deﬁnition, proceed as before along the expan-
-sion. As well as the two previous rules, we need one more:
+To write the body of the macro deﬁnition, proceed as before along the
+expansion. As well as the two previous rules, we need one more:
 
 3. If there is a connection from a series of expressions in the expansion to a
    series of the arguments in the macro call, write down the corresponding
@@ -4833,17 +4820,19 @@ programs in their own right.
 
 ## 7.4 Testing Macroexpansion
 
-Having written a macro, how do we test it? A macro like memq is simple enough
-that one can tell just by looking at it what it will do. When writing more compli-
-cated macros, we have to be able to check that they are being expanded correctly.
+Having written a macro, how do we test it? A macro like memq is simple
+enough that one can tell just by looking at it what it will do. When
+writing more complicated macros, we have to be able to check that they
+are being expanded correctly.
 
-Figure 7.4 shows a macro deﬁnition and two ways of looking at its expansion.
-The built-in function macroexpand takes an expression and returns its macroex-
-pansion. Sending a macro call to macroexpand shows how the macro call will
-ﬁnally be expanded before being evaluated, but a complete expansion is not al-
-ways what you want in order to test a macro. When the macro in question relies
-on other macros, they too will be expanded, so a complete macroexpansion can
-sometimes be difﬁcult to read.
+Figure 7.4 shows a macro deﬁnition and two ways of looking at its
+expansion.  The built-in function macroexpand takes an expression and
+returns its macro expansion. Sending a macro call to macroexpand shows
+how the macro call will ﬁnally be expanded before being evaluated, but
+a complete expansion is not al- ways what you want in order to test a
+macro. When the macro in question relies on other macros, they too
+will be expanded, so a complete macroexpansion can sometimes be
+difﬁcult to read.
 
 From the ﬁrst expression shown in Figure 7.4, it’s hard to tell whether or not
 while is expanding as intended, because the built-in do macro gets expanded, as
@@ -5052,25 +5041,28 @@ programmers do not carry such a description in their heads anyway. It’s more
 convenient to remember what defmacro does by imagining how it would be
 deﬁned.
 
-There is a long tradition of such explanations in Lisp. The Lisp 1.5 Pro-
-grammer’s Manual, ﬁrst published in 1962, gives for reference a deﬁnition of
-eval written in Lisp. Since defmacro is itself a macro, we can give it the same
-treatment, as in Figure 7.6. This deﬁnition uses several techniques which haven’t
-been covered yet, so some readers may want to refer to it later.
+There is a long tradition of such explanations in Lisp. The Lisp 1.5
+Programmer’s Manual, ﬁrst published in 1962, gives for reference a
+deﬁnition of eval written in Lisp. Since defmacro is itself a macro,
+we can give it the same treatment, as in Figure 7.6. This deﬁnition
+uses several techniques which haven’t been covered yet, so some
+readers may want to refer to it later.
 
-The deﬁnition in Figure 7.6 gives a fairly accurate impression of what macros
-do, but like any sketch it is incomplete. It wouldn’t handle the &whole keyword
-properly. And what defmacro really stores as the macro-function of its ﬁrst
-argument is a function of two arguments: the macro call, and the lexical envi-
-ronment in which it occurs. However, these features are used only by the most
-esoteric macros. If you worked on the assumption that macros were implemented
-as in Figure 7.6, you would hardly ever go wrong. Every macro deﬁned in this
-book would work, for example.
+The deﬁnition in Figure 7.6 gives a fairly accurate impression of what
+macros do, but like any sketch it is incomplete. It wouldn’t handle
+the &whole keyword properly. And what defmacro really stores as the
+macro-function of its ﬁrst argument is a function of two arguments:
+the macro call, and the lexical environment in which it
+occurs. However, these features are used only by the most esoteric
+macros. If you worked on the assumption that macros were implemented
+as in Figure 7.6, you would hardly ever go wrong. Every macro deﬁned
+in this book would work, for example.
 
-The deﬁnition in Figure 7.6 yields an expansion function which is a sharp-
-quoted lambda-expression. That should make it a closure: any free symbols in the
-macro deﬁnition should refer to variables in the environment where the defmacro
-occurred. So it should be possible to say this:
+The deﬁnition in Figure 7.6 yields an expansion function which is a
+sharp-quoted lambda-expression. That should make it a closure: any
+free symbols in the macro deﬁnition should refer to variables in the
+environment where the defmacro occurred. So it should be possible to
+say this:
 
 ```
 (let ((op ’setq))
@@ -5213,9 +5205,10 @@ make-stepforms returns arguments for the psetq. With these two functions,
 the rest of the deﬁnition becomes fairly straightforward.
 
 The code in Figure 7.8 isn’t exactly the way do would be written in a
-real implementation. To emphasize the computation done during expansion,
-make-initforms and make-stepforms have been broken out as separate func-
-tions. In the future, such code will usually be left within the defmacro expression.
+real implementation. To emphasize the computation done during
+expansion, make-initforms and make-stepforms have been broken out as
+separate functions. In the future, such code will usually be left
+within the defmacro expression.
 
 With the deﬁnition of this macro, we begin to see what macros can do. A
 macro has full access to Lisp to build an expansion. The code used to generate
@@ -5227,13 +5220,14 @@ Good style means something different for macros. Style matters when code is
 either read by people or evaluated by Lisp. With macros, both of these activities
 take place under slightly unusual circumstances.
 
-There are two different kinds of code associated with a macro deﬁnition: ex-
-pander code, the code used by the macro to generate its expansion, and expansion
-code, which appears in the expansion itself. The principles of style are different
-for each. For programs in general, to have good style is to be clear and efﬁcient.
-These principles are bent in opposite directions by the two types of macro code:
-expander code can favor clarity over efﬁciency, and expansion code can favor
-efﬁciency over clarity.
+There are two different kinds of code associated with a macro
+deﬁnition: expander code, the code used by the macro to generate its
+expansion, and expansion code, which appears in the expansion
+itself. The principles of style are different for each. For programs
+in general, to have good style is to be clear and efﬁcient.  These
+principles are bent in opposite directions by the two types of macro
+code: expander code can favor clarity over efﬁciency, and expansion
+code can favor efﬁciency over clarity.
 
 It’s in compiled code that efﬁciency counts most, and in compiled code the
 macro calls have already been expanded. If the expander code was efﬁcient, it
@@ -5285,15 +5279,17 @@ more clearly the way in which the expansion depends on the number of conjuncts.
 
 ---
 
-As always, there are exceptions. In Lisp, the distinction between compile-
-time and runtime is an artiﬁcial one, so any rule which depends upon it is likewise
-artiﬁcial. In some programs, compile-time is runtime. If you’re writing a program
-whose main purpose is transformation and which uses macros to do it, then
-everything changes: the expander code becomes your program, and the expansion
-its output. Of course under such circumstances expander code should be written
-with efﬁciency in mind. However, it’s safe to say that most expander code (a) only
-affects the speed of compilation, and (b) doesn’t affect it very much—meaning
-that clarity should nearly always come ﬁrst.
+As always, there are exceptions. In Lisp, the distinction between
+compile-time and runtime is an artiﬁcial one, so any rule which
+depends upon it is likewise artiﬁcial. In some programs, compile-time
+is runtime. If you’re writing a program whose main purpose is
+transformation and which uses macros to do it, then everything
+changes: the expander code becomes your program, and the expansion its
+output. Of course under such circumstances expander code should be
+written with efﬁciency in mind. However, it’s safe to say that most
+expander code (a) only affects the speed of compilation, and (b)
+doesn’t affect it very much—meaning that clarity should nearly always
+come ﬁrst.
 
 With expansion code, it’s just the opposite. Clarity matters less for macro
 expansions because they are rarely looked at, especially by other people. The
@@ -5332,11 +5328,11 @@ macro should receive more attention than its length would seem to demand. Avoid
 consing especially. A utility which conses unnecessarily can ruin the performance
 of an otherwise efﬁcient program.
 
-The other reason to look to the efﬁciency of expansion code is its very invis-
-ibility. If a function is badly implemented, it will proclaim this fact to you every
-time you look at its deﬁnition. Not so with macros. From a macro deﬁnition,
-inefﬁciency in the expansion code may not be evident, which is all the more reason
-to go looking for it.
+The other reason to look to the efﬁciency of expansion code is its
+very invisibility. If a function is badly implemented, it will
+proclaim this fact to you every time you look at its deﬁnition. Not so
+with macros. From a macro deﬁnition, inefﬁciency in the expansion code
+may not be evident, which is all the more reason to go looking for it.
 
 
 ## 7.9 Dependence on Macros
@@ -5420,9 +5416,10 @@ second, which returns the second element of a list. It could be deﬁned:
 (defun second (x) (cadr x))
 ```
 
-Where a function deﬁnition meets all the conditions above, you can easily trans-
-form it into an equivalent macro deﬁnition. Simply put a backquote in front of the
-body and a comma in front of each symbol which occurs in the parameter list:
+Where a function deﬁnition meets all the conditions above, you can
+easily transform it into an equivalent macro deﬁnition. Simply put a
+backquote in front of the body and a comma in front of each symbol
+which occurs in the parameter list:
 
 ```
 (defmacro second (x) ‘(cadr ,x))
@@ -5595,17 +5592,18 @@ of the arguments in the macro call. Depending on where the argument is placed
 in the macro’s expansion, it could be evaluated once, many times, or not at all.
 Macros use this control in four major ways:
 
-1. Transformation. The Common Lisp setf macro is one of a class of macros
-   which pick apart their arguments before evaluation. A built-in access func-
-   tion will often have a converse whose purpose is to set what the access
-   function retrieves. The converse of car is rplaca, of cdr, rplacd, and
-   so on. With setf we can use calls to such access functions as if they were
-   variables to be set, as in (setf (car x) ’a), which could expand into
-   (progn (rplaca x ’a) ’a).
-   To perform this trick, setf has to look inside its ﬁrst argument. To know
-   that the case above requires rplaca, setf must be able to see that the ﬁrst
-   argument is an expression beginning with car. Thus setf, and any other
-   operator which transforms its arguments, must be written as a macro.
+1. Transformation. The Common Lisp setf macro is one of a class of
+   macros which pick apart their arguments before evaluation. A
+   built-in access function will often have a converse whose purpose
+   is to set what the access function retrieves. The converse of car
+   is rplaca, of cdr, rplacd, and so on. With setf we can use calls to
+   such access functions as if they were variables to be set, as in
+   (setf (car x) ’a), which could expand into (progn (rplaca x ’a)
+   ’a).  To perform this trick, setf has to look inside its ﬁrst
+   argument. To know that the case above requires rplaca, setf must be
+   able to see that the ﬁrst argument is an expression beginning with
+   car. Thus setf, and any other operator which transforms its
+   arguments, must be written as a macro.
 
 2. Binding. Lexical variables must appear directly in the source code. The ﬁrst
    argument to setq is not evaluated, for example, so anything built on setq
@@ -5628,18 +5626,22 @@ It’s important to emphasize that the expansions thus appear in the lexical con
 of the macro call, since two of the three uses for macros depend on that fact. They
 are:
 
-5. Using the calling environment. A macro can generate an expansion con-
-   taining a variable whose binding comes from the context of the macro call.
-   The behavior of the following macro:
+5. Using the calling environment. A macro can generate an expansion
+   containing a variable whose binding comes from the context of the
+   macro call.  The behavior of the following macro:
 
+```
    (defmacro foo (x)
      ‘(+ ,x y))
+```
 
-   depends on the binding of y where foo is called.
+   depends on the binding of `y` where `foo` is called.
+
    This kind of lexical intercourse is usually viewed more as a source of con-
    tagion than a source of pleasure. Usually it would be bad style to write such
    a macro. The ideal of functional programming applies as well to macros:
    the preferred way to communicate with a macro is through its parameters.
+
    Indeed, it is so rarely necessary to use the calling environment that most
    of the time it happens, it happens by mistake. (See Chapter 9.) Of all the
    macros in this book, only the continuation-passing macros (Chapter 20) and
@@ -5785,14 +5787,15 @@ cloud your view very much.
 
 ## 8.3 Applications for Macros
 
-Having considered what can be done with macros, the next question to ask is:
-in what sorts of applications can we use them? The closest thing to a general
-description of macro use would be to say that they are used mainly for syntactic
-transformations. This is not to suggest that the scope for macros is restricted.
-Since Lisp programs are made from 1 lists, which are Lisp data structures, "syn-
-tactic transformation" can go a long way indeed. Chapters 19–24 present whole
-programs whose purpose could be described as syntactic transformation, and
-which are, in effect, all macro.
+Having considered what can be done with macros, the next question to
+ask is: in what sorts of applications can we use them? The closest
+thing to a general description of macro use would be to say that they
+are used mainly for syntactic transformations. This is not to suggest
+that the scope for macros is restricted.  Since Lisp programs are made
+from 1 lists, which are Lisp data structures, "syntactic
+transformation" can go a long way indeed. Chapters 19-24 present whole
+programs whose purpose could be described as syntactic transformation,
+and which are, in effect, all macro.
 
 Macro applications form a continuum between small general-purpose macros
 like while, and the large, special-purpose macros deﬁned in the later chapters. On
@@ -5855,13 +5858,14 @@ then we can replace the instances of the pattern with
 Doing so will make the code shorter and also make it declare in a clearer voice
 what it’s doing.
 
-The ability to transform their arguments makes macros useful in writing in-
-terfaces. The appropriate macro will make it possible to type a shorter, simpler
-expression where a long or complex one would have been required. Although
-graphic interfaces decrease the need to write such macros for end users, program-
-mers use this type of macro as much as ever. The most common example is
-defun, which makes the binding of functions resemble, on the surface, a function
-deﬁnition in a language like Pascal or C. Chapter 2 mentioned that the following
+The ability to transform their arguments makes macros useful in
+writing interfaces. The appropriate macro will make it possible to
+type a shorter, simpler expression where a long or complex one would
+have been required. Although graphic interfaces decrease the need to
+write such macros for end users, programmers use this type of macro
+as much as ever. The most common example is defun, which makes the
+binding of functions resemble, on the surface, a function deﬁnition in
+a language like Pascal or C. Chapter 2 mentioned that the following
 two expressions have approximately the same effect:
 
 ```
@@ -6005,10 +6009,10 @@ where macros come in. The job of macros is precisely to transform one type
 of expression into another, so they’re the natural choice when writing embedded
 languages.
 
-In general, the more an embedded language can be implemented by transfor-
-mation, the better. For one, it’s less work. If the new language has arithmetic,
-for example, you needn’t face all the complexities of representing and manipu-
-lating numeric quantities. If Lisp’s arithmetic capabilities are sufﬁcient for your
+In general, the more an embedded language can be implemented by transformation,
+the better. For one, it’s less work. If the new language has arithmetic,
+for example, you needn’t face all the complexities of representing and manipulating
+numeric quantities. If Lisp’s arithmetic capabilities are sufﬁcient for your
 purposes, then you can simply transform your arithmetic expressions into the
 equivalent Lisp ones, and leave the rest to the Lisp.
 
@@ -6025,8 +6029,8 @@ performance. In fact, the macros which transform the new language can be seen
 as a compiler for it—just one which relies on the existing Lisp compiler to do
 most of the work.
 
-We won’t consider any examples of embedded languages here, since Chap-
-ters 19–25 are all devoted to the topic. Chapter 19 deals speciﬁcally with the difference
+We won’t consider any examples of embedded languages here, since Chapters
+19-25 are all devoted to the topic. Chapter 19 deals speciﬁcally with the difference
 between interpreting and transforming embedded languages, and shows
 the same language implemented by each of the two methods.
 
@@ -6419,11 +6423,11 @@ A correct version:
 
 ## 9.4 Avoiding Capture with Better Names
 
-The ﬁrst two sections divided instances of variable capture into two types: ar-
-gument capture, where a symbol used in an argument is caught by a binding
+The ﬁrst two sections divided instances of variable capture into two types: argument
+capture, where a symbol used in an argument is caught by a binding
 established by the macro skeleton, and free symbol capture, where a free symbol
-in a macroexpansion is caught by a binding in force where the macro is ex-
-panded. The latter cases are usually dealt with simply by giving global variables
+in a macroexpansion is caught by a binding in force where the macro is expanded.
+The latter cases are usually dealt with simply by giving global variables
 distinguished names. In Common Lisp, it is traditional to give global variables
 names which begin and end with asterisks. The variable deﬁning the current
 package is called *package*, for example. (Such a name may be pronounced
@@ -6438,8 +6442,8 @@ a parameter w.
 
 ## 9.5 Avoiding Capture by Prior Evaluation
 
-Sometimes argument capture can be cured simply by evaluating the endan-
-gered arguments outside of any bindings created by the macroexpansion. The
+Sometimes argument capture can be cured simply by evaluating the endangered
+arguments outside of any bindings created by the macroexpansion. The
 simplest cases can be handled by beginning the macro with a let expression.
 Figure 9.1 contains two versions of the macro before, which takes two objects
 and a sequence, and returns true iff the ﬁrst object occurs before the second in the
@@ -6475,16 +6479,16 @@ macros where
 
 1. all the arguments at risk of capture are evaluated exactly once, and
 
-2. none of the arguments need to be evaluated in the scope of bindings estab-
-   lished by the macro skeleton.
+2. none of the arguments need to be evaluated in the scope of bindings established
+   by the macro skeleton.
 
 This rules out a great many macros. The proposed for macro violates both
 conditions. However, we can use a variation of this scheme to make macros like
 for safe from capture: to wrap its body forms within a lambda-expression outside
 of any locally created bindings.
 
-Some macros, including those for iteration, yield expansions where expres-
-sions appearing in the macro call will be evaluated within newly established
+Some macros, including those for iteration, yield expansions where expressions
+appearing in the macro call will be evaluated within newly established
 bindings. In the deﬁnition of for, for example, the body of the loop must be
 evaluated within a do created by the macro. Variables occurring in the body of
 the loop are thus vulnerable to capture by bindings established by the do. We
@@ -6774,8 +6778,8 @@ calls, the expansions can become large programs which look like nothing any
 human would write. Under such circumstances, it is worth defending against
 cases, however contrived, which might make your macros expand incorrectly.
 
-In the end, avoiding variable capture is not very difﬁcult anyway. It soon be-
-comes second-nature. The classic Common Lisp defmacro is like a cook’s knife:
+In the end, avoiding variable capture is not very difﬁcult anyway. It soon becomes
+second-nature. The classic Common Lisp defmacro is like a cook’s knife:
 an elegant idea which seems dangerous, but which experts use with conﬁdence.
 
 # 10 Other Macro Pitfalls
@@ -6849,8 +6853,8 @@ Incorrect order of evaluation:
 could be evaluated more than once. In this case, the solution is to bind a variable
 to the value returned by the stop form, and refer to the variable during the loop.
 
-Unless they are clearly intended for iteration, macros should ensure that ex-
-pressions are evaluated exactly as many times as they appear in the macro call.
+Unless they are clearly intended for iteration, macros should ensure that expressions
+are evaluated exactly as many times as they appear in the macro call.
 There are obvious cases in which this rule does not apply: the Common Lisp
 or would be much less useful (it would become a Pascal or) if all its arguments
 were always evaluated. But in such cases the user knows how many evaluations
@@ -7082,8 +7086,7 @@ The upshot is, don’t try to avoid consing by destructively modifying parameter
 list structure. The resulting programs won’t be portable, if they run at all. If you
 want to avoid consing in a function which takes a variable number of arguments,
 
-one solution is to use a macro, and thereby shift the consing forward to compile-
-time. For this application of macros, see Chapter 13.
+one solution is to use a macro, and thereby shift the consing forward to compile-time. For this application of macros, see Chapter 13.
 
 One should also avoid performing destructive operations on the expressions
 returned by macro expanders, if these expressions incorporate quoted lists. This
@@ -7092,8 +7095,8 @@ Section 3.3.
 
 ## 10.4 Recursion
 
-Sometimes it’s natural to deﬁne a function recursively. There’s something inher-
-ently recursive about a function like this:
+Sometimes it’s natural to deﬁne a function recursively. There’s something inherently
+recursive about a function like this:
 
 ```
 (defun our-length (x)
@@ -7295,8 +7298,8 @@ be evaluated in a new context will probably have to be deﬁned as a macro. The
 ﬁrst two sections describe the two basic types of context, and show how to deﬁne
 macros for each.
 
-The next three sections describe macros for conditional and repeated evalua-
-tion. An operator whose arguments are to be evaluated less than once, or more
+The next three sections describe macros for conditional and repeated evaluation.
+An operator whose arguments are to be evaluated less than once, or more
 than once, must also be deﬁned as a macro. There is no sharp distinction between
 operators for conditional and repeated evaluation: some of the examples in this
 chapter do both (as well as binding). The ﬁnal section explains another similarity
@@ -7314,8 +7317,8 @@ If x is set to a at the toplevel, then
 (let ((x ’b)) (list x))
 ```
 
-will nonetheless return (b), because the call to list will be made in an environ-
-ment containing a new x, whose value is b.
+will nonetheless return (b), because the call to list will be made in an environment
+containing a new x, whose value is b.
 
 ---
 
@@ -7480,8 +7483,8 @@ CD
 (D C NIL)
 ```
 
-The deﬁnition of condlet can be understood as a generalization of the def-
-inition of our-let. The latter makes its body into a function, which is applied
+The deﬁnition of condlet can be understood as a generalization of the definition
+of our-let. The latter makes its body into a function, which is applied
 to the results of evaluating the initial-value forms. A condlet expands into code
 which deﬁnes a local function with labels; within it a cond clause determines
 which set of initial-value forms will be evaluated and passed to the function.
@@ -8418,8 +8421,8 @@ a constant, the preceding example could expand into:
 ```
 
 This transformation from query to assertion is called inversion. All the most
-frequently used Common Lisp access functions have predeﬁned inversions, in-
-cluding car, cdr, nth, aref, get, gethash, and the access functions created by
+frequently used Common Lisp access functions have predeﬁned inversions, including
+car, cdr, nth, aref, get, gethash, and the access functions created by
 defstruct. (The full list is in CLTL2, p. 125.)
 
 An expression which can serve as the ﬁrst argument to setf is called a
@@ -8445,8 +8448,8 @@ which toggles the value of a generalized variable:
 (NIL B C)
 ```
 
-Now consider the following sample application. Suppose someone—a soap-
-opera writer, energetic busybody, or party ofﬁcial—wants to maintain a database
+Now consider the following sample application. Suppose someone—a soap-opera
+writer, energetic busybody, or party ofﬁcial—wants to maintain a database
 of all the relations between the inhabitants of a small town. Among the tables
 required is one which records people’s friends:
 
@@ -8611,8 +8614,7 @@ setting a number of generalized variables to the same value. Upon it are built
 nilf and tf, which set their arguments to nil and t, respectively. These macros
 are simple, but they make a difference.
 
-Like setq, setf can take multiple arguments—alternating variables and val-
-ues:
+Like setq, setf can take multiple arguments—alternating variables and values:
 
 ```
 (setf x 1 y 2)
@@ -8767,8 +8769,8 @@ assigned to them. So we can begin the expansion with:
 ```
 
 These bindings should be created in a let* because in the general case the value
-forms can refer to earlier variables. The third 3 and ﬁfth values are another tem-
-porary variable and the form that will return the original value of the generalized
+forms can refer to earlier variables. The third 3 and ﬁfth values are another temporary
+variable and the form that will return the original value of the generalized
 variable. Since we want to add 1 to this value, we wrap the latter in a call to 1+:
 
 ```
@@ -9022,8 +9024,8 @@ of arguments. After sorting, the generalized variables are reassigned using the
 
 ---
 
-forms returned by get-setf-method. The algorithm used is the O(n ) bubble-
-sort, but this macro is not intended to be called with huge numbers of arguments.
+forms returned by get-setf-method. The algorithm used is the O(n ) bubblesort,
+but this macro is not intended to be called with huge numbers of arguments.
 
 Figure 12.5 shows the expansion of a call to sortf. In the initial let*, the
 arguments and their subforms are carefully evaluated in left-to-right order. Then
@@ -9193,8 +9195,8 @@ at macros which take advantage of this possibility.
 
 ## 13.1 New Utilities
 
-Section 8.2 raised the possibility of using macros to shift computation to compile-
-time. There we had as an example the macro avg, which returns the average of
+Section 8.2 raised the possibility of using macros to shift computation to compile-time.
+There we had as an example the macro avg, which returns the average of
 its arguments:
 
 ```
@@ -9345,8 +9347,8 @@ runtime, and if n is a small constant, performs fewer comparisons.
 
 To have efﬁcient programs, must one then take the trouble to write such huge
 macros? In this case, probably not. The two versions of nthmost are intended as
-an example of a general principle: when some arguments are known at compile-
-time, you can use a macro to generate more efﬁcient code. Whether or not you
+an example of a general principle: when some arguments are known at compile-time,
+you can use a macro to generate more efﬁcient code. Whether or not you
 take advantage of this possibility will depend on how much you stand to gain,
 and how much more effort it will take to write an efﬁcient macro version. Since
 the macro version of nthmost is long and complicated, it would only be worth
@@ -9424,8 +9426,8 @@ would evaluate the equations for u = .05, .1,. . ., .95. There is no need to eva
 them for u of 0 or 1, because if u = 0 they will yield the ﬁrst endpoint (x 0 , y0 ), and
 if u = 1 they will yield the second endpoint (x 3 , y3 ).
 
-An obvious optimization is to make n ﬁxed, calculate the powers of u before-
-hand, and store them in an (n−1) × 3 array. By deﬁning the curve-generator as
+An obvious optimization is to make n ﬁxed, calculate the powers of u beforehand,
+and store them in an (n−1) × 3 array. By deﬁning the curve-generator as
 a macro, we can do even better. If n is known at expansion-time, the program
 could simply expand into n line-drawing commands. The precomputed powers of
 u, instead of being stored in an array, could be inserted as literal values right into
@@ -9446,8 +9448,8 @@ also be done at compile-time.
 ## 13.3 Applications
 
 Later chapters contain several other macros which use information available at
-compile-time. A good example is if-match (page 242). Pattern-matchers com-
-pare two sequences, possibly containing variables, to see if there is some way of
+compile-time. A good example is if-match (page 242). Pattern-matchers compare
+two sequences, possibly containing variables, to see if there is some way of
 assigning values to the variables which will make the two sequences equal. The
 
 ---
@@ -9501,7 +9503,7 @@ the variable bindings established in the process, we can have a macro generate
 code to perform the exact comparisons dictated by the known sequence, and can
 store the bindings in real Lisp variables.
 
-The embedded languages described in Chapters 19–24 also, for the most part,
+The embedded languages described in Chapters 19-24 also, for the most part,
 take advantage of information available at compile-time. Since an embedded
 language is a compiler of sorts, it’s only natural that it should use such information.
 As a general rule, the more elaborate the macro, the more constraints it imposes
@@ -9537,8 +9539,8 @@ just this way.
 
 ## 14.1 Anaphoric Variants
 
-In natural language, an anaphor is an expression which refers back in the con-
-versation. The most common anaphor in English is probably "it," as in "Get the
+In natural language, an anaphor is an expression which refers back in the conversation.
+The most common anaphor in English is probably "it," as in "Get the
 wrench and put it on the table." Anaphora are a great convenience in everyday
 language—imagine trying to get along without them—but they don’t appear much
 in programming languages. For the most part, this is good. Anaphoric expressions
@@ -9577,8 +9579,8 @@ it is bound:
   (if it (foo it) nil))
 ```
 
-So a symbol which looks free in the source code is left bound by the macroex-
-pansion. All the anaphoric macros in this chapter use some variation of the same
+So a symbol which looks free in the source code is left bound by the macroexpansion.
+All the anaphoric macros in this chapter use some variation of the same
 technique.
 
 Figure 14.1 contains anaphoric variants of several Common Lisp operators.
@@ -9733,8 +9735,7 @@ in:
                (acond ,@(cdr clauses)))))))
 ```
 
-then that binding of it would also have within its scope the following test expres-
-sion.
+then that binding of it would also have within its scope the following test expression.
 
 Figure 14.2 contains some more complicated anaphoric variants. The macro
 alambda is for referring literally to recursive functions. When does one want to
@@ -10155,8 +10156,8 @@ yields a function equivalent to
 
 ---
 
-If we use compose as the operator, we get a function representing the compo-
-sition of the arguments, but without the explicit funcalls that were needed when
+If we use compose as the operator, we get a function representing the composition
+of the arguments, but without the explicit funcalls that were needed when
 compose was deﬁned as a function. For example,
 
 ```
@@ -10383,8 +10384,8 @@ basic form, and we notice similarities between them which might not otherwise
 have been apparent.
 
 Figure 15.4 contains some new utilities which can easily be deﬁned with
-on-cdrs. The ﬁrst three, unions, intersections, and differences imple-
-ment set union, intersection, and complement, respectively. Common Lisp has
+on-cdrs. The ﬁrst three, unions, intersections, and differences implement
+set union, intersection, and complement, respectively. Common Lisp has
 built-in functions for these operations, but they can only take two lists at a time.
 Thus if we want to ﬁnd the union of three lists we have to say:
 
@@ -10467,8 +10468,8 @@ In the general case, on-cdrs is more powerful than reduce, however.
 
 Because rec refers to a call instead of a value, we can use on-cdrs to create
 functions which return multiple values. The ﬁnal function in Figure 15.4, maxmin,
-takes advantage of this possibility to ﬁnd both the maximum and minimum ele-
-ments in a single traversal of a list:
+takes advantage of this possibility to ﬁnd both the maximum and minimum elements
+in a single traversal of a list:
 
 ```
 > (maxmin ’(3 4 2 8 5 1 6 7))
@@ -10499,8 +10500,8 @@ What macros did for recursion on lists, they can also do for recursion on trees.
 In this section, we use macros to deﬁne cleaner interfaces to the tree recursers
 deﬁned in Section 5.6.
 
-In Section 5.6 we deﬁned two tree recursion builders, ttrav, which always tra-
-verses the whole tree, and trec which is more complex, but allows you to control
+In Section 5.6 we deﬁned two tree recursion builders, ttrav, which always traverses
+the whole tree, and trec which is more complex, but allows you to control
 when recursion stops. Using these functions we could express our-copy-tree
 
 ```
@@ -10821,8 +10822,8 @@ abbreviations in one shot.
 ```
 
 The user of abbrevs doesn’t have to insert additional parentheses because
-abbrevs calls group (page 47) to group its arguments by twos. It’s gener-
-ally a good thing for macros to save users from typing logically unnecessary
+abbrevs calls group (page 47) to group its arguments by twos. It’s generally
+a good thing for macros to save users from typing logically unnecessary
 parentheses, and group will be useful to most such macros.
 
 ---
@@ -11157,8 +11158,8 @@ the macro call:
      (,op it ,@(cdr args))))
 ```
 
-This nonrecursive version of anaphex doesn’t need to ensure that the macroex-
-pansion will bind it to successive arguments, so it can generate an expansion
+This nonrecursive version of anaphex doesn’t need to ensure that the macroexpansion
+will bind it to successive arguments, so it can generate an expansion
 which won’t necessarily evaluate all the arguments in the macro call. Only the
 ﬁrst argument must be evaluated, in order to bind it to its value. So aif could
 be deﬁned as:
@@ -11387,8 +11388,8 @@ subspecies called dispatching read-macros. These appear as two characters, the
 is simply to make the most of the ASCII character set; one can only have so many
 one-character read-macros.
 
-You can (with make-dispatch-macro-character) deﬁne your own dis-
-patching macro characters, but since # is already deﬁned as one, you may as well
+You can (with make-dispatch-macro-character) deﬁne your own dispatching
+macro characters, but since # is already deﬁned as one, you may as well
 use it. Some combinations beginning with # are explicitly reserved for your use;
 others are available in that they do not yet have a predeﬁned meaning in Common
 Lisp. The complete list appears in CLTL2, p. 531.
@@ -11561,8 +11562,8 @@ expression is read, yielding
   (quote (list (quote able))))
 ```
 
-Usually, there is no harm in acting as if macroexpansions could contain read-
-macros, because the deﬁnition of a read-macro will not (or should not) change
+Usually, there is no harm in acting as if macroexpansions could contain read-macros,
+because the deﬁnition of a read-macro will not (or should not) change
 between read-time and compile-time.
 
 # 18 Destructuring
@@ -11874,8 +11875,8 @@ simply bound to the value stored there, but refers to the slot, so that if we wr
 ```
 
 then the height slot of my-tree will be given the value 72. This macro works by
-deﬁning height as a symbol-macro (Section 7.11) which expands into a slot refer-
-ence. In fact, it was to support macros like with-slots that symbol-macrolet
+deﬁning height as a symbol-macro (Section 7.11) which expands into a slot reference.
+In fact, it was to support macros like with-slots that symbol-macrolet
 was added to Common Lisp.
 
 Whether or not `with-slots` is really a destructuring macro, it has the same
@@ -12384,8 +12385,8 @@ extension: it should be possible to intermingle the two freely. For the implemen
 this can mean a huge saving of effort. You can embed just what you need, and for
 the rest, use the base language.
 
-Transformation, in Lisp, suggests macros. To some extent, you could imple-
-ment embedded languages with preprocessors. But preprocessors usually operate
+Transformation, in Lisp, suggests macros. To some extent, you could implement
+embedded languages with preprocessors. But preprocessors usually operate
 only on text, while macros take advantage of a unique property of Lisp: between
 the reader and the compiler, your Lisp program is represented as lists of Lisp
 objects. Transformations done at this stage can be much smarter.
@@ -12547,8 +12548,8 @@ explicit falsity by the Wayne’s World method:
 
 However, the not operator wouldn’t treat these facts differently from any others.
 
-In programming languages there is a fundamental distinction between inter-
-preted and compiled programs. In this chapter we examine the same question
+In programming languages there is a fundamental distinction between interpreted
+and compiled programs. In this chapter we examine the same question
 with respect to queries. A query interpreter accepts a query and uses it to generate
 answers from the database. A query compiler accepts a query and generates a
 program which, when run, yields the same result. The following sections describe
@@ -12679,8 +12680,8 @@ example, why should the query
 (not (painter ?x ?y ?z))
 ```
 
-assign any bindings to ?x and ?y at all? There are an inﬁnite number of combi-
-nations of ?x and ?y which are not the name of some painter. Thus we add the
+assign any bindings to ?x and ?y at all? There are an inﬁnite number of combinations
+of ?x and ?y which are not the name of some painter. Thus we add the
 following restriction: the not operator will ﬁlter out bindings which are already
 generated, as in
 
@@ -12968,7 +12969,7 @@ the topic in two steps. The ﬁrst part of the chapter looks at the use
 of continuations in Scheme, which has built-in support for them. Once
 the behavior of continuations has been explained, the second part
 shows how to use macros to build continuations in Common Lisp
-programs. Chapters 21–24 will all make use of the macros deﬁned here.
+programs. Chapters 21-24 will all make use of the macros deﬁned here.
 
 ## 20.1 Scheme Continuations
 
@@ -13177,7 +13178,7 @@ Since the value of the call/cc expression will be discarded, it doesn’t matter
 what argument we give to froz1 and froz2.
 
 Now that we can store the state of a computation, what do we do with it?
-Chapters 21–24 are devoted to applications which use continuations. Here we
+Chapters 21-24 are devoted to applications which use continuations. Here we
 will consider a simple example which conveys well the ﬂavor of programming
 with saved states: we have a set of trees, and we want to generate lists containing
 one element from each tree, until we get a combination satisfying some condition.
@@ -13446,8 +13447,8 @@ expands into
 ```
 
 At the toplevel, the value of *cont* is identity, which just returns whatever is
-passed to it. When we call (add1 2) from the toplevel, the call gets macroex-
-panded into the equivalent of
+passed to it. When we call (add1 2) from the toplevel, the call gets macroexpanded
+into the equivalent of
 
 ```
 (funcall #’(lambda (*cont* n) (=values (1+ n))) *cont* 2)
@@ -13673,7 +13674,7 @@ build their own continuations. Fortunately, the closures are knitted together by
 the macros in the sweatshop of Figure 20.4, and the user can have the ﬁnished
 garment without giving a thought to its origins.
 
-Chapters 21–24 all rely on continuations in some way. These chapters will
+Chapters 21-24 all rely on continuations in some way. These chapters will
 show that continuations are an abstraction of unusual power. They may not be
 overly fast, especially when implemented on top of the language as macros, but
 the abstractions we can build upon them make certain programs much faster to
@@ -13813,8 +13814,8 @@ application written in it. Making programs harmonize with Lisp makes them
 more robust, like a machine whose parts ﬁt together well. It also saves effort;
 sometimes you can make Lisp do a surprising amount of your work for you.
 
-The aim of this chapter is to make a language which supports multiple pro-
-cesses. Our strategy will be to turn Lisp into such a language, by adding a few
+The aim of this chapter is to make a language which supports multiple processes.
+Our strategy will be to turn Lisp into such a language, by adding a few
 new operators. The basic elements of our language will be as follows:
 
 > Functions will be deﬁned with the =defun or =lambda macros from the
@@ -13900,8 +13901,8 @@ is restarted by funcalling its state.
 restarted, but initially the wait of a newly created process is nil. A process
 with a null wait can always be restarted.
 
-The program uses three global variables: *procs*, the list of currently sus-
-pended processes; *proc*, the process now running; and *default-proc*, the
+The program uses three global variables: *procs*, the list of currently suspended
+processes; *proc*, the process now running; and *default-proc*, the
 default process.
 
 The default process runs only when no other process can. It simulates the
@@ -14076,8 +14077,8 @@ process. As with a wait, any code to be executed after a yield must be put
 within its body.
 
 The program in Figure 21.5 illustrates how the two operators work together.
-Initially, the barbarians have two aims: to capture Rome and to plunder it. Captur-
-ing the city has (slightly) higher priority, and so will run ﬁrst. However, after the
+Initially, the barbarians have two aims: to capture Rome and to plunder it. Capturing
+the city has (slightly) higher priority, and so will run ﬁrst. However, after the
 city has been reduced, the priority of the capture process decreases to 1. Then
 there is a vote, and plunder, as the highest-priority process, starts running.
 
@@ -14141,8 +14142,8 @@ the process being suspended, and called later to determine if it can be restarte
 The latter will become the proc-state, and calling it will restart the suspended
 process.
 
-The macros wait and yield build this continuation function simply by wrap-
-ping their bodies in lambda-expressions. For example,
+The macros wait and yield build this continuation function simply by wrapping
+their bodies in lambda-expressions. For example,
 
 ```
 (wait d (car *bboard*) (=values d))
@@ -14238,11 +14239,11 @@ though it would not be efﬁcient enough for use in production software, it coul
 be quite useful for experimenting with other aspects of multiple processes, like
 scheduling algorithms.
 
-Chapters 22–24 present other applications of continuations. None of them is
-efﬁcient enough for use in production software. Because Lisp and rapid proto-
-typing evolved together, Lisp includes a lot of features speciﬁcally intended for
-prototypes: inefﬁcient but convenient features like property lists, keyword param-
-eters, and, for that matter, lists. Continuations probably belong in this category.
+Chapters 22-24 present other applications of continuations. None of them is
+efﬁcient enough for use in production software. Because Lisp and rapid prototyping
+evolved together, Lisp includes a lot of features speciﬁcally intended for
+prototypes: inefﬁcient but convenient features like property lists, keyword parameters,
+and, for that matter, lists. Continuations probably belong in this category.
 They save more state than a program is likely to need. So our continuation-based
 implementation of Prolog, for example, is a good way to understand the language,
 but an inefﬁcient way to implement it.
@@ -14484,12 +14485,12 @@ problem space just by writing an algorithm to traverse it.
 
 ## 22.2 Search
 
-Many classic problems can be formulated as search problems, and for such prob-
-lems nondeterminism often turns out to be a useful abstraction. Suppose nodes
+Many classic problems can be formulated as search problems, and for such problems
+nondeterminism often turns out to be a useful abstraction. Suppose nodes
 is bound to a list of nodes in a tree, and (kids n) is a function which returns
 the descendants of node n, or #f if there are none. We want to write a function
-(descent n1 n2 ) which returns a list of nodes on some path from n 1 to its de-
-scendant n2 , if there is one. Figure 22.1 shows a deterministic version of this
+(descent n1 n2 ) which returns a list of nodes on some path from n 1 to its descendant
+n2 , if there is one. Figure 22.1 shows a deterministic version of this
 function.
 
 Nondeterminism allows the programmer to ignore the details of ﬁnding a path.
@@ -14677,8 +14678,8 @@ DO2
 6
 ```
 
-At the toplevel, we see more clearly the backtracking which underlies nondeter-
-ministic search. The variable *paths* is used to store paths which have not yet
+At the toplevel, we see more clearly the backtracking which underlies nondeterministic
+search. The variable *paths* is used to store paths which have not yet
 been followed. When the computation reaches a choose expression with several
 alternatives, the ﬁrst alternative is evaluated, and the remaining choices are stored
 on *paths*. If the program later on encounters a fail, the last stored choice
@@ -14800,8 +14801,8 @@ well. By deﬁning functions with =defun, calling them with =bind, and having
 them return values with =values, we will be able to use nondeterminism in any
 Common Lisp program.
 
-With these macros, we can successfully run the example in which the nonde-
-terministic choice occurs in a subroutine. Figure 22.6 shows the Common Lisp
+With these macros, we can successfully run the example in which the nondeterministic
+choice occurs in a subroutine. Figure 22.6 shows the Common Lisp
 version of parlor-trick, which works as it did in Scheme:
 
 ---
@@ -14844,8 +14845,8 @@ into a closure, which keeps pointers to all the variables referred to
 in the body, including *cont*.
 
 The restrictions on the use of choose, choose-bind, and fail are the same
-as the restrictions given in Figure 20.5 for code which uses the continuation-
-passing macros. Where a choice expression occurs, it must be the last thing to
+as the restrictions given in Figure 20.5 for code which uses the continuation-passing
+macros. Where a choice expression occurs, it must be the last thing to
 be evaluated. Thus if we want to make sequential choices, in Common Lisp the
 choices have to be nested:
 
@@ -14895,8 +14896,8 @@ building another layer of macros on top of those presented here, we
 will be able to write an ATN compiler in one page of code (Chapter
 23), and a sketch of Prolog in two (Chapter 24).
 
-Common Lisp programs which use choose should be compiled with tail-
-recursion optimization—not just to make them faster, but to avoid
+Common Lisp programs which use choose should be compiled with tail-recursion
+optimization—not just to make them faster, but to avoid
 running out of stack space. Programs which "return" values by calling
 continuation functions never actually return until the ﬁnal
 fail. Without the optimization of tail-calls, the stack would just
@@ -15108,8 +15109,8 @@ search might never terminate. The implementation of path shown in Figure 22.12
 avoids circular paths by searching breadth-ﬁrst.
 
 In principle, nondeterminism should save us the trouble of even considering
-circular paths. The depth-ﬁrst implementation of choose and fail given in Sec-
-tion 22.3 is vulnerable to the problem of circular paths, but if we were being
+circular paths. The depth-ﬁrst implementation of choose and fail given in Section 22.3
+is vulnerable to the problem of circular paths, but if we were being
 picky, we would expect nondeterministic choose to be able to select an object
 
 ---
@@ -15260,8 +15261,8 @@ constrained form of English.
 
 ## 23.2 The Formalism
 
-To understand what ATNs do, we should recall their full name: augmented transi-
-tion networks. A transition network is a set of nodes joined together by directed
+To understand what ATNs do, we should recall their full name: augmented transition
+networks. A transition network is a set of nodes joined together by directed
 arcs—essentially, a ﬂow-chart. One node is designated the start node, and some
 other nodes are designated terminal nodes. Conditions are attached to each arc,
 which have to be met before the arc can be followed. There will be an input
@@ -15284,8 +15285,8 @@ build list structures, which they return in much the same way that functions ret
 values. In fact, with the exception of being nondeterministic, ATNs behave a lot
 like a functional programming language.
 
-The ATN deﬁned in Figure 23.1 is nearly the simplest possible. It parses noun-
-verb sentences of the form "Spot runs." The network representation of this ATN is
+The ATN deﬁned in Figure 23.1 is nearly the simplest possible. It parses noun-verb
+sentences of the form "Spot runs." The network representation of this ATN is
 shown in Figure 23.2.
 
 What does this ATN do when given the input (spot runs)? The ﬁrst node has
@@ -15381,17 +15382,17 @@ parses; if not, we can call fail to get more.
 To control the order in which parses are generated, the programmer needs to
 have some way of controlling the order in which choose tries alternatives. The
 depth-ﬁrst implementation isn’t the only way of controlling the order of the search.
-Any implementation except a randomizing one imposes some kind of order. How-
-ever, ATNs, like Prolog, have the depth-ﬁrst implementation conceptually built-in.
+Any implementation except a randomizing one imposes some kind of order. However,
+ATNs, like Prolog, have the depth-ﬁrst implementation conceptually built-in.
 In an ATN, the arcs leaving a node are tried in the order in which they were deﬁned.
 This convention allows the programmer to order arcs by priority.
 
 ## 23.4 An ATN Compiler
 
-Ordinarily, an ATN-based parser needs three components: the ATN itself, an inter-
-preter for traversing it, and a dictionary which can tell it, for example, that "runs"
-is a verb. Dictionaries are a separate topic—here we will use a rudimentary hand-
-made one. Nor will we need to deal with a network interpreter, because we will
+Ordinarily, an ATN-based parser needs three components: the ATN itself, an interpreter
+for traversing it, and a dictionary which can tell it, for example, that "runs"
+is a verb. Dictionaries are a separate topic—here we will use a rudimentary handmade
+one. Nor will we need to deal with a network interpreter, because we will
 translate the ATN directly into Lisp code. The program described here is called an
 ATN compiler because it transforms a whole ATN into code. Nodes are transformed
 into functions, and arcs become blocks of code within them.
@@ -15754,8 +15755,8 @@ easier to test:
 Together these two principles allow interactive development: when we write
 functional programs in Lisp, we can test each piece as we write it.
 
-ATNs are so like functional programs—in this implementation, they macroex-
-pand into functional programs—that the possibility of interactive development
+ATNs are so like functional programs—in this implementation, they macroexpand
+into functional programs—that the possibility of interactive development
 applies to them as well. We can test an ATN starting from any node, simply by
 giving its name as the ﬁrst argument to with-parses:
 
@@ -16059,8 +16060,8 @@ through the rules which leads eventually to known facts. So it is essentially a
 search engine: it traverses the tree of logical implications formed by the rules,
 looking for a successful path.
 
-Though rules and facts sound like distinct types of objects, they are conceptu-
-ally interchangeable. Rules can be seen as virtual facts. If we want our database
+Though rules and facts sound like distinct types of objects, they are conceptually
+interchangeable. Rules can be seen as virtual facts. If we want our database
 to reﬂect the discovery that big, ﬁerce animals are rare, we could look for all the
 x such that there are facts (species x), (big x), and (fierce x), and add a
 new fact (rare x). However, by deﬁning a rule to say
@@ -16089,8 +16090,8 @@ represent facts as bodyless rules.
 ## 24.2 An Interpreter
 
 Section 18.4 showed two ways to deﬁne if-match. The ﬁrst was simple but
-inefﬁcient. Its successor was faster because it did much of its work at compile-
-time. We will follow a similar strategy here. In order to introduce some of the
+inefﬁcient. Its successor was faster because it did much of its work at compile-time.
+We will follow a similar strategy here. In order to introduce some of the
 topics involved, we will begin with a simple interpreter. Later we will show how
 to write the same program much more efﬁciently.
 
@@ -16127,8 +16128,8 @@ to write the same program much more efﬁciently.
 
 ---
 
-Figures 24.2–24.4 contain the code for a simple Prolog interpreter. It ac-
-cepts the same queries as the query interpreter of Section 19.3, but uses rules
+Figures 24.2-24.4 contain the code for a simple Prolog interpreter. It accepts
+the same queries as the query interpreter of Section 19.3, but uses rules
 instead of the database to generate bindings. The query interpreter was invoked
 through a macro called with-answer. The interface to the Prolog interpreter
 will be through a similar macro, called with-inference. Like with-answer,
@@ -16140,12 +16141,12 @@ the query are symbols beginning with a question mark:
   (print ?x))
 ```
 
-A call to with-inference expands into code that will evaluate the Lisp expres-
-sions for each set of bindings generated by the query. The call above, for example,
+A call to with-inference expands into code that will evaluate the Lisp expressions
+for each set of bindings generated by the query. The call above, for example,
 will print each x for which it is possible to infer (painter x).
 
-Figure 24.2 shows the deﬁnition of with-inference, together with the func-
-tion it calls to retrieve bindings. One notable difference between with-answer
+Figure 24.2 shows the deﬁnition of with-inference, together with the function
+it calls to retrieve bindings. One notable difference between with-answer
 and with-inference is that the former simply collected all the valid bindings.
 The new program searches nondeterministically. We see this in the deﬁnition of
 with-inference: instead of expanding into a loop, it expands into code which
@@ -16236,8 +16237,8 @@ be restarted later. So now the test for (painter ?x) is done with a temporarily
 empty list of saved states, and the old list is restored on the way out.
 
 Another difference between this program and the query interpreter is in the
-interpretation of simple patterns—expressions such as (painter ?x) which con-
-sist just of a predicate and some arguments. When the query interpreter generated
+interpretation of simple patterns—expressions such as (painter ?x) which consist
+just of a predicate and some arguments. When the query interpreter generated
 bindings for a simple pattern, it called lookup (page 251). Now, instead of calling
 lookup, we have to get any bindings implied by the rules.
 
@@ -16325,8 +16326,8 @@ or just
 As in the query interpreter, arguments like turpentine do not get evaluated, so
 they don’t have to be quoted.
 
-When prove-simple is asked to generate bindings for a query, it nondeter-
-ministically chooses a rule and sends both rule and query to implies. The latter
+When prove-simple is asked to generate bindings for a query, it nondeterministically
+chooses a rule and sends both rule and query to implies. The latter
 function then tries to match the query with the head of the rule. If the match
 succeeds, implies will call prove-query to establish bindings for the body.
 Thus we recursively search the tree of implications.
@@ -16794,8 +16795,8 @@ compiling a ﬁle full of rule deﬁnitions will cause rules to be compiled func
 When a rule-function is sent a pattern, it tries to match it with the head of
 the rule it represents. If the match succeeds, the rule-function will then try to
 establish bindings for the body. This task is essentially the same as that done by
-with-inference, and in fact rule-fn ends by calling gen-query. The rule-
-function eventually returns the bindings established for the variables occurring in
+with-inference, and in fact rule-fn ends by calling gen-query. The rule-function
+eventually returns the bindings established for the variables occurring in
 the head of the rule.
 
 ## 24.6 Adding Prolog Features
@@ -17089,8 +17090,8 @@ T
 
 By means of the lisp operator we can provide other features offered by
 typical Prolog implementations. Prolog I/O predicates can be duplicated by putting
-Lisp I/O calls within lisp expressions. The Prolog assert, which as a side-
-effect deﬁnes new rules, can be duplicated by calling the <- macro within lisp
+Lisp I/O calls within lisp expressions. The Prolog assert, which as a side-effect
+deﬁnes new rules, can be duplicated by calling the <- macro within lisp
 expressions.
 
 The is operator offers a form of assignment. It takes two arguments, a pattern
@@ -17307,8 +17308,8 @@ same way: instead of having a single program which operates on an inert mass
 of data, the data itself is told how to behave, and the program is implicit in the
 interactions of these new data "objects."
 
-For example, suppose we want to write a program to ﬁnd the areas of two-
-dimensional shapes. One way to do this would be to write a single function which
+For example, suppose we want to write a program to ﬁnd the areas of two-dimensional
+shapes. One way to do this would be to write a single function which
 looked at the type of its argument and behaved accordingly:
 
 ```
@@ -17355,7 +17356,7 @@ language. This is also a good way to understand CLOS itself: in the end, nothing
 explains a language feature more effectively than a sketch of its implementation.
 In Section 7.6, macros were explained this way. The next section gives a similar
 sketch of how to build object-oriented abstractions on top of Lisp. This program
-provides a reference point from which to describe CLOS in Sections 25.3–25.6.
+provides a reference point from which to describe CLOS in Sections 25.3-25.6.
 
 ## 25.2 Objects in Plain Lisp
 
@@ -17647,8 +17648,8 @@ now goes as follows:
   2. The most speciﬁc primary method (what we used to call).
   3. All after-methods, from least speciﬁc to most speciﬁc.
 
-Notice also that instead of being a single function, a method becomes a four-
-part structure. To deﬁne a (primary) method, instead of saying:
+Notice also that instead of being a single function, a method becomes a four-part
+structure. To deﬁne a (primary) method, instead of saying:
 
 ```
 (setf (gethash ’move obj) #’(lambda ...))
@@ -17709,8 +17710,8 @@ For example, if the currently running method is the only around-method, the next
 
 ---
 
-method would be the usual sandwich of before-, most speciﬁc primary, and after-
-methods. Within the most speciﬁc primary method, the next method would be the
+method would be the usual sandwich of before-, most speciﬁc primary, and after-methods.
+Within the most speciﬁc primary method, the next method would be the
 second most speciﬁc primary method. Since the behavior of call-next depends
 on where it is called, it is never deﬁned globally with a defun, but is deﬁned
 locally within each method deﬁned by defmeth.
@@ -17847,8 +17848,7 @@ Well, that was easy.
 DONE
 ```
 
-Later we want to know how long backups take, so we deﬁne the following around-
-method:
+Later we want to know how long backups take, so we deﬁne the following around-method:
 
 ```
 (defmeth (backup :around) filesystem (fs)
@@ -17869,8 +17869,8 @@ Elapsed Time = .01 seconds
 DONE
 ```
 
-Once we are ﬁnished timing the backups, we will want to remove the around-
-method. That can be done by calling undefmeth (Figure 25.8), which takes the
+Once we are ﬁnished timing the backups, we will want to remove the around-method.
+That can be done by calling undefmeth (Figure 25.8), which takes the
 same ﬁrst two arguments as defmeth:
 
 ```
@@ -18010,8 +18010,8 @@ a method name and a second argument describing the desired combination.
 ---
 
 Ordinarily this second argument should be a function. However, it can also be one
-of :progn, :and, :or, or :standard. With the former three, primary meth-
-ods will be combined as though according to the corresponding operator, while
+of :progn, :and, :or, or :standard. With the former three, primary methods
+will be combined as though according to the corresponding operator, while
 :standard indicates that we want the traditional way of running methods.
 
 ---
@@ -18079,8 +18079,8 @@ after which props would return the union of all the primary method values: 2
 (DENTED ORANGE SWEET ROUND ACIDIC)
 ```
 
-Incidentally, this example suggests a choice that you only have when doing object-
-oriented programming in Lisp: whether to store information in slots or methods.
+Incidentally, this example suggests a choice that you only have when doing object-oriented
+programming in Lisp: whether to store information in slots or methods.
 
 Afterward, if we wanted the props method to return to the default behavior,
 we just set the method combination back to standard:
@@ -18163,8 +18163,8 @@ parameter will become the initial value of the slot:
 2
 ```
 
-By declaring an :initform, we can also deﬁne slots which initialize them-
-selves. The visible slot of the shape class
+By declaring an :initform, we can also deﬁne slots which initialize themselves.
+The visible slot of the shape class
 
 ```
 (defclass shape ()
@@ -18229,8 +18229,8 @@ PURPLE
 though it is still possible to initialize the slot otherwise by giving an explicit
 :color initarg.
 
-In our sketch of object-oriented programming, instances inherited values di-
-rectly from the slots in their parent classes. In CLOS, instances do not have slots
+In our sketch of object-oriented programming, instances inherited values directly
+from the slots in their parent classes. In CLOS, instances do not have slots
 in the same way that classes do. We deﬁne an inherited default for instances by
 deﬁning an initform in the parent class. In a way, this is more ﬂexible, because as
 well as being a constant, an initform can be an expression that returns a different
@@ -18286,8 +18286,8 @@ MAYBE
 MAYBE
 ```
 
-This could cause some confusion, so we might like to make such a slot read-
-only. When we deﬁne an accessor function for a slot, we create a way of both
+This could cause some confusion, so we might like to make such a slot read-only.
+When we deﬁne an accessor function for a slot, we create a way of both
 reading and writing the slot’s value. If we want the value to be readable but
 not writable, we can do it by giving the slot just a reader function, instead of a
 full-ﬂedged accessor function:
@@ -18632,8 +18632,8 @@ would remove the deﬁnition of any function, by calling fmakunbound:
 ## 25.5 Auxiliary Methods and Combination
 
 Auxiliary methods worked in our sketch basically as they do in CLOS. So far we
-have seen only primary methods, but we can also have before-, after- and around-
-methods. Such auxiliary methods are deﬁned by putting a qualifying keyword
+have seen only primary methods, but we can also have before-, after- and around-methods.
+Such auxiliary methods are deﬁned by putting a qualifying keyword
 after the method name in the call to defmethod. If we deﬁne a primary speak
 method for the speaker class as follows:
 
@@ -18734,11 +18734,10 @@ Indeed, it is a preposterous idea.
 BOW
 ```
 
-Note that, unlike before- and after-methods, the value returned by the around-
-method is returned as the value of the generic function.
+Note that, unlike before- and after-methods, the value returned by the around-method
+is returned as the value of the generic function.
 
-Generally, methods are run as in this outline, which is reprinted from Sec-
-tion 25.2:
+Generally, methods are run as in this outline, which is reprinted from Section 25.2:
 
 1. The most speciﬁc around-method, if there is one.
 
@@ -18852,8 +18851,8 @@ Macros do transformation, and CLOS is essentially a program which takes programs
 built out of object-oriented abstractions, and translates them into programs built
 out of Lisp abstractions.
 
-As the ﬁrst two sections suggested, the abstractions of object-oriented pro-
-gramming map so neatly onto those of Lisp that one could almost call the former
+As the ﬁrst two sections suggested, the abstractions of object-oriented programming
+map so neatly onto those of Lisp that one could almost call the former
 a special case of the latter. The objects of object-oriented programming can easily
 be implemented as Lisp objects, and their methods as lexical closures. By taking
 advantage of such isomorphisms, we were able to provide a rudimentary form of
@@ -18879,8 +18878,7 @@ lexical closures. If we deﬁne several methods within the scope of some variabl
 
 then at runtime they will share access to the variable, just like closures. Methods
 can do this because, underneath the syntax, they are closures. In the expansion
-of a defmethod, its body appears intact in the body of a sharp-quoted lambda-
-expression.
+of a defmethod, its body appears intact in the body of a sharp-quoted lambda-expression.
 
 Section 7.6 suggested that it was easier to conceive of how macros work than
 what they mean. Likewise, the secret to understanding CLOS is to understand how
@@ -18918,8 +18916,8 @@ of options for extensibility. For example, you could quite literally have a prog
 organized like a table: a program which consisted of a set of closures stored in an
 array.
 
-If it’s extensibility you need, you don’t have to choose between an "object-
-oriented" and a "traditional" program. You can give a Lisp program exactly
+If it’s extensibility you need, you don’t have to choose between an "object-oriented"
+and a "traditional" program. You can give a Lisp program exactly
 the degree of extensibility it needs, often without resorting to object-oriented
 techniques. A slot in a class is a global variable. And just as it is inelegant to
 use a global variable where you could use a parameter, it could be inelegant to
@@ -18998,8 +18996,8 @@ MINE> common-lisp-user::foo
 99
 ```
 
-So different symbols with the same print-name can coexist in different pack-
-ages. There can be one foo in package common-lisp-user and another foo in
+So different symbols with the same print-name can coexist in different packages.
+There can be one foo in package common-lisp-user and another foo in
 package mine, and they will be distinct symbols. In fact, that’s partly the point of
 packages: if you’re writing your program in a separate package, you can choose
 names for your functions and variables without worrying that someone will use
@@ -19424,8 +19422,8 @@ write a version of compose so that, in f g, multiple values returned
 by g would become the corresponding arguments to f. In CLTL2, the
 new function function-lambda-expression returns a lambda-expression
 representing the original source code of a function.  However, it has
-the option of returning nil, and usually does so for built-in func-
-tions. What we really need is a function that would take a function as
+the option of returning nil, and usually does so for built-in functions.
+What we really need is a function that would take a function as
 an argument and return its parameter list.
 
 73 A version of rfind-if which searches for whole subtrees could be deﬁned as
