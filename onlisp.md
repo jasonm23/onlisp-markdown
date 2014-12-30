@@ -1,19 +1,16 @@
-# OnLisp λ
-
-By Paul Graham
-
-
-         _/_/              _/        _/
-      _/    _/  _/_/_/    _/              _/_/_/  _/_/_/
-     _/    _/  _/    _/  _/        _/  _/_/      _/    _/
-    _/    _/  _/    _/  _/        _/      _/_/  _/    _/
-     _/_/    _/    _/  _/_/_/_/  _/  _/_/_/    _/_/_/
-                                              _/
-                                             _/
+      ___       _    _
+     / _ \ _ _ | |  (_)____ __
+    | (_) | ' \| |__| (_-< '_ \
+     \___/|_||_|____|_/__/ .__/
+                         |_|
 
 
-To my family, and to Jackie.
+---
 
+> By Paul Graham
+> To my family, and to Jackie.
+
+---
 ### Preface
 
 This book is intended for anyone who wants to become a better Lisp programmer.
@@ -191,7 +188,6 @@ technique. Most of the techniques described here are generally known in the Lisp
 community, but many have not till now been written down anywhere. And some
 issues, such as the proper role of macros or the nature of variable capture, are only
 vaguely understood even by many experienced Lisp programmers.
-
 
 # Examples
 
