@@ -1356,12 +1356,14 @@ its internal copy of n will be reset to the value passed as the ﬁrst argument:
 103
 
 ```
-It’s even possible to return a group of closures which share the same data
-objects. Figure 2.1 contains a function which creates primitive databases. It takes
-an assoc-list (db), and returns a list of three closures which query, add, and delete
-entries, respectively.
 
-Each call to make-dbms makes a new database—a new set of functions closed
+It’s even possible to return a group of closures which share the same
+data objects. [Figure 2.1](#figure-21-three-closures-share-a-list)
+contains a function which creates primitive databases. It takes an
+assoc-list (db), and returns a list of three closures which query,
+add, and delete entries, respectively.
+
+Each call to make-dbms makes a new database, a new set of functions closed
 over their own shared copy of an assoc-list.
 
 ```
@@ -1372,7 +1374,6 @@ over their own shared copy of an assoc-list.
 ```
 
 ---
-
 ```
 (defun make-dbms (db)
   (list
@@ -1808,8 +1809,9 @@ a list in the reverse order. Instead of writing a function to reverse lists, we 
 function which takes a list, and returns a list with the same elements in the reverse
 order.
 
-Figure 3.1 contains a function to reverse lists. It treats the list as an array,
-reversing it in place; its return value is irrelevant:
+[Figure 3.1](#figure-31-a-function-to-reverse-lists) contains a
+function to reverse lists. It treats the list as an array, reversing
+it in place; its return value is irrelevant:
 
 ```
 > (setq lst ’(a b c))
@@ -1830,7 +1832,7 @@ rotates the values of any number of generalized variables—that is, expressions
 you could give as the ﬁrst argument to setf. When applied to just two arguments,
 the effect is to swap them.
 
-In contrast, Figure 3.2 shows a function which returns reversed lists. With
+In contrast, [Figure 3.2](#figure-32-a-function-to-return-reversed-lists) shows a function which returns reversed lists. With
 good-reverse, we get the reversed list as the return value; the original list is not
 touched.
 
@@ -2585,7 +2587,7 @@ decreased in modern dialects, operations on lists can still make up the greater 
 of a Lisp program.
 
 Figures 4.1 and 4.2 contain a selection of functions which build or examine
-lists. Those given in Figure 4.1 are among the smallest utilities worth deﬁning.
+lists. Those given in [Figure 4.1](#figure-41-small-functions-which-operate-on-lists) are among the smallest utilities worth deﬁning.
 For efﬁciency, they should all be declared inline (page 26).
 
 The ﬁrst, `last1`, returns the last element in a list. The built-in function last
@@ -2712,7 +2714,7 @@ filter, the straightforward iterative deﬁnition is simpler than the tail-recur
 one. The combination of push and nreverse in the deﬁnition of filter is the
 standard Lisp idiom for accumulating a list.
 
-The last function in Figure 4.2 is for grouping lists into sublists. You give
+The last function in [Figure 4.2](#figure-42-larger-functions-that-operate-on-lists) is for grouping lists into sublists. You give
 group a list l and a number n, and it will return a new list in which the elements
 of l are grouped into sublists of length n. The remainder is put in a ﬁnal sublist.
 Thus if we give 2 as the second argument, we get an assoc-list:
@@ -2745,8 +2747,8 @@ examples are as much as possible written in raw Lisp. Because it is so
 useful in deﬁning macros, group is an exception, and will reappear at
 several points in later chapters.
 
-The functions in Figure 4.2 all work their way along the top-level
-structure of a list. Figure 4.3 shows two examples of functions that
+The functions in [Figure 4.2](#figure-42-larger-functions-that-operate-on-lists) all work their way along the top-level
+structure of a list. [Figure 4.3](#figure-43-doubly-recursive-list-utilities) shows two examples of functions that
 descend into nested lists.  The ﬁrst, flatten, was also predeﬁned in
 Interlisp. It returns a list of all the atoms that are elements of a
 list, or elements of its elements, and so on:
@@ -2756,7 +2758,7 @@ list, or elements of its elements, and so on:
 (A B C D E F)
 ```
 
-The other function in Figure 4.3, prune, is to remove-if as copy-tree is to
+The other function in [Figure 4.3](#figure-43-doubly-recursive-list-utilities), prune, is to remove-if as copy-tree is to
 copy-list. That is, it recurses down into sublists:
 
 ```
@@ -2803,7 +2805,7 @@ Lisp provides a rich set of built-in operators for this purpose, but some tasks
 
 are still difﬁcult—or at least difﬁcult to perform efﬁciently. We saw
 this in the hypothetical case described on page 41. The ﬁrst utility
-in Figure 4.4, find2, is the one we deﬁned in response to it.  The
+in [Figure 4.4](#figure-44-functions-which-search-lists), find2, is the one we deﬁned in response to it.  The
 next utility, before, is written with similar intentions. It tells you
 if one object is found before another in a list:
 
@@ -2903,7 +2905,7 @@ to represent both falsity and the empty list. It does cause trouble sometimes (s
 Section 14.2), but it is convenient in functions like duplicate. In questions of
 sequence membership, it seems natural to represent falsity as the empty sequence.
 
-The last function in Figure 4.4 is also a kind of generalization of member.
+The last function in [Figure 4.4](#figure-44-functions-which-search-lists), is also a kind of generalization of member.
 While member returns the cdr of the list beginning with the element it ﬁnds,
 split-if returns both halves. This utility is mainly used with lists that are
 ordered in some respect:
@@ -2996,7 +2998,7 @@ for which the function yields the highest score (along with the score itself):
 ## 4.5 Mapping
 
 Another widely used class of Lisp functions are the mapping functions, which
-apply a function to a sequence of arguments. Figure 4.6 shows some examples of
+apply a function to a sequence of arguments. [Figure 4.6](#figure-46-mapping-functions) shows some examples of
 new mapping functions. The ﬁrst three are for applying a function to a range of
 numbers without having to cons up a list to contain them. The ﬁrst two, map0-n
 and map1-n, work for ranges of positive integers:
@@ -3104,7 +3106,7 @@ discard the result immediately. With mapcars we can get the same result from:
 
 and do no unnecessary consing.
 
-The ﬁnal function in Figure 4.6 is a version of mapcar for trees. Its name,
+The ﬁnal function in [Figure 4.6](#figure-46-mapping-functions) is a version of mapcar for trees. Its name,
 rmapcar, is short for "recursive mapcar," and what mapcar does on ﬂat lists, it
 does on trees:
 
@@ -3171,7 +3173,7 @@ functions, can be passed as arguments.
 ## 4.6 I/O
 
 Figure 4.7 contains three examples of I/O utilities. The need for this kind of
-utility varies from program to program. Those in Figure 4.7 are just a representative
+utility varies from program to program. Those in [Figure 4.7](#figure-47-io-functions) are just a representative
 sample. The ﬁrst is for the case where you want users to be able to type in
 expressions without parentheses; it reads a line of input and returns it as a list:
 
@@ -3215,7 +3217,7 @@ licenses. If you can call eval at runtime, then any Lisp program can include Lis
 ## 4.7 Symbols and Strings
 
 Symbols and strings are closely related. By means of printing and reading
-functions we can go back and forth between the two representations. Figure 4.8
+functions we can go back and forth between the two representations. [Figure 4.8](#figure-48-functions-which-operate-on-symbols-and-strings)
 contains examples of utilities which operate on this border. The ﬁrst, mkstr,
 takes any number of arguments and concatenates their printed representations into
 a string:
@@ -3282,7 +3284,7 @@ in package a, instead of the symbol |a:b| in the current package. 1 The more
 general function is also pickier: reread will generate an error if its arguments
 are not proper Lisp syntax.
 
-The last function in Figure 4.8 was predeﬁned in several earlier dialects:
+The last function in [Figure 4.8](#figure-48-functions-which-operate-on-symbols-and-strings) was predeﬁned in several earlier dialects:
 explode takes a symbol and returns a list of symbols made from the characters
 in its name.
 
@@ -3686,7 +3688,7 @@ example, we often see expressions like
 ```
 
 We could deﬁne an operator to build functions like this one automatically. Using
-`fif` from Figure 5.4, we could get the same effect with:
+`fif` from [Figure 5.4](#figure-54-more-function-builders) we could get the same effect with:
 
 ```
 (mapcar (fif #’slave #’owner #’employer)
@@ -3831,7 +3833,7 @@ The Lisp list is a versatile structure. Lists can represent, among other things,
 sequences, sets, mappings, arrays, and trees. There are several different ways to
 interpret a list as a tree. The most common is to regard the list as a binary tree
 whose left branch is the `car` and whose right branch is the `cdr`. (In fact, this is
-usually the internal representation of lists.) Figure 5.7 shows three examples of
+usually the internal representation of lists.) [Figure 5.7](#figure-57-lists-as-trees) shows three examples of
 lists and the trees they represent. Each internal node in such a tree corresponds
 to a dot in the dotted-pair representation of the list, so the tree structure may be
 easier to interpret if the lists are considered in that form:
@@ -3967,14 +3969,14 @@ We should thus be able to express it as a call to a builder with two arguments:
 (ttrav #’cons #’identity)
 ```
 
-A deﬁnition of `ttrav` ("tree traverser") is shown in Figure 5.8. Instead of
+A deﬁnition of `ttrav` ("tree traverser") is shown in [Figure 5.8](#figure-58-function-for-recursion-on-trees). Instead of
 passing one value in the recursive case, we pass two, one for the left subtree and
 one for the right. If the base argument is a function it will be called on the current
 leaf. In ﬂat list recursion, the base case is always nil, but in tree recursion the
 base case could be an interesting value, and we might want to use it.
 
 With `ttrav` we could express all the preceding functions except `rfind-if`.
-(They are shown in Figure 5.9.) To deﬁne `rfind-if` we need a more general tree
+(They are shown in [Figure 5.9](#figure-59-functions-expressed-with-ttrav).) To deﬁne `rfind-if` we need a more general tree
 recursion builder which gives us control over `when`, and `if`, the recursive calls are
 made. As the ﬁrst argument to ttrav we gave a function which took the results of
 the recursive calls. For the general case, we want to use instead a function which
@@ -4016,7 +4018,7 @@ which only traverse as much of the tree as they want to.
 Functions built by ttrav always traverse a whole tree. That’s ﬁne for functions
 like count-leaves or flatten, which have to traverse the whole tree anyway.
 But we want rfind-if to stop searching as soon as it ﬁnds what it’s looking for.
-It must be built by the more general trec, shown in Figure 5.10. The second arg
+It must be built by the more general trec, shown in [Figure 5.10](#figure-510-function-for-recursion-on-trees). The second arg
 to trec should be a function of three arguments: the current object and the two
 recursers. The latter two will be closures representing the recursions down the
 left and right subtrees. With trec we would deﬁne flatten as:
@@ -4141,12 +4143,13 @@ Each non-leaf node will contain a yes/no question, and depending on the answer
 to the question, the traversal will continue down the left or right subtree. Leaf
 nodes will contain return values. When the traversal reaches a leaf node, its value
 will be returned as the value of the traversal. A session with this program might
-look as in Figure 6.1.
+look as in [Figure 6.1](#figure-61-session-of-twenty-questions).
 
 The traditional way to begin would be to deﬁne some sort of data structure to
 represent nodes. A node is going to have to know several things: whether it is a
 leaf; if so, which value to return, and if not, which question to ask; and where to
-go depending on the answer. A sufﬁcient data structure is deﬁned in Figure 6.2.
+go depending on the answer. A sufﬁcient data structure is deﬁned in [Figure 6.2](#figure-62-representation-and-deﬁnition-of-nodes).
+
 It is designed for minimal size. The contents ﬁeld will contain either a question
 or a return value. If the node is not a leaf, the yes and no ﬁelds will tell where to
 go depending on the answer to the question; if the node is a leaf, we will know it
@@ -4196,16 +4199,16 @@ our tree:
 
 ---
 
-Figure 6.3 shows as much of the network as we need to produce the transcript in
-Figure 6.1.
+[Figure 6.3](#figure-63-sample-network) shows as much of the network as we need to produce the transcript in
+[Figure 6.1](#figure-61-session-of-twenty-questions).
 
 Now all we need to do is write a function to traverse this network, printing
 out the questions and following the indicated path. This function, run-node, is
-shown in Figure 6.4. Given a name, we look up the corresponding node. If it is
+shown in [Figure 6.4](#figure-64-function-for-traversing-networks). Given a name, we look up the corresponding node. If it is
 not a leaf, the contents are asked as a question, and depending on the answer,
 we continue traversing at one of two possible destinations. If the node is a leaf,
-run-node just returns its contents. With the network deﬁned in Figure 6.3, this
-function produces the output shown in Figure 6.1.
+run-node just returns its contents. With the network deﬁned in [Figure 6.3](#figure-63-sample-network), this
+function produces the output shown in [Figure 6.1](#figure-61-session-of-twenty-questions).
 
 ---
 
@@ -4249,7 +4252,7 @@ in any language. Indeed, the program is so simple that it seems odd to think tha
 we could write it any other way. But we can—in fact, we can write it much more
 simply.
 
-The code in Figure 6.5 illustrates this point. It’s all we really need to run our
+The code in [Figure 6.5](#figure-65-a-network-compiled-into-closures) illustrates this point. It’s all we really need to run our
 network. Instead of having nodes as data structures and a separate function to
 traverse them, we represent the nodes as closures. The data formerly contained in
 the structures gets stored in variable bindings within the closures. Now there is no
@@ -4302,7 +4305,7 @@ know that the network is not going to be redeﬁned on the ﬂy, we can
 add a further enhancement: we can have node functions call their
 destinations directly, without having to go through a hash-table.
 
-Figure 6.6 contains a new version of the program. Now *nodes* is a
+[Figure 6.6](#figure-66-compilation-with-static-references) contains a new version of the program. Now *nodes* is a
 disposable list instead of a hash-table. All the nodes are deﬁned with
 defnode as before, but no closures are generated at this point. After
 all the nodes have been deﬁned, we call compile-net to compile a whole
@@ -4486,7 +4489,7 @@ and they may even appear within quotes, or within quoted sublists:
 One comma counteracts the effect of one backquote, so commas must match
 backquotes. Say that a comma is surrounded by a particular operator if the operator
 is prepended to the comma, or prepended to an expression which contains it. In
-‘(,a ,(b ‘,c))), for example, the last comma is surrounded by one comma
+`‘(,a ,(b ‘,c)))`, for example, the last comma is surrounded by one comma
 and two backquotes. The general rule is: a comma surrounded by n commas must
 be surrounded by at least n+1 backquotes. An obvious corollary is that commas
 may not appear outside of a backquoted expression. Backquotes and commas can
@@ -4519,8 +4522,8 @@ With backquote the same macro can be deﬁned as:
 ```
 
 which in this case is not all that different. The longer the macro deﬁnition,
-however, the more important it is to use backquote. Figure 7.1 contains two
-possible deﬁnitions of nif, a macro which does a three-way numeric if. 2
+however, the more important it is to use backquote. [Figure 7.1](#figure-71-a-macro-deﬁned-with-and-without-backquote) contains two
+possible deﬁnitions of nif, a macro which does a three-way numeric `if`.
 
 The ﬁrst argument should evaluate to a number. Then the second, third, or
 fourth argument is evaluated, depending on whether the ﬁrst was positive, zero,
@@ -4563,9 +4566,9 @@ Without backquote:
 ---
 
 
-The two deﬁnitions in Figure 7.1 deﬁne the same macro, but the ﬁrst uses
+The two deﬁnitions in [Figure 7.1](#figure-71-a-macro-deﬁned-with-and-without-backquote) deﬁne the same macro, but the ﬁrst uses
 backquote, while the second builds its expansion by explicit calls to list. From
-the ﬁrst deﬁnition it’s easy to see that (nif x ’p ’z ’n), for example, expands
+the ﬁrst deﬁnition it’s easy to see that `(nif x ’p ’z ’n)`, for example, expands
 into
 
 ```
@@ -4579,7 +4582,7 @@ because the body of the macro deﬁnition looks just like the expansion it gener
 To understand the second version, without backquote, you have to trace in your
 head the building of the expansion.
 
-Comma-at, ,@, is a variant of comma. It behaves like comma, with one
+Comma-at, `,@`, is a variant of comma. It behaves like comma, with one
 difference: instead of merely inserting the value of the expression to which it
 is afﬁxed, as comma does, comma-at splices it. Splicing can be thought of as
 inserting while removing the outermost level of parentheses:
@@ -4593,22 +4596,22 @@ inserting while removing the outermost level of parentheses:
 (A 1 2 3 C)
 ```
 
-The comma causes the list (1 2 3) to be inserted in place of b, while
+The comma causes the list `(1 2 3)` to be inserted in place of `b`, while
 the `,@` causes the elements of the list to be inserted there. There
 are some additional restrictions on the use of `,@`:
 
 1. In order for its argument to be spliced, comma-at must occur within a
-   sequence. It’s an error to say something like ‘,@b because there is nowhere
-   to splice the value of b.
+   sequence. It’s an error to say something like `‘,@b` because there is nowhere
+   to splice the value of `b`.
 2. The object to be spliced must be a list, unless it occurs last. The expression
-   ‘(a ,@1) will evaluate to (a . 1), but attempting to splice an atom into
-   the middle of a list, as in ‘(a ,@1 b), will cause an error.
+   `‘(a ,@1)` will evaluate to `(a . 1)`, but attempting to splice an atom into
+   the middle of a list, as in `‘(a ,@1 b)`, will cause an error.
 
 Comma-at tends to be used in macros which take an indeterminate number of
 arguments and pass them on to functions or macros which also take an indeterminate
 number of arguments. This situation commonly arises when implementing
 implicit blocks. Common Lisp has several operators for grouping code into blocks,
-including block, tagbody, and progn. These operators rarely appear directly in
+including `block`, `tagbody`, and `progn`. These operators rarely appear directly in
 source code; they are more often implicit—that is, hidden by macros.
 
 An implicit block occurs in any built-in macro which can have a body of
@@ -4633,10 +4636,10 @@ the use of comma-at, here is one possible deﬁnition for when:
          ,@body)))
 ```
 
-This deﬁnition uses an &body parameter (identical to &rest except for its effect
+This deﬁnition uses an `&body` parameter (identical to `&rest` except for its effect
 on pretty-printing) to take in an arbitrary number of arguments, and a comma-at
-to splice them into a progn expression. In the macroexpansion of the call above,
-the three expressions in the body will appear within a single progn:
+to splice them into a progn expression. In the macro expansion of the call above,
+the three expressions in the body will appear within a single `progn`:
 
 ```
 (if (eligible obj)
@@ -4706,7 +4709,7 @@ we will reincarnate it as a macro.
 
 The method: Begin with a typical call to the macro you want to deﬁne. Write
 it down on a piece of paper, and below it write down the expression into which it
-ought to expand. Figure 7.2 shows two such expressions. From the macro call,
+ought to expand. [Figure 7.2](#figure-72-diagram-used-in-writing-memq) shows two such expressions. From the macro call,
 construct the parameter list for your macro, making up some parameter name for
 each of the arguments. In this case there are two arguments, so we’ll have two
 parameters, and call them obj and lst:
@@ -4717,7 +4720,7 @@ parameters, and call them obj and lst:
 
 Now go back to the two expressions you wrote down. For each argument in the
 macro call, draw a line connecting it with the place it appears in the expansion
-below. In Figure 7.2 there are two parallel lines. To write the body of the macro,
+below. In [Figure 7.2](#figure-72-diagram-used-in-writing-memq) there are two parallel lines. To write the body of the macro,
 turn your attention to the expansion. Start the body with a backquote. Now, begin
 reading the expansion expression by expression. Wherever you ﬁnd a parenthesis
 that isn’t part of an argument in the macro call, put one in the macro deﬁnition.
@@ -4774,7 +4777,7 @@ Continuing in this way, the completed macro deﬁnition is:
 So far, we can only write macros which take a ﬁxed number of arguments.
 Now suppose we want to write a macro while, which will take a test expression
 and some body of code, and loop through the code as long as the test expression
-returns true. Figure 7.3 contains an example of a while loop describing the
+returns true. [Figure 7.3](#figure-73-diagram-used-in-writing-while) contains an example of a while loop describing the
 behavior of a cat.
 
 To write such a macro, we have to modify our technique slightly. As before,
@@ -4789,15 +4792,15 @@ conclude with an &rest or &body parameter:
 Now write the desired expansion below the macro call, and as before draw lines
 connecting the arguments in the macro call to their position in the expansion.
 However, when you have a sequence of arguments which are going to be sucked
-into a single &rest or &body parameter, treat them as a group, drawing a single
-line for the whole sequence. Figure 7.3 shows the resulting diagram.
+into a single `&rest` or `&body` parameter, treat them as a group, drawing a single
+line for the whole sequence. [Figure 7.3](#figure-73-diagram-used-in-writing-while) shows the resulting diagram.
 
 To write the body of the macro deﬁnition, proceed as before along the
 expansion. As well as the two previous rules, we need one more:
 
 3. If there is a connection from a series of expressions in the expansion to a
    series of the arguments in the macro call, write down the corresponding
-   &rest or &body parameter, preceded by a comma-at.
+   `&rest` or `&body` parameter, preceded by a comma-at.
 
 So the resulting macro deﬁnition will be:
 
@@ -4825,7 +4828,7 @@ enough that one can tell just by looking at it what it will do. When
 writing more complicated macros, we have to be able to check that they
 are being expanded correctly.
 
-Figure 7.4 shows a macro deﬁnition and two ways of looking at its
+[Figure 7.4](#figure-74-a-macro-and-two-depths-of-expansion) shows a macro deﬁnition and two ways of looking at its
 expansion.  The built-in function macroexpand takes an expression and
 returns its macro expansion. Sending a macro call to macroexpand shows
 how the macro call will ﬁnally be expanded before being evaluated, but
@@ -4834,7 +4837,7 @@ macro. When the macro in question relies on other macros, they too
 will be expanded, so a complete macroexpansion can sometimes be
 difﬁcult to read.
 
-From the ﬁrst expression shown in Figure 7.4, it’s hard to tell whether or not
+From the ﬁrst expression shown in [Figure 7.4](#figure-74-a-macro-and-two-depths-of-expansion), it’s hard to tell whether or not
 while is expanding as intended, because the built-in do macro gets expanded, as
 well as the prog macro into which it expands. What we need is a way of seeing
 the result after only one step of expansion. This is the purpose of the built-in
@@ -4848,7 +4851,7 @@ always to have to type
 (pprint (macroexpand-1 ’(or x y)))
 ```
 
-Figure 7.5 deﬁnes a new macro which allows us to say instead:
+[Figure 7.5](#figure-75-a-macro-for-testing-macroexpansion) deﬁnes a new macro which allows us to say instead:
 
 ```
 (mac (or x y))
@@ -5044,21 +5047,21 @@ deﬁned.
 There is a long tradition of such explanations in Lisp. The Lisp 1.5
 Programmer’s Manual, ﬁrst published in 1962, gives for reference a
 deﬁnition of eval written in Lisp. Since defmacro is itself a macro,
-we can give it the same treatment, as in Figure 7.6. This deﬁnition
+we can give it the same treatment, as in [Figure 7.6](#figure-76-a-sketch-of-defmacro). This deﬁnition
 uses several techniques which haven’t been covered yet, so some
 readers may want to refer to it later.
 
-The deﬁnition in Figure 7.6 gives a fairly accurate impression of what
+The deﬁnition in [Figure 7.6](#figure-76-a-sketch-of-defmacro) gives a fairly accurate impression of what
 macros do, but like any sketch it is incomplete. It wouldn’t handle
 the &whole keyword properly. And what defmacro really stores as the
 macro-function of its ﬁrst argument is a function of two arguments:
 the macro call, and the lexical environment in which it
 occurs. However, these features are used only by the most esoteric
 macros. If you worked on the assumption that macros were implemented
-as in Figure 7.6, you would hardly ever go wrong. Every macro deﬁned
+as in [Figure 7.6](#figure-76-a-sketch-of-defmacro), you would hardly ever go wrong. Every macro deﬁned
 in this book would work, for example.
 
-The deﬁnition in Figure 7.6 yields an expansion function which is a
+The deﬁnition in [Figure 7.6](#figure-76-a-sketch-of-defmacro) yields an expansion function which is a
 sharp-quoted lambda-expression. That should make it a closure: any
 free symbols in the macro deﬁnition should refer to variables in the
 environment where the defmacro occurred. So it should be possible to
@@ -5095,7 +5098,7 @@ an example by hand, then look at what happens when one form is transformed into
 another. By working from examples you can get an idea of what will be required
 of your proposed macro.
 
-Figure 7.7 shows an instance of do, and the expression into which it should
+[Figure 7.7](#figure-77-desired-expansion-of-do) shows an instance of do, and the expression into which it should
 expand. Doing expansions by hand is a good way to clarify your ideas about how
 a macro should work. For example, it may not be obvious until one tries writing
 the expansion that the local variables will have to be updated using psetq.
@@ -5194,17 +5197,17 @@ returned by the function gensym.
 
 
 In order to write do, we consider what it would take to transform the ﬁrst
-expression in Figure 7.7 into the second. To perform such a transformation,
+expression in [Figure 7.7](#figure-77-desired-expansion-of-do) into the second. To perform such a transformation,
 we need to do more than get the macro parameters into the right positions in
 some backquoted list. The initial prog has to be followed by a list of symbols
 and their initial bindings, which must be extracted from the second argument
-passed to the do. The function make-initforms in Figure 7.8 will return such
+passed to the do. The function make-initforms in [Figure 7.8](#figure-78-implementing-do) will return such
 a list. We also have to build a list of arguments for the psetq, but this case is
-more complicated because not all the symbols should be updated. In Figure 7.8,
+more complicated because not all the symbols should be updated. In [Figure 7.8](#figure-78-implementing-do),
 make-stepforms returns arguments for the psetq. With these two functions,
 the rest of the deﬁnition becomes fairly straightforward.
 
-The code in Figure 7.8 isn’t exactly the way do would be written in a
+The code in [Figure 7.8](#figure-78-implementing-do) isn’t exactly the way do would be written in a
 real implementation. To emphasize the computation done during
 expansion, make-initforms and make-stepforms have been broken out as
 separate functions. In the future, such code will usually be left
@@ -5246,7 +5249,7 @@ bargain.
 
 For example, suppose that we wanted to deﬁne a version of and as a macro.
 Since (and a b c) is equivalent to (if a (if b c)), we can write and in
-terms of if as in the ﬁrst deﬁnition in Figure 7.9. According to the standards by
+terms of if as in the ﬁrst deﬁnition in [Figure 7.9](#figure-79-two-macros-equivalent-to-and). According to the standards by
 which we judge ordinary code, our-and is badly written. The expander code is
 recursive, and on each recursion ﬁnds the length of successive cdrs of the same
 list. If this code were going to be evaluated at runtime, it would be better to deﬁne
@@ -5934,7 +5937,7 @@ Suppose we are writing an interactive 2D drawing program. For simplicity,
 we will assume that the only objects handled by the program are line segments,
 represented as an origin x,y and a vector dx,dy . One of the things such a
 program will have to do is slide groups of objects. This is the purpose of the
-function move-objs in Figure 8.1. For efﬁciency, we don’t want to redraw the
+function move-objs in [Figure 8.1](#figure-81-original-move-and-scale). For efﬁciency, we don’t want to redraw the
 whole screen after each operation—only the parts which have changed. Hence
 
 ---
@@ -5980,9 +5983,9 @@ more of the program, we would see more of this pattern: in functions to rotate,
 ﬂip, transpose, and so on.
 
 With a macro we can abstract out the code that these functions would all have
-in common. The macro with-redraw in Figure 8.2 provides the skeleton that
-the functions in Figure 8.1 share. 3 As a result, they can now be deﬁned in four
-lines each, as at the end of Figure 8.2. With these two functions the new macro
+in common. The macro with-redraw in [Figure 8.2](#figure-82-move-and-scale-ﬁlleted) provides the skeleton that
+the functions in [Figure 8.1](#figure-81-original-move-and-scale) share. 3 As a result, they can now be deﬁned in four
+lines each, as at the end of [Figure 8.2](#figure-82-move-and-scale-ﬁlleted). With these two functions the new macro
 has already paid for itself in brevity. And how much clearer the two functions
 become once the details of screen redrawing are abstracted away.
 
@@ -6445,7 +6448,8 @@ a parameter w.
 Sometimes argument capture can be cured simply by evaluating the endangered
 arguments outside of any bindings created by the macroexpansion. The
 simplest cases can be handled by beginning the macro with a let expression.
-Figure 9.1 contains two versions of the macro before, which takes two objects
+
+[Figure 9.1](#figure-91-avoiding-capture-with-let) contains two versions of the macro before, which takes two objects
 and a sequence, and returns true iff the ﬁrst object occurs before the second in the
 sequence.
 
@@ -6472,7 +6476,7 @@ the ﬁrst argument to < rearranges the list to be searched in the second.
 ```
 
 To avoid this problem, it will sufﬁce to evaluate all the arguments ﬁrst in one big
-let. The second deﬁnition in Figure 9.1 is thus safe from capture.
+let. The second deﬁnition in [Figure 9.1](#figure-91-avoiding-capture-with-let) is thus safe from capture.
 
 Unfortunately, the let technique works only in a narrow range of cases:
 macros where
@@ -6496,7 +6500,7 @@ can protect variables in the body from such capture by wrapping the body in a
 closure, and, within the loop, instead of inserting the expressions themselves,
 simply funcalling the closure.
 
-Figure 9.2 shows a version of for which uses this technique. Since the closure
+[Figure 9.2](#figure-92-avoiding-capture-with-a-closure) shows a version of for which uses this technique. Since the closure
 
 Vulnerable to capture:
 
@@ -6643,7 +6647,7 @@ NIL
 
 but they won’t be identical.
 
-Figure 9.3 contains a correct deﬁnition of for using gensyms. Now there is no
+[Figure 9.3](#figure-93-avoiding-capture-with-gensym) contains a correct deﬁnition of for using gensyms. Now there is no
 limit to clash with symbols in forms passed to the macro. It has been replaced
 by a symbol gensymed on the spot. In each expansion of the macro, the place of
 limit will be taken by a unique symbol created at expansion-time.
@@ -6792,7 +6796,7 @@ more problems to avoid when deﬁning macros.
 
 ## 10.1 Number of Evaluations
 
-Several incorrect versions of for appeared in the previous chapter. Figure 10.1
+Several incorrect versions of for appeared in the previous chapter. [Figure 10.1](#figure-101-controlling-argument-evaluation)
 shows two more, accompanied by a correct version for comparison.
 
 Though not vulnerable to capture, the second for contains a bug. It will
@@ -6883,7 +6887,7 @@ Lisp function calls, arguments are evaluated left-to-right:
 and it is good practice for macros to do the same. Macros should usually ensure
 that expressions are evaluated in the same order that they appear in the macro call.
 
-In Figure 10.1, the third version of for also contains a subtle bug. The
+In [Figure 10.1](#figure-101-controlling-argument-evaluation), the third version of for also contains a subtle bug. The
 parameter stop will be evaluated before start, even though they appear in the
 opposite order in the macro call:
 
@@ -7119,7 +7123,7 @@ A function which is neither recursive, nor part of some mutually recursive set
 of functions, can be transformed into a macro by the simple technique described
 in Section 7.10. However, just inserting backquotes and commas won’t work with
 a recursive function. Let’s take the built-in nth as an example. (For simplicity,
-our versions of nth will do no error-checking.) Figure 10.2 shows a mistaken
+our versions of nth will do no error-checking.) [Figure 10.2](#figure-102-mistaken-analogy-to-a-recursive-function) shows a mistaken
 attempt to deﬁne nth as a macro. Superﬁcially, nthb appears to be equivalent to
 ntha, but a program containing a call to nthb would not compile, because the
 expansion of the call would never terminate.
@@ -7218,7 +7222,7 @@ or even impossible.
 ---
 
 Depending on what you need a macro for, you may ﬁnd it sufﬁcient to use
-instead a combination of macro and function. Figure 10.3 shows two ways to
+instead a combination of macro and function. [Figure 10.3](#figure-103-two-ways-to-ﬁx-the-problem) shows two ways to
 make what appears to be a recursive macro. The ﬁrst strategy, embodied by nthd,
 is simply to make the macro expand into a call to a recursive function. If, for
 example, you need a macro only to save users the trouble of quoting arguments,
@@ -7237,7 +7241,7 @@ of a macro is a regular Lisp function, and can of course be recursive. For examp
 if we were to deﬁne a version of the built-in or, we would want to use a recursive
 expansion function.
 
-Figure 10.4 shows two ways of deﬁning recursive expansion functions for or.
+[Figure 10.4](#figure-104-recursive-expansion-functions) shows two ways of deﬁning recursive expansion functions for or.
 The macro ora calls the recursive function or-expand to generate its expansion.
 This macro will work, and so will the equivalent orb. Although orb recurses, it
 recurses on the arguments to the macro (which are available at macroexpansion
@@ -7342,7 +7346,7 @@ will usually be to cause the body to be evaluated in some new context. A macro
 will be needed to wrap context-creating code around the body, even if the context
 does not include new lexical variables.
 
-Figure 11.1 shows how let could be deﬁned as a macro on lambda. An
+[Figure 11.1](#figure-111-macro-implementation-of-let) shows how let could be deﬁned as a macro on lambda. An
 our-let expands into a function application—
 
 ```
@@ -7356,7 +7360,7 @@ expands into
 ((lambda (x y) (+ x y)) 1 2)
 ```
 
-Figure 11.2 contains three new macros which establish lexical environments.
+[Figure 11.2](#figure-112-macros-which-bind-variables) contains three new macros which establish lexical environments.
 Section 7.5 used when-bind as an example of parameter list destructuring, so this
 macro has already been described on page 94. The more general when-bind*
 takes a list of pairs of the form (symbol expression)—the same form as the
@@ -7466,7 +7470,7 @@ Unfortunately, there is no convenient idiom for the opposite situation, where
 we always want to evaluate the same code, but where the bindings must vary
 depending on some condition.
 
-Figure 11.3 contains a macro intended for such situations. As its name
+[Figure 11.3](#figure-113-combination-of-cond-and-let) contains a macro intended for such situations. As its name
 suggests, condlet behaves like the offspring of cond and let. It takes as
 arguments a list of binding clauses, followed by a body of code. Each of the
 binding clauses is guarded by a test expression; the body of code will be evaluated
@@ -7573,7 +7577,7 @@ want the value of the query q on the database db, we might say something like:
          (setq *db* temp)))
 ```
 
-With a macro we can hide all this bookkeeping. Figure 11.4 deﬁnes a macro
+With a macro we can hide all this bookkeeping. [Figure 11.4](#figure-114-a-typical-with-macro) deﬁnes a macro
 which will allow us to deal with databases at a higher level of abstraction. Using
 with-db, we would say just:
 
@@ -7625,7 +7629,7 @@ with-db, we would say just:
 Calling with-db is also safer, because it expands into an unwind-protect
 instead of a simple prog1.
 
-The two deﬁnitions of with-db in Figure 11.4 illustrate two possible ways
+The two deﬁnitions of with-db in [Figure 11.4](#figure-114-a-typical-with-macro) illustrate two possible ways
 to write this kind of macro. The ﬁrst is a pure macro, the second a combination
 of a function and a macro. The second approach becomes more practical as the
 
@@ -7679,7 +7683,7 @@ since only the ﬁrst two arguments ever will be evaluated, the if as a whole wi
 always safely return phew.
 
 We can create new operators of this sort by writing macros which expand into
-calls to the existing ones. The two macros in Figure 11.5 are two of many possible
+calls to the existing ones. The two macros in [Figure 11.5](#figure-115-macros-for-conditional-evaluation) are two of many possible
 variations on if. The deﬁnition of if3 shows how we could deﬁne a conditional
 for a three-valued logic. Instead of treating nil as false and everything else
 as true, this macro considers three categories of truth: true, false, and uncertain,
@@ -7709,7 +7713,7 @@ depending on its sign evaluates one of the remaining three arguments.
 ```
 
 
-Figure 11.6 contains several more macros which take advantage of conditional
+[Figure 11.6](#figure-116-macros-for-conditional-evaluation) contains several more macros which take advantage of conditional
 evaluation. The macro in is to test efﬁciently for set membership. When you
 want to test whether an object is one of a set of alternatives, you could express the
 query as a disjunction:
@@ -7896,7 +7900,7 @@ But combined with block and return-from, this kind of macro becomes the
 most natural way to express loops where termination is always in the nature of an
 emergency.
 
-Some of the simplest macros for iteration are shown in Figure 11.7. We
+Some of the simplest macros for iteration are shown in [Figure 11.7](#figure-117-simple-iteration-macros). We
 have already seen while (page 91), whose body will be evaluated while a test
 expression returns true. Its converse is till, which does the same while a test
 expression returns false. Finally for, also seen before (page 129), iterates for a
@@ -7906,11 +7910,11 @@ By deﬁning these macros to expand into dos, we enable the use of go and
 return within their bodies. As do inherits these rights from block and tagbody,
 while, till, and for inherit them from do. As explained on page 131, the nil
 tag of the implicit block around do will be captured by the macros deﬁned in
-Figure 11.7. This is more of a feature than a bug, but it should at least be mentioned
+[Figure 11.7](#figure-117-simple-iteration-macros). This is more of a feature than a bug, but it should at least be mentioned
 explicitly.
 
 Macros are indispensable when we need to deﬁne more powerful iteration
-constructs. Figure 11.8 contains two generalizations of dolist; both evaluate
+constructs. [Figure 11.8](#figure-118-macros-for-iteration-by-subsequences) contains two generalizations of dolist; both evaluate
 their body with a tuple of variables bound to successive subsequences of a list.
 For example, given two parameters, do-tuples/o will iterate by pairs:
 
@@ -8057,7 +8061,7 @@ NIL
 NIL
 ```
 
-The expansion of the former call to do-tuples/c is shown in Figure 11.9. The
+The expansion of the former call to do-tuples/c is shown in [Figure 11.9](#figure-1-9-expansion-of-a-call-to-do-tuples-c). The
 hard part to generate is the sequence of calls representing the wrap around to the
 front of the list. These calls (in this case, two of them) are generated by dt-args.
 
@@ -8065,7 +8069,7 @@ front of the list. These calls (in this case, two of them) are generated by dt-a
 
 The built-in do macros have been around longer than multiple return values.
 Fortunately do can evolve to suit the new situation, because the evolution of Lisp
-is in the hands of the programmer. Figure 11.10 contains a version of do* adapted
+is in the hands of the programmer. [Figure 11.10](#figure-1110-multiple-value-binding-version-of-do) contains a version of do* adapted
 for multiple values. With mvdo*, each of the initial clauses can bind more than
 one variable:
 
@@ -15071,9 +15075,7 @@ mark upon choosing a city. At this point, *paths* contains one continuation,
 
 ---
 
-```
-[ MISSING ]
-```
+**MISSING**
 ###### Figure 22.11: A directed graph with a loop.
 
 ---
@@ -15316,9 +15318,7 @@ one outgoing arc, a cat, or category arc, leading to node s2. It says, effective
 
 ---
 
-```
-[ MISSING ]
-```
+**MISSING**
 ###### Figure 23.2: Graph of a small ATN.
 
 ---
@@ -15694,10 +15694,7 @@ an arrow."
 
 ---
 
-```
-[ MISSING ]
-```
-
+**MISSING**
 ###### Figure 23.6: Graph of a larger ATN.
 
 ---
@@ -16001,9 +15998,7 @@ two facts and then query the database:
 
 ---
 
-```
-[ MISSING ]
-```
+**MISSING**
 ###### Figure 24.1: Layers of abstraction.
 
 ---
@@ -17471,9 +17466,7 @@ go a, b, d, c, d. If the desired property were present in both d and c, we would
 
 ---
 
-```
-[ MISSING ]
-```
+**MISSING**
 ###### Figure 25.2: Multiple paths to a superclass.
 
 ---
