@@ -1678,8 +1678,10 @@ compile. According to CLTL2 (p. 677), you can’t compile a function "deﬁned
 interpretively in a non-null lexical environment." That is, if at the toplevel you
 deﬁne foo within a let
 
+```
 > (let ((y 2))
     (defun foo (x) (+ x y)))
+```
 
 then (compile ’foo) will not necessarily work. 4 You also can’t call compile
 on a function which is already compiled. In this situation, CLTL2 hints darkly that
