@@ -5,13 +5,14 @@
                          |_|
 
 
----
+* * *
 
 > By Paul Graham
 >
 > To my family, and to Jackie.
 
----
+* * *
+
 ##### Preface
 
 This book is intended for anyone who wants to become a better Lisp programmer.
@@ -269,194 +270,194 @@ lispiest. I had fun writing it, and I hope that comes through in the text.
 
 Paul Graham
 
----
+* * *
 
 # Contents
 
 1. [The Extensible Language](#1-the-extensible-language)
- 1. [Design by Evolution](#11-design-by-evolution)
- 2. [Programming Bottom-Up](#12-programming-bottom-up)
- 3. [Extensible Software](#13-extensible-software)
- 4. [Extending Lisp](#14-extending-lisp)
- 5. [Why Lisp (or When)](#15-why-lisp-or-when)
+    1. [Design by Evolution](#11-design-by-evolution)
+    2. [Programming Bottom-Up](#12-programming-bottom-up)
+    3. [Extensible Software](#13-extensible-software)
+    4. [Extending Lisp](#14-extending-lisp)
+    5. [Why Lisp (or When)](#15-why-lisp-or-when)
 
 2. [Functions](#2-functions)
- 1. [Functions as Data](#21-functions-as-data)
- 2. [Deﬁning Functions](#22-deﬁning-functions)
- 3. [Functional Arguments](#23-functional-arguments)
- 4. [Functions as Properties](#24-functions-as-properties)
- 5. [Scope](#25-scope)
- 6. [Closures](#26-closures)
- 7. [Local Functions](#27-local-functions)
- 8. [Tail-Recursion](#28-tail-recursion)
- 9. [Compilation](#29-compilation)
- 10. [Functions from Lists](#20-functions-from-lists)
+    1. [Functions as Data](#21-functions-as-data)
+    2. [Deﬁning Functions](#22-deﬁning-functions)
+    3. [Functional Arguments](#23-functional-arguments)
+    4. [Functions as Properties](#24-functions-as-properties)
+    5. [Scope](#25-scope)
+    6. [Closures](#26-closures)
+    7. [Local Functions](#27-local-functions)
+    8. [Tail-Recursion](#28-tail-recursion)
+    9. [Compilation](#29-compilation)
+    10. [Functions from Lists](#20-functions-from-lists)
 
 3. [Functional Programming](#3-functional-programming)
- 1. [Functional Design](#31-functional-design)
- 2. [Imperative Outside-In](#32-imperative-outside-in)
- 3. [Functional Interfaces](#33-functional-interfaces)
- 4. [Interactive Programming](#34-interactive-programming)
+    1. [Functional Design](#31-functional-design)
+    2. [Imperative Outside-In](#32-imperative-outside-in)
+    3. [Functional Interfaces](#33-functional-interfaces)
+    4. [Interactive Programming](#34-interactive-programming)
 
 4. [Utility Functions](#4-utility-functions)
- 1. [Birth of a Utility](#41-birth-of-a-utility)
- 2. [Invest in Abstraction](#42-invest-in-abstraction)
- 3. [Operations on Lists](#43-operations-on-lists)
- 4. [Search](#44-search)
- 5. [Mapping](#45-mapping)
- 6. [I/O](#46-io)
- 7. [Symbols and Strings](#47-symbols-and-strings)
- 8. [Density](#48-Density)
+    1. [Birth of a Utility](#41-birth-of-a-utility)
+    2. [Invest in Abstraction](#42-invest-in-abstraction)
+    3. [Operations on Lists](#43-operations-on-lists)
+    4. [Search](#44-search)
+    5. [Mapping](#45-mapping)
+    6. [I/O](#46-io)
+    7. [Symbols and Strings](#47-symbols-and-strings)
+    8. [Density](#48-Density)
 
 5. [Returning Functions](#5-returning-functions)
- 1. [Common Lisp Evolves](#51-common-lisp-evolves)
- 2. [Orthogonality](#52-orthogonality)
- 3. [Memoizing](#53-memoizing)
- 4. [Composing Functions](#54-composing-functions)
- 5. [Recursion on Cdrs](#55-recursion-on-cdrs)
- 6. [Recursion on Subtrees](#56-recursion-on-subtrees)
- 7. [When to Build Functions](#57-when-to-build-functions)
+    1. [Common Lisp Evolves](#51-common-lisp-evolves)
+    2. [Orthogonality](#52-orthogonality)
+    3. [Memoizing](#53-memoizing)
+    4. [Composing Functions](#54-composing-functions)
+    5. [Recursion on Cdrs](#55-recursion-on-cdrs)
+    6. [Recursion on Subtrees](#56-recursion-on-subtrees)
+    7. [When to Build Functions](#57-when-to-build-functions)
 
 6. [Functions as Representation](#6-functions-as-representation)
- 1. [Networks](#61-networks)
- 2. [Compiling Networks](#62-compiling-networks)
- 3. [Looking Forward](#63-looking-forward)
+    1. [Networks](#61-networks)
+    2. [Compiling Networks](#62-compiling-networks)
+    3. [Looking Forward](#63-looking-forward)
 
 7. [Macros](#7-macros)
- 1. [How Macros Work](#71-how-macros-work)
- 2. [Backquote](#72-backquote)
- 3. [Deﬁning Simple Macros](#73-deﬁning-simple-macros)
- 4. [Testing Macroexpansion](#74-testing-macroexpansion)
- 5. [Destructuring in Parameter Lists](#75-destructuring-in-parameter-lists)
- 6. [A Model of Macros](#76-a-model-of-macros)
- 7. [Macros as Programs](#77-macros-as-programs)
- 8. [Macro Style](#78-macro-style)
- 9. [Dependence on Macros](#79-dependence-on-macros)
- 10. [Macros from Functions](#710-macros-from-functions)
- 11. [Symbol Macros](#711-symbol-macros)
+    1. [How Macros Work](#71-how-macros-work)
+    2. [Backquote](#72-backquote)
+    3. [Deﬁning Simple Macros](#73-deﬁning-simple-macros)
+    4. [Testing Macroexpansion](#74-testing-macroexpansion)
+    5. [Destructuring in Parameter Lists](#75-destructuring-in-parameter-lists)
+    6. [A Model of Macros](#76-a-model-of-macros)
+    7. [Macros as Programs](#77-macros-as-programs)
+    8. [Macro Style](#78-macro-style)
+    9. [Dependence on Macros](#79-dependence-on-macros)
+    10. [Macros from Functions](#710-macros-from-functions)
+    11. [Symbol Macros](#711-symbol-macros)
 
 8. [When to Use Macros](#8-when-to-use-macros)
- 1. [When Nothing Else Will Do](#81-when-nothing-else-will-do)
- 2. [Macro or Function?](#82-macro-or-function)
- 3. [Applications for Macros](#83-applications-for-macros)
+    1. [When Nothing Else Will Do](#81-when-nothing-else-will-do)
+    2. [Macro or Function?](#82-macro-or-function)
+    3. [Applications for Macros](#83-applications-for-macros)
 
 9. [Variable Capture](#9-variable-capture)
- 1. [Macro Argument Capture](#91-macro-argument-capture)
- 2. [Free Symbol Capture](#92-free-symbol-capture)
- 3. [When Capture Occurs](#93-when-capture-occurs)
- 4. [Avoiding Capture with Better Names](#94-avoiding-capture-with-better-names)
- 5. [Avoiding Capture by Prior Evaluation](#95-avoiding-capture-by-prior-evaluation)
- 6. [Avoiding Capture with Gensyms](#96-avoiding-capture-with-gensyms)
- 7. [Avoiding Capture with Packages](#97-avoiding-capture-with-packages)
- 8. [Capture in Other Name-Spaces](#98-capture-in-other-name-spaces)
- 9. [Why Bother?](#99-why-bother)
+    1. [Macro Argument Capture](#91-macro-argument-capture)
+    2. [Free Symbol Capture](#92-free-symbol-capture)
+    3. [When Capture Occurs](#93-when-capture-occurs)
+    4. [Avoiding Capture with Better Names](#94-avoiding-capture-with-better-names)
+    5. [Avoiding Capture by Prior Evaluation](#95-avoiding-capture-by-prior-evaluation)
+    6. [Avoiding Capture with Gensyms](#96-avoiding-capture-with-gensyms)
+    7. [Avoiding Capture with Packages](#97-avoiding-capture-with-packages)
+    8. [Capture in Other Name-Spaces](#98-capture-in-other-name-spaces)
+    9. [Why Bother?](#99-why-bother)
 
 10. [Other Macro Pitfalls](#10-other-macro-pitfalls)
- 1. [Number of Evaluations](#101-number-of-evaluations)
- 2. [Order of Evaluation](#102-order-of-evaluation)
- 3. [Non-functional Expanders](#103-non-functional-expanders)
- 4. [Recursion](#104-recursion)
+    1. [Number of Evaluations](#101-number-of-evaluations)
+    2. [Order of Evaluation](#102-order-of-evaluation)
+    3. [Non-functional Expanders](#103-non-functional-expanders)
+    4. [Recursion](#104-recursion)
 
 11. [Classic Macros](#11-classic-macros)
- 1. [Creating Context](#111-creating-context)
- 2. [The with- Macro](#112-the-with-macro)
- 3. [Conditional Evaluation](#113-conditional-evaluation)
- 4. [Iteration](#114-iteration)
- 5. [Iteration with Multiple Values](#115-iteration-with-multiple-values)
- 6. [Need for Macros](#116-need-for-macros)
+    1. [Creating Context](#111-creating-context)
+    2. [The with- Macro](#112-the-with-macro)
+    3. [Conditional Evaluation](#113-conditional-evaluation)
+    4. [Iteration](#114-iteration)
+    5. [Iteration with Multiple Values](#115-iteration-with-multiple-values)
+    6. [Need for Macros](#116-need-for-macros)
 
 12. [Generalized Variables](#12-generalized-variables)
- 1. [The Concept](#121-the-concept)
- 2. [The Multiple Evaluation Problem](#122-the-multiple-evaluation-problem)
- 3. [New Utilities](#123-new-utilities)
- 4. [More Complex Utilities](#124-more-complex-utilities)
- 5. [Deﬁning Inversions](#125-deﬁning-inversions)
+    1. [The Concept](#121-the-concept)
+    2. [The Multiple Evaluation Problem](#122-the-multiple-evaluation-problem)
+    3. [New Utilities](#123-new-utilities)
+    4. [More Complex Utilities](#124-more-complex-utilities)
+    5. [Deﬁning Inversions](#125-deﬁning-inversions)
 
 13. [Computation at Compile-Time](#13-Computation at Compile-time)
- 1. [New Utilities](#131-new-utilities)
- 2. [Example: Bezier Curves](#132-example-bezier-curves)
- 3. [Applications](#133-applications)
+    1. [New Utilities](#131-new-utilities)
+    2. [Example: Bezier Curves](#132-example-bezier-curves)
+    3. [Applications](#133-applications)
 
 14. [Anaphoric Macros](#14-anaphoric-macros)
- 1. [Anaphoric Variants](#141-anaphoric-variants)
- 2. [Failure](#142-failure)
- 3. [Referential Transparency](#143-referential-transparency)
+    1. [Anaphoric Variants](#141-anaphoric-variants)
+    2. [Failure](#142-failure)
+    3. [Referential Transparency](#143-referential-transparency)
 
 15. [Macros Returning Functions](#15-macros-returning-functions)
- 1. [Building Functions](#151-building-functions)
- 2. [Recursion on Cdrs](#152-recursion-on-cdrs)
- 3. [Recursion on Subtrees](#153-recursion-on-subtrees)
- 4. [Lazy Evaluation](#154-lazy-evaluation)
+    1. [Building Functions](#151-building-functions)
+    2. [Recursion on Cdrs](#152-recursion-on-cdrs)
+    3. [Recursion on Subtrees](#153-recursion-on-subtrees)
+    4. [Lazy Evaluation](#154-lazy-evaluation)
 
 16. [Macro-Deﬁning Macros](#16-Macro-deﬁning-macros)
- 1. [Abbreviations](#161-abbreviations)
- 2. [Properties](#162-properties)
- 3. [Anaphoric Macros](#163-anaphoric-macros)
+    1. [Abbreviations](#161-abbreviations)
+    2. [Properties](#162-properties)
+    3. [Anaphoric Macros](#163-anaphoric-macros)
 
 17. [Read-Macros](#17-Read-macros)
- 1. [Macro Characters](#171-macro-characters)
- 2. [Dispatching Macro Characters](#172-dispatching-macro-characters)
- 3. [Delimiters](#173-delimiters)
- 4. [When What Happens](#174-when-what-happens)
+    1. [Macro Characters](#171-macro-characters)
+    2. [Dispatching Macro Characters](#172-dispatching-macro-characters)
+    3. [Delimiters](#173-delimiters)
+    4. [When What Happens](#174-when-what-happens)
 
 18. [Destructuring](#18-destructuring)
- 1. [Destructuring on Lists](#181-destructuring-on-lists)
- 2. [Other Structures](#182-other-structures)
- 3. [Reference](#183-reference)
- 4. [Matching](#184-matching)
+    1. [Destructuring on Lists](#181-destructuring-on-lists)
+    2. [Other Structures](#182-other-structures)
+    3. [Reference](#183-reference)
+    4. [Matching](#184-matching)
 
 19. [A Query Compiler](#19-a-query-compiler)
- 1. [The Database](#191-the-database)
- 2. [Pattern-Matching Queries](#192-pattern-matching-queries)
- 3. [A Query Interpreter](#193-a-query-interpreter)
- 4. [Restrictions on Binding](#194-restrictions-on-binding)
- 5. [A Query Compiler](#195-a-query-compiler)
+    1. [The Database](#191-the-database)
+    2. [Pattern-Matching Queries](#192-pattern-matching-queries)
+    3. [A Query Interpreter](#193-a-query-interpreter)
+    4. [Restrictions on Binding](#194-restrictions-on-binding)
+    5. [A Query Compiler](#195-a-query-compiler)
 
 20. [Continuations](#20-continuations)
- 1. [Scheme Continuations](#201-scheme-continuations)
- 2. [Continuation-Passing Macros](#202-continuation-passing-macros)
- 3. [Code-Walkers and CPS Conversion](#203-code-walkers-and-cps-conversion)
+    1. [Scheme Continuations](#201-scheme-continuations)
+    2. [Continuation-Passing Macros](#202-continuation-passing-macros)
+    3. [Code-Walkers and CPS Conversion](#203-code-walkers-and-cps-conversion)
 
 21. [Multiple Processes](#21-multiple-processes)
- 1. [The Process Abstraction](#211-the-process-abstraction)
- 2. [Implementation](#212-implementation)
- 3. [The Less-than-Rapid Prototype](#213-the-less-than-rapid-prototype)
+    1. [The Process Abstraction](#211-the-process-abstraction)
+    2. [Implementation](#212-implementation)
+    3. [The Less-than-Rapid Prototype](#213-the-less-than-rapid-prototype)
 
 22. [Nondeterminism](#22-nondeterminism)
- 1. [The Concept](#221-the-concept)
- 2. [Search](#222-search)
- 3. [Scheme Implementation](#223-scheme-implementation)
- 4. [Common Lisp Implementation](#224-common-lisp-implementation)
- 5. [Cuts](#225-cuts)
- 6. [True Nondeterminism](#226-true-nondeterminism)
+    1. [The Concept](#221-the-concept)
+    2. [Search](#222-search)
+    3. [Scheme Implementation](#223-scheme-implementation)
+    4. [Common Lisp Implementation](#224-common-lisp-implementation)
+    5. [Cuts](#225-cuts)
+    6. [True Nondeterminism](#226-true-nondeterminism)
 
 23. [Parsing with ATNs](#23-parsing-with-at-ns)
- 1. [Background](#231-background)
- 2. [The Formalism](#232-the-formalism)
- 3. [Nondeterminism](#233-nondeterminism)
- 4. [An ATN Compiler](#234-an-atn-compiler)
- 5. [A Sample ATN](#235-a-sample-atn)
+    1. [Background](#231-background)
+    2. [The Formalism](#232-the-formalism)
+    3. [Nondeterminism](#233-nondeterminism)
+    4. [An ATN Compiler](#234-an-atn-compiler)
+    5. [A Sample ATN](#235-a-sample-atn)
 
 24. [Prolog](#24-prolog)
- 1. [Concepts](#241-concepts)
- 2. [An Interpreter](#242-an-interpreter)
- 3. [Rules](#243-rules)
- 4. [The Need for Nondeterminism](#244-the-need-for-nondeterminism)
- 5. [New Implementation](#245-new-implementation)
- 6. [Adding Prolog Features](#246-adding-prolog-features)
- 7. [Examples](#247-examples)
- 8. [The Senses of Compile](#248-the-senses-of-compile)
+    1. [Concepts](#241-concepts)
+    2. [An Interpreter](#242-an-interpreter)
+    3. [Rules](#243-rules)
+    4. [The Need for Nondeterminism](#244-the-need-for-nondeterminism)
+    5. [New Implementation](#245-new-implementation)
+    6. [Adding Prolog Features](#246-adding-prolog-features)
+    7. [Examples](#247-examples)
+    8. [The Senses of Compile](#248-the-senses-of-compile)
 
 25. [Object-Oriented Lisp](#25-Object-oriented-lisp)
- 1. [Plus ca Change](#251-plus-ca-change)
- 2. [Objects in Plain Lisp](#252-objects-in-plain-lisp)
- 3. [Classes and Instances](#253-classes-and-instances)
- 4. [Methods](#254-methods)
- 5. [Auxiliary Methods and Combination](#255-auxiliary-methods-and-combination)
- 6. [CLOS and Lisp](#256-clos-and-lisp)
- 7. [When to Object](#257-when-to-object)
+    1. [Plus ca Change](#251-plus-ca-change)
+    2. [Objects in Plain Lisp](#252-objects-in-plain-lisp)
+    3. [Classes and Instances](#253-classes-and-instances)
+    4. [Methods](#254-methods)
+    5. [Auxiliary Methods and Combination](#255-auxiliary-methods-and-combination)
+    6. [CLOS and Lisp](#256-clos-and-lisp)
+    7. [When to Object](#257-when-to-object)
 
----
+* * *
 
 # 1 The Extensible Language
 
@@ -1373,7 +1374,8 @@ over their own shared copy of an assoc-list.
  #<Interpreted-Function 802347>)
 ```
 
----
+* * *
+
 ###### Figure 2.1: Three closures share a list.
 
 ```
@@ -1390,7 +1392,7 @@ over their own shared copy of an assoc-list.
 
 ```
 
----
+* * *
 
 The actual assoc-list within the database is invisible from the outside world—we
 can’t even tell that it’s an assoc-list—but it can be reached through the functions
@@ -1793,7 +1795,8 @@ Lisp and functional programming have gradually become inseparable.
 An example will show how functional programming differs from what you
 might do in another language. Suppose for some reason we want the elements of
 
----
+* * *
+
 ###### Figure 3.1: A function to reverse lists.
 
 ```
@@ -1806,7 +1809,7 @@ might do in another language. Suppose for some reason we want the elements of
       (rotatef (nth i lst) (nth j lst)))))
 ```
 
----
+* * *
 
 a list in the reverse order. Instead of writing a function to reverse lists, we write a
 function which takes a list, and returns a list with the same elements in the reverse
@@ -1848,7 +1851,8 @@ touched.
 (A B C)
 ```
 
----
+* * *
+
 ###### Figure 3.2: A function to return reversed lists.
 
 
@@ -1861,7 +1865,7 @@ touched.
     (rev lst nil)))
 ```
 
----
+* * *
 
 It used to be thought that you could judge someone’s character by looking at
 the shape of his head. Whether or not this is true of people, it is generally true
@@ -2562,7 +2566,8 @@ are for Polo. A highly optimized Common Lisp program might never see a list.
 It would still be a list, though, at least at compile-time. The most sophisticated
 programs, which use lists less at runtime, use them proportionately more at
 
----
+* * *
+
 ###### Figure 4.1: Small functions which operate on lists.
 
 ```
@@ -2584,7 +2589,7 @@ programs, which use lists less at runtime, use them proportionately more at
   (if (listp obj) obj (list obj)))
 ```
 
----
+* * *
 
 compile-time, when generating macro expansions. So although the role of lists is
 decreased in modern dialects, operations on lists can still make up the greater part
@@ -2669,7 +2674,8 @@ if you called find-if with the same function on successive cdrs of a list. Analo
 filter returns what some would have returned for successive cdrs of the
 list:
 
----
+* * *
+
 ###### Figure 4.2: Larger functions that operate on lists.
 
 ```
@@ -2700,7 +2706,7 @@ list:
 ```
 
 
----
+* * *
 
 ```
 > (filter #’(lambda (x) (if (numberp x) (1+ x)))
@@ -2778,7 +2784,8 @@ Every leaf for which the function returns true is removed.
 This section gives some examples of functions for searching lists. Common
 Lisp provides a rich set of built-in operators for this purpose, but some tasks
 
----
+* * *
+
 ###### Figure 4.3: Doubly-recursive list utilities.
 
 ```
@@ -2803,7 +2810,7 @@ Lisp provides a rich set of built-in operators for this purpose, but some tasks
 ```
 
 
----
+* * *
 
 
 
@@ -2833,7 +2840,8 @@ Since before is similar in spirit to a test for membership, it is written to
 resemble the built-in member function. Like member it takes an optional test
 argument, which defaults to eql. Also, instead of simply returning t, it tries to
 
----
+* * *
+
 ###### Figure 4.4: Functions which search lists.
 
 ```
@@ -2868,7 +2876,7 @@ argument, which defaults to eql. Also, instead of simply returning t, it tries t
       (push (car src) acc))))
 ```
 
----
+* * *
 
 return potentially useful information: the cdr beginning with the object given as
 the ﬁrst argument.
@@ -2937,7 +2945,8 @@ A more general kind of search is provided by best. This utility also takes a
 function and a list, but here the function must be a predicate of two arguments. It
 returns the element which, according to the predicate, beats all the others.
 
----
+* * *
+
 ###### Figure 4.5: Search functions which compare elements.
 
 ```
@@ -2977,7 +2986,7 @@ returns the element which, according to the predicate, beats all the others.
         (values (nreverse result) max))))
 ```
 
----
+* * *
 
 ```
 > (best #’> ’(1 2 3 4 5))
@@ -3028,7 +3037,8 @@ With `map->` it is possible to navigate arbitrary data structures, as well as
 operate on sequences of numbers. We could deﬁne `mapa-b` in terms of `map->` as
 follows:
 
----
+* * *
+
 ###### Figure 4.6: Mapping functions.
 
 ```
@@ -3076,7 +3086,7 @@ follows:
 ```
 
 
----
+* * *
 
 For efﬁciency, the built-in mapcan is destructive. It could be duplicated by:
 
@@ -3139,7 +3149,8 @@ by the new series macros introduced in CLTL2. For example,
 
 could be rendered
 
----
+* * *
+
 ###### Figure 4.7: I/O functions.
 
 ```
@@ -3162,7 +3173,7 @@ could be rendered
           (format *query-io* "~A~%" (funcall fn in))))))
 ```
 
----
+* * *
 
 ```
 (collect (#Mfn (scan-range :from a :upto b :by c)))
@@ -3241,7 +3252,8 @@ printable representation: symbols, strings, numbers, even lists.
 |ARMadiLL0|
 ```
 
----
+* * *
+
 ###### Figure 4.8: Functions which operate on symbols and strings.
 
 ```
@@ -3262,7 +3274,7 @@ printable representation: symbols, strings, numbers, even lists.
              (symbol-name sym)))
 ```
 
----
+* * *
 
 After calling mkstr to concatenate all its arguments into a single string, symb
 sends the string to intern. This function is Lisp’s traditional symbol-builder: it
@@ -3479,7 +3491,8 @@ is that it makes a language more orthogonal. Before `complement`, Common
 Lisp had pairs of functions like `remove-if` and `remove-if-not`, `subst-if` and
 `subst-if-not`, and so on. With `complement` we can do without half of them.
 
----
+* * *
+
 ###### Figure 5.1: Returning destructive equivalents.
 
 ```
@@ -3492,7 +3505,7 @@ Lisp had pairs of functions like `remove-if` and `remove-if-not`, `subst-if` and
   (setf (gethash fn *!equivs*) fn!))
 ```
 
----
+* * *
 
 The `setf` macro also improves Lisp’s orthogonality. Earlier dialects
 of Lisp would often have pairs of functions for reading and writing
@@ -3544,7 +3557,8 @@ which would be more visible in Scheme:
 ((! remove-if) oddp lst)
 ```
 
----
+* * *
+
 ###### Figure 5.2: Memoizing utility.
 
 ```
@@ -3558,7 +3572,7 @@ which would be more visible in Scheme:
                     (apply fn args)))))))
 ```
 
----
+* * *
 
 As well as greater orthogonality, the `!` operator brings a couple of other beneﬁts.
 It makes programs clearer, because we can see immediately that `(! #’foo)`
@@ -3592,7 +3606,8 @@ Elapsed Time = 0.00 seconds
 1
 ```
 
----
+* * *
+
 ###### Figure 5.3: An operator for functional composition.
 
 ```
@@ -3607,7 +3622,7 @@ Elapsed Time = 0.00 seconds
       #’identity))
 ```
 
----
+* * *
 
 With a memoized function, repeated calls are just hash-table lookups. There is
 of course the additional expense of a lookup on each initial call, but since we
@@ -3650,7 +3665,8 @@ arguments it takes, so will the function returned by `compose`:
 4
 ```
 
----
+* * *
+
 ###### Figure 5.4: More function builders.
 
 ```
@@ -3675,7 +3691,7 @@ arguments it takes, so will the function returned by `compose`:
              (or (funcall fn x) (funcall chain x))))))
 ```
 
----
+* * *
 
 Since `not` is a Lisp function, `complement` is a special case of `compose`. It could
 be deﬁned as:
@@ -3758,7 +3774,8 @@ Structurally these two functions have a lot in common. They both
 operate recursively on successive `cdrs` of a list, evaluating the same
 expression on each step,
 
----
+* * *
+
 ###### Figure 5.5: Function to deﬁne ﬂat list recursers.
 
 ```
@@ -3774,7 +3791,7 @@ expression on each step,
     #’self))
 ```
 
----
+* * *
 
 except in the base case, where they return a distinct value. This pattern appears
 so frequently in Lisp programs that experienced programmers can read and reproduce
@@ -3809,7 +3826,8 @@ self. In the recursive case the function `rec` is passed two arguments, the curr
 `our-every`, where the recursive case is an and, if the ﬁrst argument returns false
 we want to stop right there. Which means that the argument passed in the recursive
 
----
+* * *
+
 ###### Figure 5.6: Functions expressed with lrec.
 
 ```
@@ -3826,7 +3844,7 @@ we want to stop right there. Which means that the argument passed in the recursi
 (lrec #’(lambda (x f) (or (fn x) (funcall f))))
 ```
 
----
+* * *
 
 case must not be a value but a function, which we can call (if we want) in order to
 get a value.
@@ -3853,14 +3871,15 @@ easier to interpret if the lists are considered in that form:
 (a b (c d))       =   (a . (b . ((c . (d . nil)) . nil)))
 ```
 
----
+* * *
+
 ###### Figure 5.7: Lists as trees.
 
 ```
 (a . b)                  (a b c)                          (a b (c d))
 ```
 
----
+* * *
 
 Any list can be interpreted as a binary tree. Hence the distinction between pairs
 of Common Lisp functions like `copy-list` and `copy-tree`. The former copies
@@ -3993,7 +4012,8 @@ the recursive calls. For the general case, we want to use instead a function whi
 takes two closures representing the calls themselves. Then we can write recursers
 which only traverse as much of the tree as they want to.
 
----
+* * *
+
 ###### Figure 5.8: Function for recursion on trees.
 
 ```
@@ -4009,9 +4029,10 @@ which only traverse as much of the tree as they want to.
     #’self))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 5.9: Functions expressed with ttrav.
 
 ```
@@ -4025,7 +4046,7 @@ which only traverse as much of the tree as they want to.
 (ttrav #’nconc #’mklist)
 ```
 
----
+* * *
 
 Functions built by ttrav always traverse a whole tree. That’s ﬁne for functions
 like count-leaves or flatten, which have to traverse the whole tree anyway.
@@ -4048,7 +4069,8 @@ Now we can also express rfind-if for e.g. oddp as:
 
 ```
 
----
+* * *
+
 ###### Figure 5.10: Function for recursion on trees.
 
 ```
@@ -4068,7 +4090,7 @@ Now we can also express rfind-if for e.g. oddp as:
     #’self))
 ```
 
----
+* * *
 
 ## 5.7 When to Build Functions
 
@@ -4124,7 +4146,8 @@ representing a node in a network can know of several other nodes (closures) to
 which it must send its output. This means that we may be able to translate some
 networks straight into code.
 
----
+* * *
+
 ###### Figure 6.1: Session of twenty questions.
 
 ```
@@ -4142,7 +4165,7 @@ Is the coin a penny?
 LINCOLN
 ```
 
----
+* * *
 
 In this section and the next we will look at two ways to traverse a network.
 First we will follow the traditional approach, with nodes deﬁned as structures, and
@@ -4175,7 +4198,8 @@ our tree:
          ’male ’female)
 ```
 
----
+* * *
+
 ###### Figure 6.2: Representation and deﬁnition of nodes.
 
 ```
@@ -4190,9 +4214,10 @@ our tree:
                    :no       no)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 6.3: Sample network.
 
 ```
@@ -4209,7 +4234,7 @@ our tree:
 (defnode ’penny ’lincoln)
 ```
 
----
+* * *
 
 [Figure 6.3](#figure-63-sample-network) shows as much of the network as we need to produce the transcript in
 [Figure 6.1](#figure-61-session-of-twenty-questions).
@@ -4222,7 +4247,8 @@ we continue traversing at one of two possible destinations. If the node is a lea
 run-node just returns its contents. With the network deﬁned in [Figure 6.3](#figure-63-sample-network), this
 function produces the output shown in [Figure 6.1](#figure-61-session-of-twenty-questions).
 
----
+* * *
+
 ###### Figure 6.4: Function for traversing networks.
 
 ```
@@ -4236,9 +4262,10 @@ function produces the output shown in [Figure 6.1](#figure-61-session-of-twenty-
           (t (node-contents n)))))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 6.5: A network compiled into closures.
 
 ```
@@ -4255,7 +4282,7 @@ function produces the output shown in [Figure 6.1](#figure-61-session-of-twenty-
             #’(lambda () conts))))
 ```
 
----
+* * *
 
 ## 6.2 Compiling Networks
 
@@ -4270,7 +4297,8 @@ traverse them, we represent the nodes as closures. The data formerly contained i
 the structures gets stored in variable bindings within the closures. Now there is no
 need for run-node; it is implicit in the nodes themselves. To start the traversal,
 
----
+* * *
+
 ###### Figure 6.6: Compilation with static references.
 
 ```
@@ -4298,7 +4326,7 @@ need for run-node; it is implicit in the nodes themselves. To start the traversa
               #’(lambda () conts))))))
 ```
 
----
+* * *
 
 we just funcall the node at which we want to begin:
 
@@ -4561,7 +4589,8 @@ With backquote:
 
 Without backquote:
 
----
+* * *
+
 ###### Figure 7.1: A macro deﬁned with and without backquote.
 
 ```
@@ -4575,7 +4604,7 @@ Without backquote:
 ```
 
 
----
+* * *
 
 
 The two deﬁnitions in [Figure 7.1](#figure-71-a-macro-deﬁned-with-and-without-backquote) deﬁne the same macro, but the ﬁrst uses
@@ -4702,7 +4731,8 @@ want to test for membership using eq, you have to say so explicitly:
 If we did this a lot, we might want to write a variant of member which always used
 eq. Some earlier dialects of Lisp had such a function, called memq:
 
----
+* * *
+
 ###### Figure 7.2: Diagram used in writing memq.
 
 ```
@@ -4717,7 +4747,7 @@ we will reincarnate it as a macro.
 > expansion: `(member x choices :test #’eq)`
 >
 
----
+* * *
 
 The method: Begin with a typical call to the macro you want to deﬁne. Write
 it down on a piece of paper, and below it write down the expression into which it
@@ -4763,7 +4793,8 @@ use in the macro body the ﬁrst parameter, with a comma:
 
 Continuing in this way, the completed macro deﬁnition is:
 
----
+* * *
+
 ###### Figure 7.3: Diagram used in writing while.
 
 ```
@@ -4779,7 +4810,7 @@ Continuing in this way, the completed macro deﬁnition is:
   (rub-against-legs))
 ```
 
----
+* * *
 
 ```
 (defmacro memq (obj lst)
@@ -4872,7 +4903,8 @@ always to have to type
 Typically you debug functions by calling them, and macros by expanding
 them. But since a macro call involves two layers of computation, there are two
 
----
+* * *
+
 ###### Figure 7.4: A macro and two depths of expansion.
 
 ```
@@ -4900,9 +4932,10 @@ T
 T
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 7.5: A macro for testing macroexpansion.
 
 ```
@@ -4910,7 +4943,7 @@ T
    ‘(pprint (macroexpand-1 ’,expr)))
 ```
 
----
+* * *
 
 points where things can go wrong. If a macro is misbehaving, most of the time
 you will be able to tell what’s wrong just by looking at the expansion. Sometimes,
@@ -5025,7 +5058,8 @@ Used sparingly, parameter list destructuring can result in clearer code. At a
 minimum, it can be used in macros like when-bind and dolist, which take two
 or more arguments followed by a body of expressions.
 
----
+* * *
+
 ###### Figure 7.6: A sketch of defmacro.
 
 ```
@@ -5047,7 +5081,7 @@ or more arguments followed by a body of expressions.
       expr))
 ```
 
----
+* * *
 
 ## 7.6 A Model of Macros
 
@@ -5132,7 +5166,8 @@ the new value of the ﬁrst argument is visible during the evaluation of the fou
 ```
 should expand into something like
 
----
+* * *
+
 ###### Figure 7.7: Desired expansion of do.
 
 ```
@@ -5147,7 +5182,7 @@ should expand into something like
 ```
 
 
----
+* * *
 
 ```
 > (let ((a 1))
@@ -5175,7 +5210,8 @@ do? Chapter 9 will deal with this problem in detail; for now, sufﬁce it to say
 instead of using foo, the macroexpansion must use a special anonymous symbol
 returned by the function gensym.
 
----
+* * *
+
 ###### Figure 7.8: Implementing do.
 
 ```
@@ -5205,7 +5241,7 @@ returned by the function gensym.
 ```
 
 
----
+* * *
 
 
 In order to write do, we consider what it would take to transform the ﬁrst
@@ -5270,7 +5306,8 @@ effort. However, as a macro deﬁnition our-and is just as good, if not better. 
 may be inefﬁcient in calling length on each recursion, but its organization shows
 more clearly the way in which the expansion depends on the number of conjuncts.
 
----
+* * *
+
 ###### Figure 7.9: Two macros equivalent to and.
 
 ```
@@ -5292,7 +5329,7 @@ more clearly the way in which the expansion depends on the number of conjuncts.
         (expander args))))
 ```
 
----
+* * *
 
 As always, there are exceptions. In Lisp, the distinction between
 compile-time and runtime is an artiﬁcial one, so any rule which
@@ -5904,7 +5941,8 @@ We could imagine it written as follows:
 Macros like while and nil! could be described as general-purpose utilities.
 Any Lisp program might use them. But particular domains can have their utilities
 
----
+* * *
+
 ###### Figure 8.1: Original move and scale.
 
 ```
@@ -5927,7 +5965,7 @@ Any Lisp program might use them. But particular domains can have their utilities
               (max x1 xb) (max y1 yb)))))
 ```
 
----
+* * *
 
 as well. There is no reason to suppose that base Lisp is the only level at which
 you have a programming language to extend. If you’re writing a CAD program,
@@ -5952,7 +5990,8 @@ program will have to do is slide groups of objects. This is the purpose of the
 function move-objs in [Figure 8.1](#figure-81-original-move-and-scale). For efﬁciency, we don’t want to redraw the
 whole screen after each operation—only the parts which have changed. Hence
 
----
+* * *
+
 ###### Figure 8.2: Move and scale ﬁlleted.
 
 ```
@@ -5979,7 +6018,7 @@ whole screen after each operation—only the parts which have changed. Hence
 ```
 
 
----
+* * *
 
 
 the two calls to the function bounds, which returns four coordinates (min x, min
@@ -6422,7 +6461,8 @@ Vulnerable to capture:
 
 A correct version:
 
----
+* * *
+
 ###### Figure 9.1: Avoiding capture with let.
 
 ```
@@ -6433,7 +6473,7 @@ A correct version:
 ```
 
 
----
+* * *
 
 
 ## 9.4 Avoiding Capture with Better Names
@@ -6526,7 +6566,8 @@ Vulnerable to capture:
 
 A correct version:
 
----
+* * *
+
 ###### Figure 9.2: Avoiding capture with a closure.
 
 ```
@@ -6539,7 +6580,7 @@ A correct version:
 ```
 
 
----
+* * *
 
 
 is the ﬁrst thing made by the expansion of a for, free symbols occurring in the
@@ -6629,7 +6670,8 @@ Vulnerable to capture:
 
 A correct version:
 
----
+* * *
+
 ###### Figure 9.3: Avoiding capture with gensym.
 
 ```
@@ -6642,7 +6684,7 @@ A correct version:
 ```
 
 
----
+* * *
 
 In CLTL2 Common Lisp, the number in a gensym’s printed representation
 comes from *gensym-counter*, a global variable always bound to an integer.
@@ -6850,7 +6892,8 @@ Subject to multiple evaluations:
 
 Incorrect order of evaluation:
 
----
+* * *
+
 ###### Figure 10.1: Controlling argument evaluation.
 
 ```
@@ -6863,7 +6906,7 @@ Incorrect order of evaluation:
 ```
 
 
----
+* * *
 
 
 could be evaluated more than once. In this case, the solution is to bind a variable
@@ -7164,7 +7207,8 @@ This will work:
 
 This won’t compile:
 
----
+* * *
+
 ###### Figure 10.2: Mistaken analogy to a recursive function.
 
 ```
@@ -7175,7 +7219,7 @@ This won’t compile:
 ```
 
 
----
+* * *
 
 which will in turn expand into:
 
@@ -7211,7 +7255,8 @@ so it is not impossible in principle to duplicate a recursive function with a ma
 However, transforming more complicated recursive functions could be difﬁcult,
 or even impossible.
 
----
+* * *
+
 ###### Figure 10.3: Two ways to ﬁx the problem.
 
 ```
@@ -7231,7 +7276,7 @@ or even impossible.
      (nth-fn ,n ,lst)))
 ```
 
----
+* * *
 
 Depending on what you need a macro for, you may ﬁnd it sufﬁcient to use
 instead a combination of macro and function. [Figure 10.3](#figure-103-two-ways-to-ﬁx-the-problem) shows two ways to
@@ -7260,7 +7305,8 @@ recurses on the arguments to the macro (which are available at macroexpansion
 time), not upon their values (which aren’t). It might seem as if the expansion
 would contain a reference to orb itself, but the call to orb generated by one
 
----
+* * *
+
 ###### Figure 10.4: Recursive expansion functions.
 
 ```
@@ -7287,7 +7333,7 @@ would contain a reference to orb itself, but the call to orb generated by one
 ```
 
 
----
+* * *
 
 
 macroexpansion step will be replaced by a let in the next one, yielding in the
@@ -7336,7 +7382,8 @@ If x is set to a at the toplevel, then
 will nonetheless return (b), because the call to list will be made in an environment
 containing a new x, whose value is b.
 
----
+* * *
+
 ###### Figure 11.1: Macro implementation of let.
 
 ```
@@ -7350,7 +7397,7 @@ containing a new x, whose value is b.
                binds)))
 ```
 
----
+* * *
 
 An operator which is to have a body of expressions must usually be deﬁned as
 a macro. Except for cases like prog1 and progn, the purpose of such an operator
@@ -7392,7 +7439,8 @@ Finally, the macro with-gensyms is itself for use in writing macros. Many
 macro deﬁnitions begin with the creation of gensyms, sometimes quite a number
 of them. The macro with-redraw (page 115) had to create ﬁve:
 
----
+* * *
+
 ###### Figure 11.2: Macros which bind variables.
 
 ```
@@ -7415,7 +7463,7 @@ of them. The macro with-redraw (page 115) had to create ﬁve:
      ,@body))
 ```
 
----
+* * *
 
 ```
 (defmacro with-redraw ((var objs) &body body)
@@ -7446,7 +7494,8 @@ evaluate one of a set of expressions, we just use a conditional within a let:
       (visit rain-place)))
 ```
 
----
+* * *
+
 ###### Figure 11.3: Combination of cond and let.
 
 ```
@@ -7476,7 +7525,7 @@ evaluate one of a set of expressions, we just use a conditional within a let:
           (cdr cl)))
 ```
 
----
+* * *
 
 Unfortunately, there is no convenient idiom for the opposite situation, where
 we always want to evaluate the same code, but where the bindings must vary
@@ -7593,7 +7642,8 @@ With a macro we can hide all this bookkeeping. [Figure 11.4](#figure-114-a-typic
 which will allow us to deal with databases at a higher level of abstraction. Using
 with-db, we would say just:
 
----
+* * *
+
 ###### Figure 11.4: A typical with- macro.
 
 ```
@@ -7631,7 +7681,7 @@ with-db, we would say just:
 ```
 
 
----
+* * *
 
 ```
 (with-db db
@@ -7645,7 +7695,8 @@ The two deﬁnitions of with-db in [Figure 11.4](#figure-114-a-typical-with-macr
 to write this kind of macro. The ﬁrst is a pure macro, the second a combination
 of a function and a macro. The second approach becomes more practical as the
 
----
+* * *
+
 ###### Figure 11.5: Macros for conditional evaluation.
 
 ```
@@ -7664,7 +7715,7 @@ of a function and a macro. The second approach becomes more practical as the
 ```
 
 
----
+* * *
 
 desired with- macro grows in complexity.
 
@@ -7751,7 +7802,8 @@ use member. We can get the same abstraction more efﬁciently with a macro: in
 combines the abstraction of member with the efﬁciency of or. The equivalent in
 expression
 
----
+* * *
+
 ###### Figure 11.6: Macros for conditional evaluation.
 
 ```
@@ -7787,7 +7839,7 @@ expression
 ```
 
 
----
+* * *
 
 ```
 (in (foo) (bar) (baz))
@@ -7863,7 +7915,8 @@ that the rest of the clause will never be evaluated.
 For clarity, the code that generates the expansion of each >case clause is
 deﬁned as a separate function, >casex. Notice that >casex itself uses inq.
 
----
+* * *
+
 ###### Figure 11.7: Simple iteration macros.
 
 ```
@@ -7886,7 +7939,7 @@ deﬁned as a separate function, >casex. Notice that >casex itself uses inq.
 ```
 
 
----
+* * *
 
 ## 11.4 Iteration
 
@@ -7969,7 +8022,8 @@ write
 The list of parameters given as the ﬁrst argument can be any length, and
 iteration will proceed by tuples of that length. If just one parameter is given, both
 
----
+* * *
+
 ###### Figure 11.8: Macros for iteration by subsequences.
 
 ```
@@ -8012,9 +8066,10 @@ iteration will proceed by tuples of that length. If just one parameter is given,
 ```
 
 
----
+* * *
 
----
+* * *
+
 ###### Figure 11.9: Expansion of a call to do-tuples/c.
 
 ```
@@ -8042,7 +8097,7 @@ iteration will proceed by tuples of that length. If just one parameter is given,
 
 ```
 
----
+* * *
 
 degenerate to dolist:
 
@@ -8118,7 +8173,8 @@ we need a multiple-value version of psetq. Since Common Lisp doesn’t have
 one, we have to write it ourselves, as in Figure 11.12. The new macro works as
 follows:
 
----
+* * *
+
 ###### Figure 11.10: Multiple value binding version of do*.
 
 ```
@@ -8155,7 +8211,7 @@ follows:
 ```
 
 
----
+* * *
 
 ```
 > (let ((w 0) (x 1) (y 2) (z 3))
@@ -8167,7 +8223,8 @@ follows:
 The deﬁnition of mvpsetq relies on three utility functions: mklist,
 group, and shuffle, deﬁned here, which interleaves two lists:
 
----
+* * *
+
 ###### Figure 11.11: A game of squash.
 
 ```
@@ -8203,7 +8260,7 @@ of the mouse.
 `(draw obj)` draws obj at its current position.
 
 
----
+* * *
 
 ```
 > (shuffle ’(a b c) ’(1 2 3 4))
@@ -8219,7 +8276,8 @@ call. The mappend-mklist idiom ﬂattens a tree by one level:
 (A B C D E (F G) H (I) J)
 ```
 
----
+* * *
+
 ###### Figure 11.12: Multiple value version of psetq.
 
 ```
@@ -8255,7 +8313,7 @@ call. The mappend-mklist idiom ﬂattens a tree by one level:
 ```
 
 
----
+* * *
 
 
 To help in understanding this rather large macro, Figure 11.14 contains a sample
@@ -8267,7 +8325,8 @@ Macros aren’t the only way to protect arguments against evaluation. Another is
 wrap them in closures. Conditional and repeated evaluation are similar because
 neither problem inherently requires macros. For example, we could write a version
 
----
+* * *
+
 ###### Figure 11.13: Multiple value binding version of do.
 
 ```
@@ -8301,7 +8360,7 @@ neither problem inherently requires macros. For example, we could write a versio
 ```
 
 
----
+* * *
 
 of if as a function:
 
@@ -8319,7 +8378,8 @@ so instead of
 (if (rich) (go-sailing) (rob-bank))
 ```
 
----
+* * *
+
 ###### Figure 11.14: Expansion of a call to mvdo.
 
 ```
@@ -8344,7 +8404,7 @@ so instead of
 ```
 
 
----
+* * *
 
 we would say
 
@@ -8596,7 +8656,8 @@ setf and setq can take an arbitrary number of arguments, so should toggle.
 We can add this capability by deﬁning another macro on top of the modify-macro,
 as in Figure 12.1.
 
----
+* * *
+
 ###### Figure 12.1: Macros which operate on generalized variables.
 
 ```
@@ -8618,7 +8679,7 @@ as in Figure 12.1.
 (define-modify-macro toggle2 () not)
 ```
 
----
+* * *
 
 ## 12.3 New Utilities
 
@@ -8649,7 +8710,8 @@ you can say just
 (nilf x y z)
 ```
 
----
+* * *
+
 ###### Figure 12.2: List operations on generalized variables.
 
 ```
@@ -8665,7 +8727,7 @@ you can say just
       (nconc place (list obj)))))
 ```
 
----
+* * *
 
 
 The last macro, toggle, was described in the previous section: it is like nilf,
@@ -8817,7 +8879,8 @@ when expanding incf by hand. The only difference is that, instead of wrapping
 the last form in the let* in a call to 1+, we wrap it in an expression made from
 the arguments to f. The deﬁnition of f is shown in Figure 12.3.
 
----
+* * *
+
 ###### Figure 12.3: More complex macros on setf.
 
 ```
@@ -8858,7 +8921,7 @@ the arguments to f. The deﬁnition of f is shown in Figure 12.3.
                 ,set)))))
 ```
 
----
+* * *
 
 This utility is quite a useful one. Now that we have it, for example, we can
 easily replace any named function with a memoized (Section 5.3) equivalent. 4 To
@@ -8964,7 +9027,8 @@ simplest case, the arguments could be ordinary variables:
 (3 2 1)
 ```
 
----
+* * *
+
 ###### Figure 12.4: A macro which sorts its arguments.
 
 ```
@@ -8994,7 +9058,7 @@ simplest case, the arguments could be ordinary variables:
 ```
 
 
----
+* * *
 
 In general, they could be any invertible expressions. Suppose cake is an invertible
 function which returns someone’s piece of cake, and bigger is a comparison
@@ -9013,7 +9077,8 @@ mapcon expression, which generates code to sort these temporary variables. The
 code generated by this portion of the macro grows exponentially with the number
 of arguments. After sorting, the generalized variables are reassigned using the
 
----
+* * *
+
 ###### Figure 12.5: Expansion of a call to sortf.
 
 ```
@@ -9038,7 +9103,7 @@ of arguments. After sorting, the generalized variables are reassigned using the
   (system:set-car #:g6 #:g5))
 ```
 
----
+* * *
 
 forms returned by get-setf-method. The algorithm used is the O(n ) bubblesort,
 but this macro is not intended to be called with huge numbers of arguments.
@@ -9110,7 +9175,8 @@ There is one important difference between defmacro and defsetf: the latter
 automatically creates gensyms for its arguments. With the deﬁnition given above,
 `(setf (car x) y)` would expand into:
 
----
+* * *
+
 ###### Figure 12.6: An asymmetric inversion.
 
 ```
@@ -9131,7 +9197,7 @@ automatically creates gensyms for its arguments. With the deﬁnition given abov
   ‘(setf (gethash ,key *cache*) ,val))
 ```
 
----
+* * *
 
 Thus we can write defsetf expanders without having to worry about variable
 capture, or number or order of evaluations.
@@ -9230,7 +9296,8 @@ expansion-time can be combined with the kind we get from in (page 152), where
 it was possible to avoid even evaluating some of the arguments. Figure 13.2
 contains two versions of most-of, which returns true if most of its arguments do:
 
----
+* * *
+
 ###### Figure 13.1: Shifting computation when ﬁnding averages.
 
 ```
@@ -9241,9 +9308,10 @@ contains two versions of most-of, which returns true if most of its arguments do
   ‘(/ (+ ,@args) ,(length args)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 13.2: Shifting and avoiding computation.
 
 ```
@@ -9264,7 +9332,7 @@ contains two versions of most-of, which returns true if most of its arguments do
                      args)))))
 ```
 
----
+* * *
 
 ```
 > (most-of t t t nil)
@@ -9284,7 +9352,8 @@ into the equivalent of:
 
 In the best case, just over half the arguments will be evaluated.
 
----
+* * *
+
 ###### Figure 13.3: Use of arguments known at compile-time.
 
 ```
@@ -9325,7 +9394,7 @@ In the best case, just over half the arguments will be evaluated.
                  ,else)))))
 ```
 
----
+* * *
 
 A macro may also be able to shift computation to compile-time if the values
 of particular arguments are known. Figure 13.3 contains an example of such a
@@ -9371,7 +9440,8 @@ the macro version of nthmost is long and complicated, it would only be worth
 writing in extreme cases. However, information known at compile-time is always
 a factor worth considering, even if you choose not to take advantage of it.
 
----
+* * *
+
 ###### Figure 13.4: Expansion of nthmost.
 
 ```
@@ -9405,7 +9475,7 @@ a factor worth considering, even if you choose not to take advantage of it.
 ```
 
 
----
+* * *
 
 ## 13.2 Example: Bezier Curves
 
@@ -9468,7 +9538,8 @@ compile-time. A good example is if-match (page 242). Pattern-matchers compare
 two sequences, possibly containing variables, to see if there is some way of
 assigning values to the variables which will make the two sequences equal. The
 
----
+* * *
+
 ###### Figure 13.5: Macro for generating Bezier curves.
 
 ```
@@ -9510,7 +9581,7 @@ assigning values to the variables which will make the two sequences equal. The
                    (aref *pts* *segs* 1) ,gy3))))))
 ```
 
----
+* * *
 
 design of if-match shows that if one of the sequences is known at compile-time,
 and only that one contains variables, then matching can be done more efﬁciently.
@@ -9615,7 +9686,8 @@ in situations where a program needs to poll some outside source. And when you
 are polling a source, unless you are simply waiting for it to change state, you will
 usually want to do something with the object you ﬁnd there:
 
----
+* * *
+
 ###### Figure 14.1: Anaphoric variants of Common Lisp operators.
 
 ```
@@ -9648,7 +9720,7 @@ usually want to do something with the object you ﬁnd there:
                (acond ,@(cdr clauses)))))))
 ```
 
----
+* * *
 
 ```
 (awhile (poll *fridge*)
@@ -9716,7 +9788,8 @@ initially be kept in a gensymed variable, in order that the symbol it may be bou
 only within the remainder of the clause. When macros create bindings, they should
 always do so over the narrowest possible scope. Here, if we dispensed with the
 
----
+* * *
+
 ###### Figure 14.2: More anaphoric variants.
 
 ```
@@ -9735,7 +9808,7 @@ always do so over the narrowest possible scope. Here, if we dispensed with the
                args)))
 ```
 
----
+* * *
 
 gensym and instead bound it immediately to the result of the test expression, as
 in:
@@ -9985,7 +10058,8 @@ write a version of load as:
   (do-file filename (eval it)))
 ```
 
----
+* * *
+
 ###### Figure 14.3: Multiple-value anaphoric macros.
 
 ```
@@ -10018,7 +10092,7 @@ write a version of load as:
                (acond2 ,@(cdr clauses)))))))
 ```
 
----
+* * *
 
 ## 14.3 Referential Transparency
 
@@ -10033,7 +10107,8 @@ Gelernter and Jagannathan deﬁne as follows:
 Note that this standard applies to languages,not to programs. No language with
 assignment is referentially transparent. The ﬁrst and the last x in this expression
 
----
+* * *
+
 ###### Figure 14.4: File utilities.
 
 ```
@@ -10049,7 +10124,7 @@ assignment is referentially transparent. The ﬁrst and the last x in this expre
          ,@body))))
 ```
 
----
+* * *
 
 ```
 (list x
@@ -10139,7 +10214,8 @@ yields a function equivalent to
 #’(lambda (x) (and (integerp x) (oddp x)))
 ```
 
----
+* * *
+
 ###### Figure 15.1: General function-building macro.
 
 ```
@@ -10170,7 +10246,7 @@ yields a function equivalent to
           (rec fns)))))
 ```
 
----
+* * *
 
 If we use compose as the operator, we get a function representing the composition
 of the arguments, but without the explicit funcalls that were needed when
@@ -10310,7 +10386,8 @@ Figure 15.2 contains the deﬁnition of the macro which will allow us to say thi
 T
 ```
 
----
+* * *
+
 ###### Figure 15.2: Macros for list recursion.
 
 ```
@@ -10335,7 +10412,7 @@ T
 ```
 
 
----
+* * *
 
 The new macro works by transforming the expression given as the second
 argument into a function to be passed to lrec. Since the second argument may
@@ -10364,7 +10441,8 @@ to use these recursion builders to deﬁne named functions:
       (alrec (1+ rec) 0))
 ```
 
----
+* * *
+
 ###### Figure 15.3: Common Lisp functions deﬁned with on-cdrs.
 
 ```
@@ -10381,7 +10459,7 @@ to use these recursion builders to deﬁne named functions:
   (on-cdrs (or (funcall fn it) rec) nil lst))
 ```
 
----
+* * *
 
 The ﬁnal macro in Figure 15.2 is intended to make this more abstract. Using
 on-cdrs we could say instead:
@@ -10418,7 +10496,8 @@ so that we could say:
 (D C A B)
 ```
 
----
+* * *
+
 ###### Figure 15.4: New utilities deﬁned with on-cdrs.
 
 ```
@@ -10440,7 +10519,7 @@ so that we could say:
              (cdr args))))
 ```
 
----
+* * *
 
 Like union, unions does not preserve the order of the elements in the initial lists.
 
@@ -10587,7 +10666,8 @@ idea of this chapter and Chapter 5 is that one can write function generators and
 put a clean macro interface on them. This same technique could equally well be
 used to build function generators which yielded particularly efﬁcient code.
 
----
+* * *
+
 ###### Figure 15.5: Macros for recursion on trees.
 
 ```
@@ -10613,9 +10693,10 @@ used to build function generators which yielded particularly efﬁcient code.
   ‘(funcall (atrec ,rec ,base) ,@trees))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 15.6: Functions deﬁned using on-trees.
 
 ```
@@ -10634,9 +10715,10 @@ used to build function generators which yielded particularly efﬁcient code.
             tree))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 15.7: Implementation of force and delay.
 
 ```
@@ -10660,7 +10742,7 @@ used to build function generators which yielded particularly efﬁcient code.
       x))
 ```
 
----
+* * *
 
 ## 15.4 Lazy Evaluation
 
@@ -10735,7 +10817,8 @@ A program, like printed text, is easiest to read when it contains no more than a
 70 characters per line. We begin at a disadvantage when the lengths of individual
 names are a quarter of that.
 
----
+* * *
+
 ###### Figure 16.1: Automatic deﬁnition of abbreviations.
 
 ```
@@ -10750,7 +10833,7 @@ names are a quarter of that.
                (group names 2))))
 ```
 
----
+* * *
 
 Fortunately, in a language like Lisp you don’t have to live with all the decisions
 of the designers. Having deﬁned
@@ -10842,7 +10925,8 @@ abbrevs calls group (page 47) to group its arguments by twos. It’s generally
 a good thing for macros to save users from typing logically unnecessary
 parentheses, and group will be useful to most such macros.
 
----
+* * *
+
 ###### Figure 16.2: Automatic deﬁnition of access macros.
 
 ```
@@ -10856,7 +10940,7 @@ parentheses, and group will be useful to most such macros.
                props)))
 ```
 
----
+* * *
 
 ## 16.2 Properties
 
@@ -11011,7 +11095,8 @@ For example, we can deﬁne a+ so that, as with aand, it is always bound to
 the value returned by the previous argument. The following function calculates
 the cost of dining out in Massachusetts:
 
----
+* * *
+
 ###### Figure 16.3: Deﬁnitions of a+ and alist.
 
 ```
@@ -11040,7 +11125,7 @@ the cost of dining out in Massachusetts:
       ‘(list ,@syms)))
 ```
 
----
+* * *
 
 ```
 (defun mass-cost (menu-price)
@@ -11063,7 +11148,8 @@ to generate its expansion. The general strategy of a+expand is to cdr down the
 list of arguments in the macro call, generating a series of nested let expressions;
 each let leaves it bound to a different argument, but also binds a distinct gensym
 
----
+* * *
+
 ###### Figure 16.4: Automatic deﬁnition of anaphoric macros.
 
 ```
@@ -11085,7 +11171,7 @@ each let leaves it bound to a different argument, but also binds a distinct gens
   (intern (subseq (symbol-name sym) 1)))
 ```
 
----
+* * *
 
 to each argument. The expansion function accumulates a list of these gensyms,
 and when it reaches the end of the list of arguments it returns a + expression with
@@ -11097,7 +11183,8 @@ the gensyms as the arguments. So the expression
 
 yields the macroexpansion:
 
----
+* * *
+
 ###### Figure 16.3 also contains the deﬁnition of the analogous alist:
 
 ```
@@ -11107,7 +11194,7 @@ yields the macroexpansion:
       (+ #:g2 #:g3 #:g4))))
 ```
 
----
+* * *
 
 ```
 > (alist 1 (+ 2 it) (+ 2 it))
@@ -11226,7 +11313,8 @@ value.
 Using the new defanaph, some of the previous examples would be deﬁned as
 follows:
 
----
+* * *
+
 ###### Figure 16.5: More general defanaph.
 
 ```
@@ -11255,7 +11343,7 @@ follows:
   ‘(_f (lambda (it) (,op it ,@(cdr args))) ,(car args)))
 ```
 
----
+* * *
 
 ```
 (defanaph alist)
@@ -11309,7 +11397,8 @@ One of the oldest read-macros in Lisp is ’, the quote. You could do without
 would make your code harder to read. The quote read-macro makes it possible to
 use ’a as an abbreviation for (quote a). We could deﬁne it as in Figure 17.1.
 
----
+* * *
+
 ###### Figure 17.1: Possible deﬁnition of ’.
 
 ```
@@ -11319,7 +11408,7 @@ use ’a as an abbreviation for (quote a). We could deﬁne it as in Figure 17.1
 
 ```
 
----
+* * *
 
 When read encounters an instance of ’ in a normal context (e.g. not in "a’b" or
 |a’b|), it will return the result of calling this function on the current stream and
@@ -11364,7 +11453,8 @@ whereas if we had tried to deﬁne an abbreviation for quote using a normal macr
 ‘(quote ,obj))
 ```
 
----
+* * *
+
 ###### Figure 17.2: A read-macro for constant functions.
 
 ```
@@ -11375,7 +11465,7 @@ whereas if we had tried to deﬁne an abbreviation for quote using a normal macr
 
 ```
 
----
+* * *
 
 it would work in isolation,
 
@@ -11422,7 +11512,8 @@ takes any number of arguments and returns 2. For example:
 (2 2 2)
 ```
 
----
+* * *
+
 ###### Figure 17.3: A read-macro deﬁning delimiters.
 
 ```
@@ -11439,7 +11530,7 @@ takes any number of arguments and returns 2. For example:
 ```
 
 
----
+* * *
 
 
 This example makes the new operator look rather pointless, but in programs that
@@ -11476,7 +11567,8 @@ a built-in function provided just for such cases. Its ﬁrst argument is the cha
 to treat as the end of the list. For ] to be recognized as a delimiter, it must ﬁrst be
 given this role, hence the preliminary call to set-macro-character.
 
----
+* * *
+
 ###### Figure 17.4: A macro for deﬁning delimiter read-macros.
 
 ```
@@ -11493,7 +11585,7 @@ given this role, hence the preliminary call to set-macro-character.
 ```
 
 
----
+* * *
 
 Most potential delimiter read-macro deﬁnitions will duplicate a lot of the
 code in Figure 17.3. A macro could put a more abstract interface on all this
@@ -11531,7 +11623,8 @@ alternative; by preﬁxing the sharp-dot read-macro to a compose expression,
 #.(compose #’list #’1+)
 ```
 
----
+* * *
+
 ###### Figure 17.5: A read-macro for functional composition.
 
 ```
@@ -11540,7 +11633,7 @@ alternative; by preﬁxing the sharp-dot read-macro to a compose expression,
 ```
 
 
----
+* * *
 
 
 we could cause it to be evaluated at read-time.
@@ -11662,7 +11755,8 @@ thereof:
 (1 #\f "ribble" (2 3 4))
 ```
 
----
+* * *
+
 ###### Figure 18.1: General sequence destructuring operator.
 
 ```
@@ -11706,7 +11800,7 @@ thereof:
 
 ```
 
----
+* * *
 
 The `#(` read-macro is for representing vectors, and `#\` for representing characters.
 Since `"abc" = #(#\a #\b #\c)`, the ﬁrst element of "fribble" is the character #\f.
@@ -11761,7 +11855,8 @@ of lets:
     (PROGN BODY)))
 ```
 
----
+* * *
+
 ###### Figure 18.2: Destructuring on arrays.
 
 ```
@@ -11790,7 +11885,7 @@ of lets:
           ,@body))))
 ```
 
----
+* * *
 
 Note that `dbind`, like `destructuring-bind`, assumes that it will ﬁnd all the
 list structure it is looking for. Left-over variables are not simply bound to nil, as
@@ -11808,7 +11903,8 @@ macro for arrays, how do we represent the pattern? For two-dimensional arrays,
 it is still practical to use a list. Figure 18.2 contains a macro, with-matrix, for
 destructuring on two-dimensional arrays.
 
----
+* * *
+
 ###### Figure 18.3: Destructuring on structures.
 
 ```
@@ -11821,7 +11917,7 @@ destructuring on two-dimensional arrays.
           ,@body))))
 ```
 
----
+* * *
 
 ```
 > (setq ar (make-array ’(3 3)))
@@ -11911,7 +12007,8 @@ do `dbind`:
 (1 2 3)
 ```
 
----
+* * *
+
 ###### Figure 18.4: Reference destructuring on sequences.
 
 ```
@@ -11935,7 +12032,7 @@ do `dbind`:
                     body))))
 ```
 
----
+* * *
 
 But the new macro also gives us the option to setf positions in sequences, as we
 do slots in with-slots:
@@ -12013,7 +12110,8 @@ to match, we will get back a list showing how:
 T
 ```
 
----
+* * *
+
 ###### Figure 18.5: Matching function.
 
 ```
@@ -12040,7 +12138,7 @@ T
       (values (cdr b) b))))
 ```
 
----
+* * *
 
 ```
 > (match ’(p ?x b ?y a) ’(p ?y b c a))
@@ -12063,7 +12161,8 @@ NIL
 T
 ```
 
----
+* * *
+
 ###### Figure 18.6: Slow matching operator.
 
 ```
@@ -12085,7 +12184,7 @@ T
   (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
 ```
 
----
+* * *
 
 When match returns nil and t as above, it indicates a successful match which
 yielded no bindings.
@@ -12167,7 +12266,8 @@ to use quoted literals in patterns, the destructuring code (and vars-in) have to
 told not to go inside lists whose ﬁrst element is quote. With the new matching
 operator, we will be able to use lists as pattern elements, simply by quoting them.
 
----
+* * *
+
 ###### Figure 18.7: Fast matching operator.
 
 ```
@@ -12197,7 +12297,7 @@ operator, we will be able to use lists as pattern elements, simply by quoting th
             (gen-match (car refs) then else)))))
 ```
 
----
+* * *
 
 
 
@@ -12216,7 +12316,8 @@ or set it to, the corresponding part of the sequence given at runtime. Otherwise
 the pattern element is taken to be a literal value, and match1 generates code to
 compare it with the corresponding part of the sequence.
 
----
+* * *
+
 ###### Figure 18.8: Fast matching operator (continued).
 
 ```
@@ -12247,7 +12348,7 @@ compare it with the corresponding part of the sequence.
         ‘(> (length ,pat) ,(- (length rest) 2)))))
 ```
 
----
+* * *
 
 Let’s look at examples of how some parts of the expansion are generated.
 Suppose we begin with
@@ -12325,7 +12426,8 @@ generic sequence operators elt and subseq, the new if-match will work
 for any kind of sequence. If abab is deﬁned with the new version, it
 can be used also on vectors and strings:
 
----
+* * *
+
 ###### Figure 18.9: Expansion of an if-match.
 
 ```
@@ -12350,7 +12452,7 @@ can be used also on vectors and strings:
 
 ```
 
----
+* * *
 
 
 ```
@@ -12462,7 +12564,8 @@ macro which expands into an invertible reference will itself be invertible. Sinc
 db-query is deﬁned this way, we can simply push new facts onto the db-query
 of their predicates. In Common Lisp, hash-table entries are initialized to nil
 
----
+* * *
+
 ###### Figure 19.1: Basic database functions.
 
 ```
@@ -12485,7 +12588,7 @@ of their predicates. In Common Lisp, hash-table entries are initialized to nil
           ’,args))
 ```
 
----
+* * *
 
 unless speciﬁed otherwise, so any key initially has an empty list associated with
 it. Finally, the macro fact adds a new fact to the database.
@@ -12511,7 +12614,8 @@ Calling `db-query` is not a very ﬂexible way of looking at the contents of the
 database. Usually the user wants to ask questions which depend on more than
 just the ﬁrst element of a fact. A query language is a language for expressing
 
----
+* * *
+
 ###### Figure 19.2: Syntax of queries.
 
 ```
@@ -12524,7 +12628,7 @@ argument :   ? symbol
          :    number
 ```
 
----
+* * *
 
 more complicated questions. In a typical query language, the user can ask for all
 the values which satisfy some combination of restrictions—for example, the last
@@ -12613,7 +12717,8 @@ The macro with-answer provides a clean way of using the query interpreter
 within Lisp programs. It takes as its ﬁrst argument any legal query; the rest
 of the arguments are treated as a body of code. A with-answer expands into
 
----
+* * *
+
 ###### Figure 19.3: Query interpreter.
 
 ```
@@ -12655,9 +12760,10 @@ of the arguments are treated as a body of code. A with-answer expands into
           (db-query   pred)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 19.4: Assertion of sample facts.
 
 ```
@@ -12670,7 +12776,7 @@ of the arguments are treated as a body of code. A with-answer expands into
 (fact dates reynolds 1723 1792)
 ```
 
----
+* * *
 
 code which collects all the sets of bindings generated by the query, then iterates
 through the body with the variables in the query bound as speciﬁed by each set of
@@ -12745,7 +12851,8 @@ The last name and year of birth of everyone who died in 1772 or 1792.
 The last name of every English painter not born the same year as a Venetian
 one.
 
----
+* * *
+
 ###### Figure 19.5: The query interpreter in use.
 
 ```
@@ -12759,7 +12866,7 @@ one.
 ```
 
 
----
+* * *
 
 then we would get nil as the result if there were any painters born in 1772. Even
 in the ﬁrst example, we shouldn’t expect to be able to use the value of ?d within
@@ -12824,7 +12931,8 @@ REYNOLDS was born in my favorite year.
 NIL
 ```
 
----
+* * *
+
 ###### Figure 19.6: Query compiler.
 
 ```
@@ -12869,9 +12977,10 @@ NIL
          ,body)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 19.7: Two expansions of the same query.
 
 ```
@@ -12896,7 +13005,7 @@ NIL
          nil)))
 ```
 
----
+* * *
 
 This could have been done in the query interpreter, but only at the cost of calling
 eval explicitly. And even then, it wouldn’t have been possible to refer to lexical
@@ -12924,7 +13033,8 @@ NIL
 A well-implemented embedded language can have a seamless interface with the
 base language on both sides.
 
----
+* * *
+
 ###### Figure 19.8: The query compiler in use.
 
 ```
@@ -12955,7 +13065,7 @@ NIL
 NIL
 ```
 
----
+* * *
 
 Aside from these two additions—the evaluation of arguments and the new
 lisp operator—the query language supported by the query compiler is identical
@@ -13023,7 +13133,8 @@ waiting for the value it will return.  For example, in
 3. In Scheme, named functions are usually deﬁned with define, which takes
  the place of defun as well as defvar. The Common Lisp:
 
----
+* * *
+
 ###### Figure 20.1: Some differences between Scheme and Common Lisp.
 
 ```
@@ -13049,7 +13160,7 @@ has two possible Scheme translations:
  should be obvious from the context.
 
 
----
+* * *
 
 ```
 (/ (- x 1) 2)
@@ -13216,7 +13327,8 @@ a real program we would want to do something with the nodes as we encountered
 them. Here we just print them. The function dft, given for comparison, does an
 ordinary depth-ﬁrst traversal:
 
----
+* * *
+
 ###### Figure 20.2: Two Trees.
 
 ```
@@ -13224,7 +13336,7 @@ ordinary depth-ﬁrst traversal:
 ABDHCEFIG()
 ```
 
----
+* * *
 
 
 The function dft-node follows the same path through the tree, but deals out
@@ -13264,7 +13376,8 @@ Finally, the function dft2 neatly packages up what we just did by hand:
 ABDHCEFIG()
 ```
 
----
+* * *
+
 ###### Figure 20.3: Tree traversal using continuations.
 
 ```
@@ -13302,7 +13415,7 @@ ABDHCEFIG()
                 (restart)))))
 ```
 
----
+* * *
 
 Notice that there is no explicit recursion or iteration in the
 deﬁnition of dft2: successive nodes are printed because the
@@ -13411,7 +13524,8 @@ deﬁnition of =values shows how this continuation will be used. Any
 function deﬁned using =defun must return with =values, or call some
 other function
 
----
+* * *
+
 ###### Figure 20.4: Continuation-passing macros.
 
 ```
@@ -13441,7 +13555,7 @@ other function
   ‘(apply ,fn *cont* ,@args))
 ```
 
----
+* * *
 
 which does so. The syntax of =values is the same as that of the Common Lisp
 form values. It can return multiple values if there is an =bind with the same
@@ -13579,7 +13693,8 @@ were built by the network compiler on page 80.
    after an =bind should be put in its body. So if we want to have
    several =binds one after another, they must be nested:
 
----
+* * *
+
 ###### Figure 20.5: Restrictions on continuation-passing macros.
 
 ```
@@ -13591,7 +13706,7 @@ were built by the network compiler on page 80.
       (=values x y z))))
 ```
 
----
+* * *
 
 The remaining macros, =apply and =funcall, are for use with functions
 deﬁned by =lambda. Note that "functions" deﬁned with =defun, because they
@@ -13617,7 +13732,8 @@ special macros. Built-in functions like list, for example, are exempt.
 Figure 20.6 contains the code from Figure 20.3, translated from Scheme into
 Common Lisp, and using the continuation-passing macros instead of Scheme
 
----
+* * *
+
 ###### Figure 20.6: Tree traversal using continuation-passing macros.
 
 ```
@@ -13649,7 +13765,7 @@ Common Lisp, and using the continuation-passing macros instead of Scheme
              (restart)))))
 ```
 
----
+* * *
 
 
 continuations. With the same example tree, dft2 works just as before:
@@ -13861,7 +13977,8 @@ new operators. The basic elements of our language will be as follows:
 > ﬂy. From running processes it will be possible to deﬁne new
 > functions, and to instantiate and kill processes.
 
----
+* * *
+
 ###### Figure 21.1: Process structure and instantiation.
 
 ```
@@ -13893,7 +14010,7 @@ new operators. The basic elements of our language will be as follows:
      (catch *halt* (loop (pick-process)))))
 ```
 
----
+* * *
 
 Continuations make it possible to store the state of a Lisp program. Being able to
 store several states at once is not very far from having multiple processes. Starting
@@ -14012,7 +14129,8 @@ happen after the wait must be put in its body. Thus, if we want to have a proces
 wait several times, the wait expressions must be nested. By asserting facts aimed
 at one another, processes can cooperate in reaching some goal, as in Figure 21.4.
 
----
+* * *
+
 ###### Figure 21.2: Process scheduling.
 
 ```
@@ -14058,9 +14176,10 @@ at one another, processes can cooperate in reaching some goal, as in Figure 21.4
       (pick-process)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 21.3: One process with one wait.
 
 ```
@@ -14074,7 +14193,7 @@ at one another, processes can cooperate in reaching some goal, as in Figure 21.4
   (fork (pedestrian) 1))
 ```
 
----
+* * *
 
 Processes instantiated from visitor and host, if given the same door, will
 exchange control via messages on a blackboard:
@@ -14112,7 +14231,8 @@ does the capture process resume, and the barbarians turn to fortifying their own
 position.
 
 
----
+* * *
+
 ###### Figure 21.4: Synchronization with a blackboard.
 
 ```
@@ -14147,7 +14267,7 @@ position.
   (fork (host ’door2) 1))
 ```
 
----
+* * *
 
 
 Underlying wait expressions is the more general arbitrator. This function
@@ -14165,7 +14285,8 @@ their bodies in lambda-expressions. For example,
 (wait d (car *bboard*) (=values d))
 ```
 
----
+* * *
+
 ###### Figure 21.5: Effect of changing priorities.
 
 ```
@@ -14190,7 +14311,7 @@ their bodies in lambda-expressions. For example,
 ```
 
 
----
+* * *
 
 expands into:
 
@@ -14467,7 +14588,8 @@ algorithms like the one above, as if it really were possible to guess what ances
 to follow. By using choose it is possible to write an algorithm to search some
 problem space just by writing an algorithm to traverse it.
 
----
+* * *
+
 ###### Figure 22.1: Deterministic tree search.
 
 ```
@@ -14484,9 +14606,10 @@ problem space just by writing an algorithm to traverse it.
           (try-paths (cdr ns) n2))))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 22.2: Nondeterministic tree search.
 
 ```
@@ -14496,7 +14619,7 @@ problem space just by writing an algorithm to traverse it.
         (else (cons n1 (descent (choose (kids n1)) n2)))))
 ```
 
----
+* * *
 
 
 ## 22.2 Search
@@ -14519,7 +14642,8 @@ right path. It is written on the assumption that choose has chosen an n with the
 desired properties. If we are used to looking at deterministic programs, we may
 not perceive that choose has to work as if it could guess what n would make it
 
----
+* * *
+
 ###### Figure 22.3: Choice in a subroutine.
 
 ```
@@ -14534,7 +14658,7 @@ not perceive that choose has to work as if it could guess what n would make it
         (fail))))
 ```
 
----
+* * *
 
 through the computation which follows without failing.
 
@@ -14628,7 +14752,8 @@ speciﬁcation. But a program which used these versions of choose and
 fail to search a graph might not terminate, if the graph contained
 cycles.
 
----
+* * *
+
 ###### Figure 22.4: Scheme implementation of choose and fail.
 
 ```
@@ -14659,7 +14784,7 @@ cycles.
                   (p1)))))))
 ```
 
----
+* * *
 
 In practice, nondeterminism usually means using a depth-ﬁrst implementation
 equivalent to the one in Figure 22.4, and leaving it to the user to avoid loops in
@@ -14718,7 +14843,8 @@ different form. It should be given a symbol, a list of choices, and a body of co
 It will do a choose on the list of choices, bind the symbol to the value chosen, and
 evaluate the body of code:
 
----
+* * *
+
 ###### Figure 22.5: Nondeterministic operators in Common Lisp.
 
 ```
@@ -14752,7 +14878,7 @@ evaluate the body of code:
       failsym))
 ```
 
----
+* * *
 
 ```
 > (choose-bind x ’(marrakesh strasbourg vegas)
@@ -14821,7 +14947,8 @@ With these macros, we can successfully run the example in which the nondetermini
 choice occurs in a subroutine. Figure 22.6 shows the Common Lisp
 version of parlor-trick, which works as it did in Scheme:
 
----
+* * *
+
 ###### Figure 22.6: Common Lisp choice in a subroutine.
 
 ```
@@ -14837,7 +14964,7 @@ version of parlor-trick, which works as it did in Scheme:
         (fail))))
 ```
 
----
+* * *
 
 ```
 > (parlor-trick 7)
@@ -14934,7 +15061,8 @@ number of boxes of Chocoblobs will also contain tokens entitling the
 recipient to valuable prizes. To ensure fairness, no two of the
 winning boxes are sent to the same city.
 
----
+* * *
+
 ###### Figure 22.7: Nondeterministic search in Common Lisp
 
 ```
@@ -14966,7 +15094,7 @@ KIDS
 @
 ```
 
----
+* * *
 
 After the promotion has begun, it emerges that the tokens are small enough to
 be swallowed by children. Hounded by visions of lawsuits, Chocoblob lawyers
@@ -14981,7 +15109,8 @@ exists physically: the root node is at the company’s head ofﬁce; the childre
 node are the cities where the special boxes were sent; the children of those nodes
 are the stores in each city; and the children of each store represent the boxes in
 
----
+* * *
+
 ###### Figure 22.8: Exhaustive Chocoblob search.
 
 ```
@@ -15001,7 +15130,7 @@ are the stores in each city; and the children of each store represent the boxes 
   (member x ’((la 1 2) (ny 1 1) (bos 2 2))))
 ```
 
----
+* * *
 
 that store. When the lawyers searching this tree ﬁnd one of the boxes containing
 a coin, they can prune off all the unexplored branches descending from the city
@@ -15033,7 +15162,8 @@ understood independently of any particular implementation, pruning the
 search tree is an optimization technique, and depends very much on how
 choose is implemented. The mark and
 
----
+* * *
+
 ###### Figure 22.9: Marking and pruning search trees.
 
 ```
@@ -15048,9 +15178,10 @@ choose is implemented. The mark and
          (cut))))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 22.10: Pruned Chocoblob search.
 
 ```
@@ -15068,7 +15199,7 @@ choose is implemented. The mark and
         (fail)))))
 ```
 
----
+* * *
 
 cut deﬁned in Figure 22.9 are suitable for use with the depth-ﬁrst implementation
 of choose (Figure 22.4).
@@ -15085,12 +15216,13 @@ Figure 22.10 shows how these operators would be used to prune the search
 tree in the Chocoblob case. (Changed lines are indicated by semicolons.) We call
 mark upon choosing a city. At this point, *paths* contains one continuation,
 
----
+* * *
+
 ###### Figure 22.11: A directed graph with a loop.
 
 **MISSING**
 
----
+* * *
 
 representing the search of the remaining cities.
 
@@ -15127,7 +15259,8 @@ circular paths. The depth-ﬁrst implementation of choose and fail given in Sect
 is vulnerable to the problem of circular paths, but if we were being
 picky, we would expect nondeterministic choose to be able to select an object
 
----
+* * *
+
 ###### Figure 22.12: Deterministic search.
 
 ```
@@ -15148,9 +15281,10 @@ picky, we would expect nondeterministic choose to be able to select an object
                                    (neighbors node))))))))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 22.13: Nondeterministic search.
 
 ```
@@ -15161,7 +15295,7 @@ picky, we would expect nondeterministic choose to be able to select an object
                 (cons n (path n node2))))))
 ```
 
----
+* * *
 
 which meets any computable speciﬁcation, and this case is no exception. Using a
 correct choose, we should be able to write the shorter and clearer version of path
@@ -15179,7 +15313,8 @@ true-choose will search their state-space breadth-ﬁrst. When the
 program reaches a choice-point, continuations to follow each choice
 are appended to the end of the list of stored paths.
 
----
+* * *
+
 ###### Figure 22.14: Correct choose in Scheme.
 
 ```
@@ -15208,7 +15343,7 @@ are appended to the end of the list of stored paths.
                   (p1)))))))
 ```
 
----
+* * *
 
 (Scheme’s map returns the same values as Common Lisp’s mapcar.) After this
 there is a call to fail, which is unchanged.
@@ -15306,7 +15441,8 @@ shown in Figure 23.2.
 What does this ATN do when given the input (spot runs)? The ﬁrst node has
 one outgoing arc, a cat, or category arc, leading to node s2. It says, effectively,
 
----
+* * *
+
 ###### Figure 23.1: A very small ATN.
 
 ```
@@ -15324,16 +15460,17 @@ one outgoing arc, a cat, or category arc, leading to node s2. It says, effective
          (verb ,(getr v)))))
 ```
 
----
+* * *
 
 
 
----
+* * *
+
 ###### Figure 23.2: Graph of a small ATN.
 
 **MISSING**
 
----
+* * *
 
 you can follow me if the current word is a noun, and if you do, you must store
 the current word (indicated by *) in the subj register. So we leave this node with
@@ -15452,7 +15589,8 @@ gets translated into a function deﬁnition of the following form:
     <translation of arc 2>))
 ```
 
----
+* * *
+
 ###### Figure 23.3: Compilation of nodes and arcs.
 
 ```
@@ -15500,9 +15638,10 @@ gets translated into a function deﬁnition of the following form:
                  ,regs))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 23.4: Macroexpansion of a node function.
 
 ```
@@ -15536,7 +15675,7 @@ gets translated into a function deﬁnition of the following form:
               (fail))))))
 ```
 
----
+* * *
 
 Figure 23.4 shows the macroexpansion of the ﬁrst node in the sample ATN of
 Figure 23.11. When called at runtime, node functions like s nondeterministically
@@ -15653,7 +15792,8 @@ Superﬁcially with-parses resembles operators like dolist, but underneath it
 uses backtracking search instead of simple iteration. A with-parses expression
 will return @, because that’s what fail returns when it runs out of choices.
 
----
+* * *
+
 ###### Figure 23.5: Toplevel macro.
 
 ```
@@ -15668,7 +15808,7 @@ will return @, because that’s what fail returns when it runs out of choices.
              (fail))))))
 ```
 
----
+* * *
 
 Before going on to look at a more representative ATN, let’s look at a parsing
 generated from the tiny ATN deﬁned earlier. The ATN compiler (Figure 23.3)
@@ -15704,14 +15844,16 @@ deﬁne the ATN (or set of ATNs) represented in Figure 23.6. This network is jus
 big enough to yield several parsings for the classic parser fodder "Time ﬂies like
 an arrow."
 
----
+* * *
+
 ###### Figure 23.6: Graph of a larger ATN.
 
 **MISSING**
 
----
+* * *
 
----
+* * *
+
 ###### Figure 23.7: Nominal dictionary.
 
 ```
@@ -15727,14 +15869,15 @@ an arrow."
     ((i you he she him her it) ’(pron))))
 ```
 
----
+* * *
 
 We need a slightly larger dictionary to parse more complex input. The function
 types (Figure 23.7) provides a dictionary of the most primitive sort. It deﬁnes a
 22-word vocabulary, and associates each word with a list of one or more simple
 grammatical roles.
 
----
+* * *
+
 ###### Figure 23.8: Sub-network for strings of modiﬁers.
 
 ```
@@ -15748,7 +15891,7 @@ grammatical roles.
   (up ‘(n-group ,(getr mods))))
 ```
 
----
+* * *
 
 The components of an ATN are themselves ATNs. The smallest ATN in our set
 is the one in Figure 23.8. It parses strings of modiﬁers, which in this case means
@@ -15786,7 +15929,8 @@ The noun phrase network contains six nodes. The ﬁrst node, np has three
 choices. If it reads a pronoun, then it can move to node pron, which pops out of
 the network:
 
----
+* * *
+
 ###### Figure 23.9: Noun phrase sub-network.
 
 ```
@@ -15825,7 +15969,7 @@ the network:
            ,(getr pp))))
 ```
 
----
+* * *
 
 ```
 > (with-parses np ’(it)
@@ -15834,7 +15978,8 @@ Parsing: (NP (PRONOUN IT))
 @
 ```
 
----
+* * *
+
 ###### Figure 23.10: Prepositional phrase sub-network.
 
 ```
@@ -15851,7 +15996,7 @@ Parsing: (NP (PRONOUN IT))
            (obj ,(getr op)))))
 ```
 
----
+* * *
 
 Both the other arcs lead to node np/det: one arc reads a determiner (e.g. "the"),
 and the other arc simply jumps, reading no input. At node np/det, both arcs
@@ -15890,7 +16035,8 @@ difﬁcult for humans even to detect the syntactic structure.  Here the
 noun phrase "a time ﬂy like him" has the same form as "a Lisp hacker
 like him."
 
----
+* * *
+
 ###### Figure 23.11: Sentence network.
 
 ```
@@ -15925,14 +16071,15 @@ like him."
            (obj ,(getr obj)))))
 ```
 
----
+* * *
 
 Now all we need is a network for recognizing sentence structure. The
 network shown in Figure 23.11 parses both commands and statements. The
 start node is conventionally called s. The ﬁrst node leaving it pushes
 for a noun phrase,
 
----
+* * *
+
 ###### Figure 23.12: Two parsings for a sentence.
 
 ```
@@ -15963,7 +16110,7 @@ for a noun phrase,
  @
 ```
 
----
+* * *
 
 which will be the subject of the sentence. The second outgoing arc reads a verb.
 When a sentence is syntactically ambiguous, both arcs could succeed, ultimately
@@ -16008,12 +16155,13 @@ true in the database. In the following example, (after calling clear-db) we asse
 two facts and then query the database:
 
 
----
+* * *
+
 ###### Figure 24.1: Layers of abstraction.
 
 **MISSING**
 
----
+* * *
 
 ```
 > (fact painter reynolds)
@@ -16102,7 +16250,8 @@ We will follow a similar strategy here. In order to introduce some of the
 topics involved, we will begin with a simple interpreter. Later we will show how
 to write the same program much more efﬁciently.
 
----
+* * *
+
 ###### Figure 24.2: Toplevel macro.
 
 ```
@@ -16133,7 +16282,7 @@ to write the same program much more efﬁciently.
    (and (symbolp x) (eq (char (symbol-name x) 0) #\?)))
 ```
 
----
+* * *
 
 Figures 24.2-24.4 contain the code for a simple Prolog interpreter. It accepts
 the same queries as the query interpreter of Section 19.3, but uses rules
@@ -16202,7 +16351,8 @@ returning nil if any were found. With nondeterministic search we have to be
 more careful: we don’t want the interpretation of (painter ?x) to fail back
 outside the scope of the not, nor do we want it to leave saved paths that might
 
----
+* * *
+
 ###### Figure 24.3: Interpretation of queries.
 
 ```
@@ -16238,7 +16388,7 @@ outside the scope of the not, nor do we want it to leave saved paths that might
      (implies r query binds)))
 ```
 
----
+* * *
 
 be restarted later. So now the test for (painter ?x) is done with a temporarily
 empty list of saved states, and the old list is restored on the way out.
@@ -16249,7 +16399,8 @@ just of a predicate and some arguments. When the query interpreter generated
 bindings for a simple pattern, it called lookup (page 251). Now, instead of calling
 lookup, we have to get any bindings implied by the rules.
 
----
+* * *
+
 ###### Figure 24.4: Code involving rules.
 
 ```
@@ -16274,9 +16425,10 @@ lookup, we have to get any bindings implied by the rules.
            r))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 24.5: Syntax of rules.
 
 ```
@@ -16292,7 +16444,7 @@ lookup, we have to get any bindings implied by the rules.
   variable :   ? symbol
 ```
 
----
+* * *
 
 Code for deﬁning and using rules is shown in Figure 24.4. The rules are kept
 in a global list, *rlist*. Each rule is represented as a dotted pair of body and
@@ -16479,7 +16631,8 @@ append([X | Xs], Ys, [X | Zs]) <- append(Xs, Ys, Zs).
 
 becomes:
 
----
+* * *
+
 ###### Figure 24.6: Prolog syntax equivalence.
 
 ```
@@ -16489,7 +16642,7 @@ becomes:
 ```
 
 
----
+* * *
 
 ```
 > (with-inference (append ?x (c d) (a b c d))
@@ -16665,7 +16818,8 @@ that they haven’t yet been assigned real values by matching. Thus the function
 varsym?, which match and fullbind use to detect variables, has to be changed
 to look for gensyms.
 
----
+* * *
+
 ###### Figure 24.7: New toplevel macro.
 
 ```
@@ -16685,7 +16839,7 @@ to look for gensyms.
 ```
 
 
----
+* * *
 
 To generate the code to establish bindings for the query, with-inference
 calls gen-query (Figure 24.8). The ﬁrst thing gen-query does is look to see
@@ -16716,7 +16870,8 @@ the expansion of the second conjunct within that of the ﬁrst. When (big ?x)
 succeeds we try (red ?x), and if that succeeds, we evaluate the Lisp expressions.
 So the whole expression expands as in Figure 24.9.
 
----
+* * *
+
 ###### Figure 24.8: Compilation of queries.
 
 ```
@@ -16761,9 +16916,10 @@ So the whole expression expands as in Figure 24.9.
        ‘(cons ,(form (car pat)) ,(form (cdr pat)))))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 24.9: Expansion of a conjunction.
 
 ```
@@ -16781,7 +16937,7 @@ So the whole expression expands as in Figure 24.9.
       (fail)))
 ```
 
----
+* * *
 
 
 An and means nesting; an or means a choose. Given a query like
@@ -16814,7 +16970,8 @@ is to add extras like cuts, arithmetic, and I/O.
 Putting a cut in a Prolog rule causes the search tree to be pruned. Ordinarily,
 when our program encounters a fail, it backtracks to the last choice point. The
 
----
+* * *
+
 ###### Figure 24.10: Code for deﬁning rules.
 
 ```
@@ -16842,7 +16999,7 @@ when our program encounters a fail, it backtracks to the last choice point. The
                 (fail)))))))
 ```
 
----
+* * *
 
 implementation of choose in Section 22.4 stores choice points in the global variable
 *paths*. Calling fail restarts the search at the most recent choice point, which
@@ -16919,7 +17076,8 @@ HEPWORTH
 @
 ```
 
----
+* * *
+
 ###### Figure 24.11: Adding support for new operators.
 
 ```
@@ -16966,9 +17124,10 @@ HEPWORTH
       (=funcall r query binds paths)))                       ;
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 24.12: Adding support for new operators.
 
 ```
@@ -17011,9 +17170,10 @@ HEPWORTH
           (fail)))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 24.13: New syntax of rules.
 
 ```
@@ -17031,7 +17191,7 @@ HEPWORTH
   variable :   ? symbol
 ```
 
----
+* * *
 
 The cut is sometimes used in conjunction with the Prolog fail operator. Our
 function fail does exactly the same thing. Putting a cut in a rule makes it like a
@@ -17166,7 +17326,8 @@ done, then the query will terminate in the second rule. Otherwise the query will
 only match the third rule, which prints the value read, and starts the process over
 again.
 
----
+* * *
+
 ###### Figure 24.14: Quicksort.
 
 ```
@@ -17192,9 +17353,10 @@ again.
  (<- (partition nil ?y nil   nil))
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 24.15: An I/O loop in Prolog.
 
 ```
@@ -17210,7 +17372,7 @@ again.
      (echo ?y))
 ```
 
----
+* * *
 
 Collectively, the rules deﬁne a program that will continue to echo what you
 type, until you type done:
@@ -17418,7 +17580,8 @@ In fact, the only ingredient plain Lisp lacks is inheritance, and we can provide
 a rudimentary version of that in six lines of code, by deﬁning a recursive version
 of gethash:
 
----
+* * *
+
 ###### Figure 25.1: Multiple inheritance.
 
 ```
@@ -17451,7 +17614,7 @@ of gethash:
              (some2 fn (cdr lst))))))
 ```
 
----
+* * *
 
 
 If we just use rget in place of gethash, we will get inherited properties and
@@ -17476,12 +17639,13 @@ are both descended from d. A depth-ﬁrst (or rather, height-ﬁrst) traversal w
 go a, b, d, c, d. If the desired property were present in both d and c, we would
 
 
----
+* * *
+
 ###### Figure 25.2: Multiple paths to a superclass.
 
 **MISSING**
 
----
+* * *
 
 get the value stored in d, not the one stored in c. This would violate
 the principle that subclasses override the default values provided by
@@ -17521,7 +17685,8 @@ scoundrel ﬁrst and a patriot second:
 #<Hash-Table C4219E>
 ```
 
----
+* * *
+
 ###### Figure 25.3: A function to create objects.
 
 ```
@@ -17540,7 +17705,7 @@ scoundrel ﬁrst and a patriot second:
           (ancestors obj)))
 ```
 
----
+* * *
 
 ```
 > (setf (gethash ’serves scoundrel) ’self
@@ -17571,7 +17736,8 @@ should be treated as a method. Otherwise it will be treated as a slot, and the v
 retrieved by rget will simply be returned. Once we have deﬁned the name of
 either kind of property,
 
----
+* * *
+
 ###### Figure 25.4: Functional syntax.
 
 ```
@@ -17591,7 +17757,7 @@ either kind of property,
          (error "No ~A method for ~A." name obj))))
 ```
 
----
+* * *
 
 ```
 (defprop find-owner t)
@@ -17675,7 +17841,8 @@ methods. Around- and primary methods can use call-next to invoke the next
 method, which is the code that would have run if the current method didn’t exist.
 For example, if the currently running method is the only around-method, the next
 
----
+* * *
+
 ###### Figure 25.5: Auxiliary methods.
 
 ```
@@ -17713,7 +17880,7 @@ For example, if the currently running method is the only around-method, the next
           (nthcdr skip (ancestors obj))))
 ```
 
----
+* * *
 
 method would be the usual sandwich of before-, most speciﬁc primary, and after-methods.
 Within the most speciﬁc primary method, the next method would be the
@@ -17721,7 +17888,8 @@ second most speciﬁc primary method. Since the behavior of call-next depends
 on where it is called, it is never deﬁned globally with a defun, but is deﬁned
 locally within each method deﬁned by defmeth.
 
----
+* * *
+
 ###### Figure 25.6: Auxiliary methods (continued).
 
 ```
@@ -17740,7 +17908,7 @@ locally within each method deﬁned by defmeth.
      (rec (ancestors obj))))
 ```
 
----
+* * *
 
 An around- or primary method can use next-p to check whether there is a
 next method. If the current method is the primary method of an object with no
@@ -17770,7 +17938,8 @@ Now the area of an instance is calculated according to the method of the class:
 6
 ```
 
----
+* * *
+
 ###### Figure 25.7: Deﬁning methods.
 
 ```
@@ -17816,9 +17985,10 @@ Now the area of an instance is calculated according to the method of the class:
 
 ```
 
----
+* * *
 
----
+* * *
+
 ###### Figure 25.8: Removing methods.
 
 ```
@@ -17827,7 +17997,7 @@ Now the area of an instance is calculated according to the method of the class:
          nil))
 ```
 
----
+* * *
 
 In a more complicated example, suppose we have deﬁned a backup method for
 the filesystem object:
@@ -17926,7 +18096,8 @@ citrus, (orange sweet) for orange, and (dented) for my-orange, it would
 be convenient to be able to make (props my-orange) return the union of all
 these values: (dented orange sweet round acidic).
 
----
+* * *
+
 ###### Figure 25.9: Maintaining parent and child links.
 
 ```
@@ -17962,7 +18133,7 @@ these values: (dented orange sweet round acidic).
      obj))
 ```
 
----
+* * *
 
 We could have this if we allowed methods to apply some function to the values
 of all the primary methods, instead of just returning the value of the most speciﬁc.
@@ -17973,7 +18144,8 @@ combination.
 We deﬁne the form of combination for a method via defcomb, which takes
 a method name and a second argument describing the desired combination.
 
----
+* * *
+
 ###### Figure 25.10: Method combination.
 
 ```
@@ -18012,14 +18184,15 @@ a method name and a second argument describing the desired combination.
                   (ancestors obj))))
 ```
 
----
+* * *
 
 Ordinarily this second argument should be a function. However, it can also be one
 of :progn, :and, :or, or :standard. With the former three, primary methods
 will be combined as though according to the corresponding operator, while
 :standard indicates that we want the traditional way of running methods.
 
----
+* * *
+
 ###### Figure 25.11: Method combination (continued).
 
 ```
@@ -18040,7 +18213,7 @@ will be combined as though according to the corresponding operator, while
               (comb-or obj name args (cdr ancs))))))
 ```
 
----
+* * *
 
 The central function in Figure 25.10 is the new run-core-methods. If the
 method being called has no mcombine property, then the method call proceeds as
@@ -18581,7 +18754,8 @@ we redeﬁne what combine does when its ﬁrst two arguments are strings.
 Unfortunately, if instead of redeﬁning a method we want to remove it, there
 is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
 
----
+* * *
+
 ###### Figure 25.12: Macro for removing methods.
 
 ```
@@ -18600,7 +18774,7 @@ is no built-in converse of defmethod. Fortunately, this is Lisp, so we can write
                                   (list ,@classes)))))
 ```
 
----
+* * *
 
 one. The details of how to remove a method by hand are summarized in the
 implementation of undefmethod in Figure 25.12. We use this macro by giving
